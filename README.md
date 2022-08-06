@@ -1,6 +1,7 @@
 # experimental-test-tool-swift
 Pod creado para facilitar la creación de test mediante código simple
 
+<img width="661" alt="Captura de Pantalla 2022-08-06 a la(s) 8 06 21" src="https://user-images.githubusercontent.com/16517868/183250159-668900e0-23b1-4f7a-8d30-034557d89ca9.png">
 
 
 # Roadmap
@@ -17,6 +18,26 @@ Pod creado para facilitar la creación de test mediante código simple
 | UnitTest | ⌛ 👨‍💻|
 | Documentación  | ⌛  👨‍💻|
 | Extensiones  | ⌛  👨‍💻|
+
+
+### Swift Package Manager
+Swift Package Manager es una herramienta para automatizar la distribución de código Swift y está integrado en el compilador Swift. Está en desarrollo temprano, pero experimental-annotation-swift admite su uso en plataformas compatibles.
+
+
+Una vez que haya configurado su paquete Swift, agregar experimental-annotation-swift como dependencia es tan fácil como agregarlo al valor de dependencias de su Package.swift.
+```swift
+dependencies: [
+    .package(url: "https://github.com/JavierSaldivarRubio/esperimental-annotation-swift", .upToNextMajor(from: "0.0.1"))
+]
+```
+
+### CocoaPods
+[CocoaPods](https://cocoapods.org) es un administrador de dependencias para proyectos Cocoa. Para obtener instrucciones de uso e instalación, visite su sitio web. Para integrar AnnotationSwift en su proyecto Xcode usando CocoaPods, especifíquelo en su `Podfile`:
+
+
+```ruby
+In working
+```
 
 
 Dummy
