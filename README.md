@@ -3,6 +3,22 @@ Pod creado para facilitar la creación de test mediante código simple
 
 
 
+# Roadmap
+
+| Roadmap | Estado |
+| ------------- | ------------- |
+| Crear código base | 👨‍💻 |
+| SwiftPackage | 👨‍💻 |
+| [CocoaPods](https://cocoapods.org) | 👨‍💻 |
+| Example | ⌛ 👨‍💻|
+| Spy | ⌛ 👨‍💻|
+| Mock | ⌛ 👨‍💻|
+| Stubed | ⌛ 👨‍💻|
+| UnitTest | ⌛ 👨‍💻|
+| Documentación  | ⌛  👨‍💻|
+| Extensiones  | ⌛  👨‍💻|
+
+
 Dummy
 A dummy is a test double that doesn't do anything.
 
