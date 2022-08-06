@@ -7,8 +7,8 @@ Pod creado para facilitar la creación de test mediante código simple
 
 | Roadmap | Estado |
 | ------------- | ------------- |
-| Crear código base | 👨‍💻 |
-| SwiftPackage | 👨‍💻 |
+| Crear código base | ✅ |
+| SwiftPackage | ✅ |
 | [CocoaPods](https://cocoapods.org) | 👨‍💻 |
 | Example | ⌛ 👨‍💻|
 | Spy | ⌛ 👨‍💻|

@@ -13,6 +13,10 @@
 		B6436E4D289E92AF00D9B5C2 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B6436E4B289E92AF00D9B5C2 /* Main.storyboard */; };
 		B6436E4F289E92B100D9B5C2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B6436E4E289E92B100D9B5C2 /* Assets.xcassets */; };
 		B6436E52289E92B100D9B5C2 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B6436E50289E92B100D9B5C2 /* LaunchScreen.storyboard */; };
+		B6436E5E289E9BED00D9B5C2 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = B6436E5A289E9BED00D9B5C2 /* README.md */; };
+		B6436E5F289E9BED00D9B5C2 /* Package.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6436E5B289E9BED00D9B5C2 /* Package.swift */; };
+		B6436E60289E9BED00D9B5C2 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = B6436E5C289E9BED00D9B5C2 /* LICENSE */; };
+		B6436E61289E9BED00D9B5C2 /* Spockwift.podspec in Resources */ = {isa = PBXBuildFile; fileRef = B6436E5D289E9BED00D9B5C2 /* Spockwift.podspec */; };
 		CAABFF87437E05EC05CCDE26 /* Pods_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48F1A0F4E3688831F4560EF4 /* Pods_Example.framework */; };
 /* End PBXBuildFile section */
 
@@ -28,6 +32,10 @@
 		B6436E4E289E92B100D9B5C2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		B6436E51289E92B100D9B5C2 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		B6436E53289E92B100D9B5C2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B6436E5A289E9BED00D9B5C2 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
+		B6436E5B289E9BED00D9B5C2 /* Package.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Package.swift; path = ../Package.swift; sourceTree = "<group>"; };
+		B6436E5C289E9BED00D9B5C2 /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
+		B6436E5D289E9BED00D9B5C2 /* Spockwift.podspec */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Spockwift.podspec; path = ../Spockwift.podspec; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -53,6 +61,7 @@
 		B6436E39289E92AF00D9B5C2 = {
 			isa = PBXGroup;
 			children = (
+				B6436E59289E9BD400D9B5C2 /* metadata */,
 				B6436E44289E92AF00D9B5C2 /* Example */,
 				B6436E43289E92AF00D9B5C2 /* Products */,
 				CA33C3F1288E194716F02FE9 /* Pods */,
@@ -82,13 +91,23 @@
 			path = Example;
 			sourceTree = "<group>";
 		};
+		B6436E59289E9BD400D9B5C2 /* metadata */ = {
+			isa = PBXGroup;
+			children = (
+				B6436E5C289E9BED00D9B5C2 /* LICENSE */,
+				B6436E5B289E9BED00D9B5C2 /* Package.swift */,
+				B6436E5A289E9BED00D9B5C2 /* README.md */,
+				B6436E5D289E9BED00D9B5C2 /* Spockwift.podspec */,
+			);
+			name = metadata;
+			sourceTree = "<group>";
+		};
 		CA33C3F1288E194716F02FE9 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
 				12E05220E58C3F61AE374F1D /* Pods-Example.debug.xcconfig */,
 				42F3E2E097CD7A4620DF56BB /* Pods-Example.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -152,8 +171,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				B6436E52289E92B100D9B5C2 /* LaunchScreen.storyboard in Resources */,
+				B6436E61289E9BED00D9B5C2 /* Spockwift.podspec in Resources */,
 				B6436E4F289E92B100D9B5C2 /* Assets.xcassets in Resources */,
+				B6436E5E289E9BED00D9B5C2 /* README.md in Resources */,
 				B6436E4D289E92AF00D9B5C2 /* Main.storyboard in Resources */,
+				B6436E60289E9BED00D9B5C2 /* LICENSE in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -189,6 +211,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B6436E5F289E9BED00D9B5C2 /* Package.swift in Sources */,
 				B6436E4A289E92AF00D9B5C2 /* ViewController.swift in Sources */,
 				B6436E46289E92AF00D9B5C2 /* AppDelegate.swift in Sources */,
 				B6436E48289E92AF00D9B5C2 /* SceneDelegate.swift in Sources */,
