@@ -1,0 +1,27 @@
+name: Test
+
+on:
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: macos-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run tests
+      run: swift test --enable-code-coverage
+    - name: Test coverage
+      uses: maxep/spm-lcov-action@0.3.0
+      with:
+        output-file: ./coverage/lcov.info
+    - uses: romeovs/lcov-reporter-action@v0.2.16
+      with:
+        github-token: ${{ github.token }}
+        lcov-file: ./coverage/lcov.info
+    - uses: ziishaned/jest-reporter-action@v0.0.1
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        test-command: "yarn jest --coverage"
