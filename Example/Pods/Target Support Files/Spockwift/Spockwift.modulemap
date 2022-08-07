@@ -1,0 +1,6 @@
+framework module Spockwift {
+  umbrella header "Spockwift-umbrella.h"
+
+  export *
+  module * { export * }
+}
