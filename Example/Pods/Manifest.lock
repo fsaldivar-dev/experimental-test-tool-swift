@@ -1,10 +1,8 @@
 PODS:
   - Spockwift (0.0.1)
-  - Spockwift/Tests (0.0.1)
 
 DEPENDENCIES:
   - Spockwift (from `../`)
-  - Spockwift/Tests (from `../`)
 
 EXTERNAL SOURCES:
   Spockwift:
@@ -13,6 +11,6 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   Spockwift: 581ceb34acdae37668fd0aa2e3dfc838a60c412a
 
-PODFILE CHECKSUM: ed42946dfe098cf427650169989449af61a7e07d
+PODFILE CHECKSUM: dc9b14202d8d088806aa0e612b65271b52540b8c
 
 COCOAPODS: 1.11.2
