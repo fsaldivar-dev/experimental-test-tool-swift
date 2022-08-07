@@ -1,0 +1,50 @@
+//
+//  SpockableDummyTest.swift
+//  Spockwift-Unit-Tests
+//
+//  Created by Francisco Javier Saldivar Rubio on 07/08/22.
+//
+
+import XCTest
+@testable import Spockwift
+
+final class SpockDummyStringTest: XCTestCase {
+
+    func testStrings() throws {
+        var user = try User.dummy(with:
+                                    SpockDummyValue(at: "name", with: "Saldivar"),
+                                    SpockDummyValue(at: "profession:name", with: "Developer"),
+                                    SpockDummyValue(at: "profession:years", with: 10),
+                                    SpockDummyValue(at: "profession:university:name", with: "UTEQ")
+        )
+        
+        XCTAssertEqual(user.name, "Saldivar")
+        XCTAssertEqual(user.profession.name, "Developer")
+        XCTAssertEqual(user.profession.university.name, "UTEQ")
+        XCTAssertNotNil(user.profession.university.country)
+        
+        
+        let specName = "Francisco Saldivar"
+        user.name = specName
+        XCTAssertEqual(user.name, specName)
+    }
+    
+    func testDefault() throws {
+        let user = try User.dummy()
+        XCTAssertNotNil(user.name)
+        XCTAssertNotNil(user.profession.name)
+        XCTAssertNotNil(user.profession.university.name)
+        XCTAssertNotNil(user.profession.university.country)
+    }
+
+    func testNil() throws {
+        let user = try User.dummy(with:
+                                    SpockDummyValue(at: "name", with: nil),
+                                    SpockDummyValue(at: "profession:university:country", with: nil)
+        )
+
+        XCTAssertNil(user.name)
+        XCTAssertNil(user.profession.university.country)
+        
+    }
+}
