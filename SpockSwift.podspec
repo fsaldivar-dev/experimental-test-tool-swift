@@ -1,5 +1,5 @@
 Pod::Spec.new do |s|
-  s.name             = 'Spockwift'
+  s.name             = 'SpockSwift'
   s.version          = '0.0.1'
   s.summary          = 'Libreria para agulizar el desarrollo de pruebas'
   s.homepage         = 'https://github.com/fsaldivar-dev/experimental-test-tool-swift'

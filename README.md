@@ -11,7 +11,7 @@ Pod creado para facilitar la creación de pruebas únitarias mediante código si
 |                Roadmap             |    Estado     |
 | -----------------------------------| ------------- |
 | Crear código base                  | ✅            |
-| SwiftPackage                       | ✅            |
+| SwiftPackage                       | ⌛ 👨‍💻         |
 | [CocoaPods](https://cocoapods.org) | 👨‍💻            |
 | Example                            | ✅            |
 | [Simple Dummy](./Sources/SpockDummy/SpockableDummy.md)| ✅            |
@@ -29,9 +29,7 @@ Swift Package Manager es una herramienta para automatizar la distribución de c�
 
 Una vez que haya configurado su paquete Swift, agregar experimental-annotation-swift como dependencia es tan fácil como agregarlo al valor de dependencias de su Package.swift.
 ```swift
-dependencies: [
-    .package(url: "https://github.com/JavierSaldivarRubio/esperimental-annotation-swift", .upToNextMajor(from: "0.0.1"))
-]
+In working
 ```
 
 ### CocoaPods
@@ -39,7 +37,7 @@ dependencies: [
 
 
 ```ruby
-In working
+pod SpockSwift
 ```
 
 ## [Dummy](./Sources/SpockDummy/SpockableDummy.md)
