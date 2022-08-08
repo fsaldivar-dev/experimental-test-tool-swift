@@ -1,24 +1,26 @@
 # experimental-test-tool-swift
 
 
-<img width="661" alt="Captura de Pantalla 2022-08-06 a la(s) 8 06 21" src="https://user-images.githubusercontent.com/16517868/183250159-668900e0-23b1-4f7a-8d30-034557d89ca9.png">
+<img width="640" alt="Captura de Pantalla 2022-08-08 a la(s) 7 07 24" src="https://user-images.githubusercontent.com/16517868/183414396-108611c1-8585-4ce5-8b4f-088ea4d15f04.png">
+
 
 Pod creado para facilitar la creación de pruebas únitarias mediante código simple
 
 # Roadmap
 
-| Roadmap | Estado |
-| ------------- | ------------- |
-| Crear código base | ✅ |
-| SwiftPackage | ✅ |
-| [CocoaPods](https://cocoapods.org) | 👨‍💻 |
-| Example | ⌛ 👨‍💻|
-| Spy | ⌛ 👨‍💻|
-| Mock | ⌛ 👨‍💻|
-| Stubed | ⌛ 👨‍💻|
-| UnitTest | ⌛ 👨‍💻|
-| Documentación  | ⌛  👨‍💻|
-| Extensiones  | ⌛  👨‍💻|
+|                Roadmap             |    Estado     |
+| -----------------------------------| ------------- |
+| Crear código base                  | ✅            |
+| SwiftPackage                       | ✅            |
+| [CocoaPods](https://cocoapods.org) | 👨‍💻            |
+| Example                            | ✅            |
+| [Simple Dummy](./Sources/SpockDummy/SpockableDummy.md)| ✅            |
+| Spy                                | ⌛ 👨‍💻         |
+| Mock                               | ⌛ 👨‍💻         |
+| Stubed                             | ⌛ 👨‍💻         |
+| UnitTest                           | ⌛ 👨‍💻         |
+| Documentación                      | ⌛  👨‍💻        |
+| Extensiones                        | ⌛  👨‍💻        |
 
 
 ### Swift Package Manager
