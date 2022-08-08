@@ -24,5 +24,18 @@
       "source_files": "Tests/**/*"
     }
   ],
+  "subspecs": [
+    {
+      "name": "SpockDummy",
+      "source_files": "Sources/SpockDummy/**",
+      "testspecs": [
+        {
+          "name": "Tests",
+          "test_type": "unit",
+          "source_files": "Tests/SpockDummy/**/*"
+        }
+      ]
+    }
+  ],
   "swift_version": "5.0"
 }

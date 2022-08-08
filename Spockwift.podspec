@@ -13,4 +13,12 @@ Pod::Spec.new do |s|
   s.test_spec 'Tests' do |test_spec|
       test_spec.source_files = 'Tests/**/*'
   end
+  
+  s.subspec 'SpockDummy' do |sp|
+      sp.source_files = 'Sources/SpockDummy/**'
+      
+      sp.test_spec do |test_subspec|
+          test_subspec.source_files = 'Tests/SpockDummy/**/*'
+      end
+  end
 end
