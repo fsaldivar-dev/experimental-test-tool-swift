@@ -10,3 +10,7 @@
 #endif
 #endif
 
+
+FOUNDATION_EXPORT double SpockSwiftVersionNumber;
+FOUNDATION_EXPORT const unsigned char SpockSwiftVersionString[];
+

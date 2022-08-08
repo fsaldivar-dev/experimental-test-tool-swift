@@ -1,18 +1,18 @@
 PODS:
-  - Spockwift/SpockDummy (0.0.1)
-  - Spockwift/SpockDummy/Tests (0.0.1)
+  - SpockSwift/SpockDummy (0.0.1)
+  - SpockSwift/SpockDummy/Tests (0.0.1)
 
 DEPENDENCIES:
-  - Spockwift/SpockDummy (from `../`)
-  - Spockwift/SpockDummy/Tests (from `../`)
+  - SpockSwift/SpockDummy (from `../`)
+  - SpockSwift/SpockDummy/Tests (from `../`)
 
 EXTERNAL SOURCES:
-  Spockwift:
+  SpockSwift:
     :path: "../"
 
 SPEC CHECKSUMS:
-  Spockwift: 359a759dd85155309b68301ee961ed8f62fcb4de
+  SpockSwift: 82709fa1e553730c116cd4a2ea80186bd0c7e298
 
-PODFILE CHECKSUM: 6ddc5925d3daa20a5b50396a05398bb936950d0a
+PODFILE CHECKSUM: b01fa772e73049cf61bb47462b30b4184da78723
 
 COCOAPODS: 1.11.2
