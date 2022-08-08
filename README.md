@@ -37,7 +37,7 @@ In working
 
 
 ```ruby
-pod SpockSwift
+In working
 ```
 
 ## [Dummy](./Sources/SpockDummy/SpockableDummy.md)
