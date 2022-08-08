@@ -7,135 +7,135 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		1B07E5281B10A3606EB006D660D67EAB /* SpockUnkeyedContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00FE213106C52A3978846486949E4DD1 /* SpockUnkeyedContainer.swift */; };
-		33CED28C69F37DB7C517E9E913814296 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 73010CC983E3809BECEE5348DA1BB8C6 /* Foundation.framework */; };
-		59F293068C4DF679C9C4F970FD95331A /* SpockableDummy.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDE67625AF3C6CA358F153442C59FD59 /* SpockableDummy.swift */; };
-		64D87F453B16E6F83C2753B4CDD424CF /* SpockSingleValueContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8560F712CAB51256677E5F423171817 /* SpockSingleValueContainer.swift */; };
-		702F9407F9CCBB20717C4EE1ABCBE811 /* Pods-Example-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = D6D7C498FA339E02BD53ECB8916CEA8E /* Pods-Example-dummy.m */; };
-		7C67695FECB38771A3EA7AEEE0B8EC04 /* Pods-Example-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 7825A90E082A1582EB16256B0E722B3F /* Pods-Example-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		81FB578262193C4B1169FD90323183DB /* SpockDummyNumbersTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00594D2AF228F6770A77691710256052 /* SpockDummyNumbersTest.swift */; };
-		8A1351C96C1D93A94BDDC5934579A629 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = E488E71533A5117785730120D7C1B130 /* Models.swift */; };
-		8BB834ACC116163E0833AA784CAD6E7A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 73010CC983E3809BECEE5348DA1BB8C6 /* Foundation.framework */; };
-		A0CCE30407F4BA08C87CBFBE8AF6AC15 /* SpockDummyStringTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8744E81456F4B669C498A57DECC6B0C0 /* SpockDummyStringTest.swift */; };
-		D3F0F63E3D81F7C7BF6C90C934D7171F /* SpockDummyArrayTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CB20519F24996DF7546F79EFD2DFE70 /* SpockDummyArrayTest.swift */; };
-		E3B980683C66446FBB0F822D4365BB4A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 73010CC983E3809BECEE5348DA1BB8C6 /* Foundation.framework */; };
-		EF1092F129F6D633251662D83F23C76C /* Spockwift-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 4C80F790F96E5D4F2B1F5EA9D058F2E8 /* Spockwift-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		F0A071487134B5C395B7501819EA9545 /* Spockwift-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BE3A1B1CC614587C6A84EE3C207160C /* Spockwift-dummy.m */; };
+		13BA5036E80583411BAE97D518C851E5 /* Pods-Example-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = D6D7C498FA339E02BD53ECB8916CEA8E /* Pods-Example-dummy.m */; };
+		2FAEEABCFE3AD82B346791A8BEFABE3B /* SpockDummyNumbersTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34B94DAC8F3596B31C82AAFCCC17F23E /* SpockDummyNumbersTest.swift */; };
+		3969300DFF209A328CEA4723B4646DFB /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A9BDD21A1DECDA829051770D38D1FB0 /* Models.swift */; };
+		403C1A53D4480D85579964BAF58379FB /* SpockUnkeyedContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4210E014D016DEEF61F076BDF29197B /* SpockUnkeyedContainer.swift */; };
+		40791F0AA410FF8AF55225E233F1B29B /* SpockableDummy.md in Sources */ = {isa = PBXBuildFile; fileRef = 1F54685503A43ED948FDDD38252A21FD /* SpockableDummy.md */; };
+		4705A8C8BDA1A51745CE70B5DE363848 /* SpockSwift-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = EDC667740C86CD393EE04DAE827C318B /* SpockSwift-dummy.m */; };
+		50528297088E80301CFA03ADAD9A364B /* SpockSwift-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 162BF098FBC821D1D7869AAA10BF1290 /* SpockSwift-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		53CF9EC74677D79CDC46E9CB990E7D56 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 73010CC983E3809BECEE5348DA1BB8C6 /* Foundation.framework */; };
+		5CBEA37C7DA6A9E26A1FDFEFA12E387E /* SpockDummyArrayTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = B346D1806610B570CBF5B29EAD141189 /* SpockDummyArrayTest.swift */; };
+		606A0BE2124D0DC8215DB73325565708 /* Pods-Example-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 7825A90E082A1582EB16256B0E722B3F /* Pods-Example-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8FCCB3BA025EF5EF5D5017B0343F2219 /* SpockDummyStringTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49F454E92C397F0DC590938D630F73DD /* SpockDummyStringTest.swift */; };
+		963A5E4C3D9429A98F24B6CC4B8C2DA6 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 73010CC983E3809BECEE5348DA1BB8C6 /* Foundation.framework */; };
+		ADA1A23109E2BFA76A05B4A038798899 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 73010CC983E3809BECEE5348DA1BB8C6 /* Foundation.framework */; };
+		D03BA04EC5AE0C9118B3584DE9BA278E /* SpockableDummy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F38D222C4E5B0C48C8700B06DD95CD0 /* SpockableDummy.swift */; };
+		EDF3929716D57DF9752264F154961CDD /* SpockSingleValueContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64FC556C7B90257155BB374C8308C5A1 /* SpockSingleValueContainer.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		1523BD757A8B89E3C829144D1C8944F7 /* PBXContainerItemProxy */ = {
+		28717EB363B93D058829DE8D8170FC65 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = BFDFE7DC352907FC980B868725387E98 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 5B52A50CD3419375AD6AA979113F0BB2;
-			remoteInfo = Spockwift;
+			remoteGlobalIDString = C797CCD7A82F1A20D844CF389E24B4C6;
+			remoteInfo = SpockSwift;
 		};
-		C618DD744D2A5AF53845DDDAD1FEF726 /* PBXContainerItemProxy */ = {
+		70BE4F054F8033C1255393118552D591 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = BFDFE7DC352907FC980B868725387E98 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 5B52A50CD3419375AD6AA979113F0BB2;
-			remoteInfo = Spockwift;
+			remoteGlobalIDString = C797CCD7A82F1A20D844CF389E24B4C6;
+			remoteInfo = SpockSwift;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		00594D2AF228F6770A77691710256052 /* SpockDummyNumbersTest.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SpockDummyNumbersTest.swift; path = Tests/SpockDummy/SpockDummyNumbersTest.swift; sourceTree = "<group>"; };
-		00FE213106C52A3978846486949E4DD1 /* SpockUnkeyedContainer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SpockUnkeyedContainer.swift; path = Sources/SpockDummy/SpockUnkeyedContainer.swift; sourceTree = "<group>"; };
-		06BF8C66A73FDD3EA23F58E38C0B45F4 /* Spockwift-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Spockwift-prefix.pch"; sourceTree = "<group>"; };
-		0F7BAA69A0A6AF25F95970FFA9435FBB /* Spockwift.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = Spockwift.debug.xcconfig; sourceTree = "<group>"; };
-		1C78014E81B3F4785299B6478070F417 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; path = README.md; sourceTree = "<group>"; };
-		1CB20519F24996DF7546F79EFD2DFE70 /* SpockDummyArrayTest.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SpockDummyArrayTest.swift; path = Tests/SpockDummy/SpockDummyArrayTest.swift; sourceTree = "<group>"; };
+		050312EBA45EED570AC0A5D74D2A79D3 /* SpockSwift-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "SpockSwift-Info.plist"; sourceTree = "<group>"; };
+		162BF098FBC821D1D7869AAA10BF1290 /* SpockSwift-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "SpockSwift-umbrella.h"; sourceTree = "<group>"; };
+		1F54685503A43ED948FDDD38252A21FD /* SpockableDummy.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = SpockableDummy.md; path = Sources/SpockDummy/SpockableDummy.md; sourceTree = "<group>"; };
 		1F667CC0E19EAF34E5A4119E2121F585 /* Pods-Example */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = "Pods-Example"; path = Pods_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		243410B9535472556EA4BB6DBC133A0D /* Pods-Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-Example.release.xcconfig"; sourceTree = "<group>"; };
-		2BE3A1B1CC614587C6A84EE3C207160C /* Spockwift-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Spockwift-dummy.m"; sourceTree = "<group>"; };
+		2A9BDD21A1DECDA829051770D38D1FB0 /* Models.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Models.swift; path = Tests/SpockDummy/Models.swift; sourceTree = "<group>"; };
 		31C1D37707DFAA5E6A164BCC07834264 /* Pods-Example-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-Example-Info.plist"; sourceTree = "<group>"; };
+		332940EEDC64ECEFFAA6AA1A690345C3 /* SpockSwift-Unit-SpockDummy-Tests-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "SpockSwift-Unit-SpockDummy-Tests-prefix.pch"; sourceTree = "<group>"; };
+		34B94DAC8F3596B31C82AAFCCC17F23E /* SpockDummyNumbersTest.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SpockDummyNumbersTest.swift; path = Tests/SpockDummy/SpockDummyNumbersTest.swift; sourceTree = "<group>"; };
 		35C305D3797C284E6F5BAA1D3E6F9BF8 /* Pods-Example.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = "Pods-Example.modulemap"; sourceTree = "<group>"; };
-		3A08DAC12EB27F6E9FDE0B038962A295 /* Spockwift-Unit-SpockDummy-Tests-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Spockwift-Unit-SpockDummy-Tests-Info.plist"; sourceTree = "<group>"; };
 		441854E35F81731E63E53DC7E4EEAD9D /* Pods-Example-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-Example-acknowledgements.markdown"; sourceTree = "<group>"; };
-		4C80F790F96E5D4F2B1F5EA9D058F2E8 /* Spockwift-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Spockwift-umbrella.h"; sourceTree = "<group>"; };
-		52726B9260EE9EA5815EA28C4F1C40CC /* Spockwift.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = Spockwift.modulemap; sourceTree = "<group>"; };
-		596CDD2F7E65BF1DD469519D7FD4557C /* Spockwift.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; lastKnownFileType = text; path = Spockwift.podspec; sourceTree = "<group>"; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
-		5A4A15C206EF17269337DBBBF18B1A24 /* Spockwift-Unit-SpockDummy-Tests-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Spockwift-Unit-SpockDummy-Tests-prefix.pch"; sourceTree = "<group>"; };
-		659D1A208DDFCB4207702D04A4E89319 /* Spockwift-Unit-SpockDummy-Tests */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = "Spockwift-Unit-SpockDummy-Tests"; path = "Spockwift-Unit-SpockDummy-Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		68E511DD747A99DD2F3460C6D04A1887 /* Spockwift.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = Spockwift.release.xcconfig; sourceTree = "<group>"; };
-		690FE2192F76348DE165D6C8E697790D /* Spockwift.unit-spockdummy-tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Spockwift.unit-spockdummy-tests.release.xcconfig"; sourceTree = "<group>"; };
+		47BFED1D75B856EB777C8EDDE408481A /* SpockSwift.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = SpockSwift.release.xcconfig; sourceTree = "<group>"; };
+		49F454E92C397F0DC590938D630F73DD /* SpockDummyStringTest.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SpockDummyStringTest.swift; path = Tests/SpockDummy/SpockDummyStringTest.swift; sourceTree = "<group>"; };
+		4CB60634C70752B577959F733E2385AE /* SpockSwift.unit-spockdummy-tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "SpockSwift.unit-spockdummy-tests.debug.xcconfig"; sourceTree = "<group>"; };
+		4D6842202084E1FA436BBB376A2F816D /* SpockSwift.unit-spockdummy-tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "SpockSwift.unit-spockdummy-tests.release.xcconfig"; sourceTree = "<group>"; };
+		64FC556C7B90257155BB374C8308C5A1 /* SpockSingleValueContainer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SpockSingleValueContainer.swift; path = Sources/SpockDummy/SpockSingleValueContainer.swift; sourceTree = "<group>"; };
+		6F38D222C4E5B0C48C8700B06DD95CD0 /* SpockableDummy.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SpockableDummy.swift; path = Sources/SpockDummy/SpockableDummy.swift; sourceTree = "<group>"; };
 		73010CC983E3809BECEE5348DA1BB8C6 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS14.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		7825A90E082A1582EB16256B0E722B3F /* Pods-Example-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-Example-umbrella.h"; sourceTree = "<group>"; };
-		828DF094AAC76D3E3744B3E04E38C7BD /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; path = LICENSE; sourceTree = "<group>"; };
-		85DC49A5C3ED0029325493E97B5EE643 /* Spockwift-Unit-SpockDummy-Tests-frameworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Spockwift-Unit-SpockDummy-Tests-frameworks.sh"; sourceTree = "<group>"; };
-		8744E81456F4B669C498A57DECC6B0C0 /* SpockDummyStringTest.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SpockDummyStringTest.swift; path = Tests/SpockDummy/SpockDummyStringTest.swift; sourceTree = "<group>"; };
-		8F6B02E04EFA4FE46E6D61971004BA79 /* Spockwift.unit-spockdummy-tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Spockwift.unit-spockdummy-tests.debug.xcconfig"; sourceTree = "<group>"; };
-		9D940727FF8FB9C785EB98E56350EF41 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; lastKnownFileType = text; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
-		A7EA26F41999655A9E93F6C47BBA87C2 /* Spockwift */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = Spockwift; path = Spockwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		783754D816084569D99AA77397E4069C /* SpockSwift.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; path = SpockSwift.podspec; sourceTree = "<group>"; tabWidth = 2; };
+		84973E38566DB65D35CD04E10DBEC412 /* SpockSwift.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = SpockSwift.debug.xcconfig; sourceTree = "<group>"; };
+		8BEFE5FC4AA3C29ACA6830B15723AD8F /* SpockSwift-Unit-SpockDummy-Tests-frameworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "SpockSwift-Unit-SpockDummy-Tests-frameworks.sh"; sourceTree = "<group>"; };
+		8F7B9B56F7BBB44C5229EA0E9E041553 /* SpockSwift-Unit-SpockDummy-Tests-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "SpockSwift-Unit-SpockDummy-Tests-Info.plist"; sourceTree = "<group>"; };
+		9D940727FF8FB9C785EB98E56350EF41 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		ADC620B670BFB809A9005C009D398BC7 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		AFECBC24E09D0D25F822C27BD944AFD4 /* Pods-Example-frameworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-Example-frameworks.sh"; sourceTree = "<group>"; };
+		B346D1806610B570CBF5B29EAD141189 /* SpockDummyArrayTest.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SpockDummyArrayTest.swift; path = Tests/SpockDummy/SpockDummyArrayTest.swift; sourceTree = "<group>"; };
+		B3CA96FA5B6A48AD32849D5409C93568 /* SpockSwift-Unit-SpockDummy-Tests */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = "SpockSwift-Unit-SpockDummy-Tests"; path = "SpockSwift-Unit-SpockDummy-Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B45138496B85A072654D1D0F8EBBEDE5 /* Pods-Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-Example.debug.xcconfig"; sourceTree = "<group>"; };
-		BE9D6030717DB66C2BC631F23C3E9725 /* Spockwift-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Spockwift-Info.plist"; sourceTree = "<group>"; };
+		B6B91EF4C27CE149466AED55B5FB27DD /* LICENSE.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; path = LICENSE.md; sourceTree = "<group>"; };
+		CC9E4D162D1B9A8AE1EB615D80C81360 /* SpockSwift */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = SpockSwift; path = SpockSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		D4210E014D016DEEF61F076BDF29197B /* SpockUnkeyedContainer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SpockUnkeyedContainer.swift; path = Sources/SpockDummy/SpockUnkeyedContainer.swift; sourceTree = "<group>"; };
 		D6D7C498FA339E02BD53ECB8916CEA8E /* Pods-Example-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-Example-dummy.m"; sourceTree = "<group>"; };
-		D8560F712CAB51256677E5F423171817 /* SpockSingleValueContainer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SpockSingleValueContainer.swift; path = Sources/SpockDummy/SpockSingleValueContainer.swift; sourceTree = "<group>"; };
-		E488E71533A5117785730120D7C1B130 /* Models.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Models.swift; path = Tests/SpockDummy/Models.swift; sourceTree = "<group>"; };
+		E6275A64743BC93C647E572A7AB2A513 /* SpockSwift-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "SpockSwift-prefix.pch"; sourceTree = "<group>"; };
 		EA21B344259B58996DB73382B1B1521F /* Pods-Example-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-Example-acknowledgements.plist"; sourceTree = "<group>"; };
-		FDE67625AF3C6CA358F153442C59FD59 /* SpockableDummy.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SpockableDummy.swift; path = Sources/SpockDummy/SpockableDummy.swift; sourceTree = "<group>"; };
+		EDC667740C86CD393EE04DAE827C318B /* SpockSwift-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "SpockSwift-dummy.m"; sourceTree = "<group>"; };
+		FA8267C0D9E992DE88ED23C293FCE20B /* SpockSwift.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = SpockSwift.modulemap; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		3243665C94E2D1960245E2112C77817A /* Frameworks */ = {
+		079AD204A02F3472E67E2278B7BE1750 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E3B980683C66446FBB0F822D4365BB4A /* Foundation.framework in Frameworks */,
+				ADA1A23109E2BFA76A05B4A038798899 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		6119674E2DB40072C116D0A81F30C5DB /* Frameworks */ = {
+		53934B0A89CD166757BFE1C665FBDC1A /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8BB834ACC116163E0833AA784CAD6E7A /* Foundation.framework in Frameworks */,
+				53CF9EC74677D79CDC46E9CB990E7D56 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		D28BF94D92C7B24F4100A85B800135BC /* Frameworks */ = {
+		D005212CBE6A00208BC1AC17B1849A0B /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				33CED28C69F37DB7C517E9E913814296 /* Foundation.framework in Frameworks */,
+				963A5E4C3D9429A98F24B6CC4B8C2DA6 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		0549B0982E621ED4013502CF2772E1D0 /* Tests */ = {
+		0A84E75DBB3A03C279DDC87FA6A3BB79 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
-				E488E71533A5117785730120D7C1B130 /* Models.swift */,
-				1CB20519F24996DF7546F79EFD2DFE70 /* SpockDummyArrayTest.swift */,
-				00594D2AF228F6770A77691710256052 /* SpockDummyNumbersTest.swift */,
-				8744E81456F4B669C498A57DECC6B0C0 /* SpockDummyStringTest.swift */,
+				2A9BDD21A1DECDA829051770D38D1FB0 /* Models.swift */,
+				B346D1806610B570CBF5B29EAD141189 /* SpockDummyArrayTest.swift */,
+				34B94DAC8F3596B31C82AAFCCC17F23E /* SpockDummyNumbersTest.swift */,
+				49F454E92C397F0DC590938D630F73DD /* SpockDummyStringTest.swift */,
 			);
 			name = Tests;
 			sourceTree = "<group>";
 		};
-		0925D8D12AD006F3F4277C1D6547D03F /* Support Files */ = {
+		1E318CAE401A5D0DDE7B7A995926935B /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				52726B9260EE9EA5815EA28C4F1C40CC /* Spockwift.modulemap */,
-				2BE3A1B1CC614587C6A84EE3C207160C /* Spockwift-dummy.m */,
-				BE9D6030717DB66C2BC631F23C3E9725 /* Spockwift-Info.plist */,
-				06BF8C66A73FDD3EA23F58E38C0B45F4 /* Spockwift-prefix.pch */,
-				4C80F790F96E5D4F2B1F5EA9D058F2E8 /* Spockwift-umbrella.h */,
-				85DC49A5C3ED0029325493E97B5EE643 /* Spockwift-Unit-SpockDummy-Tests-frameworks.sh */,
-				3A08DAC12EB27F6E9FDE0B038962A295 /* Spockwift-Unit-SpockDummy-Tests-Info.plist */,
-				5A4A15C206EF17269337DBBBF18B1A24 /* Spockwift-Unit-SpockDummy-Tests-prefix.pch */,
-				0F7BAA69A0A6AF25F95970FFA9435FBB /* Spockwift.debug.xcconfig */,
-				68E511DD747A99DD2F3460C6D04A1887 /* Spockwift.release.xcconfig */,
-				8F6B02E04EFA4FE46E6D61971004BA79 /* Spockwift.unit-spockdummy-tests.debug.xcconfig */,
-				690FE2192F76348DE165D6C8E697790D /* Spockwift.unit-spockdummy-tests.release.xcconfig */,
+				1F667CC0E19EAF34E5A4119E2121F585 /* Pods-Example */,
+				CC9E4D162D1B9A8AE1EB615D80C81360 /* SpockSwift */,
+				B3CA96FA5B6A48AD32849D5409C93568 /* SpockSwift-Unit-SpockDummy-Tests */,
 			);
-			name = "Support Files";
-			path = "Example/Pods/Target Support Files/Spockwift";
+			name = Products;
+			sourceTree = "<group>";
+		};
+		3F91BD8B63BE1E4886D7B61CF39FDBB3 /* Development Pods */ = {
+			isa = PBXGroup;
+			children = (
+				BE8C62FC3AD5D1F663EED5515245B5B0 /* SpockSwift */,
+			);
+			name = "Development Pods";
 			sourceTree = "<group>";
 		};
 		578452D2E740E91742655AC8F1636D1F /* iOS */ = {
@@ -144,27 +144,6 @@
 				73010CC983E3809BECEE5348DA1BB8C6 /* Foundation.framework */,
 			);
 			name = iOS;
-			sourceTree = "<group>";
-		};
-		5F7E2902F7878BE8BFCAB64640B78DB0 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				1F667CC0E19EAF34E5A4119E2121F585 /* Pods-Example */,
-				A7EA26F41999655A9E93F6C47BBA87C2 /* Spockwift */,
-				659D1A208DDFCB4207702D04A4E89319 /* Spockwift-Unit-SpockDummy-Tests */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		7049FE83F067866BE367FCCAD152DD68 /* SpockDummy */ = {
-			isa = PBXGroup;
-			children = (
-				FDE67625AF3C6CA358F153442C59FD59 /* SpockableDummy.swift */,
-				D8560F712CAB51256677E5F423171817 /* SpockSingleValueContainer.swift */,
-				00FE213106C52A3978846486949E4DD1 /* SpockUnkeyedContainer.swift */,
-				0549B0982E621ED4013502CF2772E1D0 /* Tests */,
-			);
-			name = SpockDummy;
 			sourceTree = "<group>";
 		};
 		9BDBD95ED116334D1B2835202D8D3060 /* Pods-Example */ = {
@@ -184,12 +163,37 @@
 			path = "Target Support Files/Pods-Example";
 			sourceTree = "<group>";
 		};
-		CA6219E56317FEC252FA5B8EDD9E88A7 /* Development Pods */ = {
+		AD2F3C5426695EF6FAF7E2A38BEC5E7E /* Pod */ = {
 			isa = PBXGroup;
 			children = (
-				D6C559FA7DF8C06D7671DC50E40BCBD0 /* Spockwift */,
+				B6B91EF4C27CE149466AED55B5FB27DD /* LICENSE.md */,
+				ADC620B670BFB809A9005C009D398BC7 /* README.md */,
+				783754D816084569D99AA77397E4069C /* SpockSwift.podspec */,
 			);
-			name = "Development Pods";
+			name = Pod;
+			sourceTree = "<group>";
+		};
+		BB784D5B115D8A0790E7A082DF73C041 /* SpockDummy */ = {
+			isa = PBXGroup;
+			children = (
+				1F54685503A43ED948FDDD38252A21FD /* SpockableDummy.md */,
+				6F38D222C4E5B0C48C8700B06DD95CD0 /* SpockableDummy.swift */,
+				64FC556C7B90257155BB374C8308C5A1 /* SpockSingleValueContainer.swift */,
+				D4210E014D016DEEF61F076BDF29197B /* SpockUnkeyedContainer.swift */,
+				0A84E75DBB3A03C279DDC87FA6A3BB79 /* Tests */,
+			);
+			name = SpockDummy;
+			sourceTree = "<group>";
+		};
+		BE8C62FC3AD5D1F663EED5515245B5B0 /* SpockSwift */ = {
+			isa = PBXGroup;
+			children = (
+				AD2F3C5426695EF6FAF7E2A38BEC5E7E /* Pod */,
+				BB784D5B115D8A0790E7A082DF73C041 /* SpockDummy */,
+				DD737600EF44662E8735A07D1BDA9453 /* Support Files */,
+			);
+			name = SpockSwift;
+			path = ../..;
 			sourceTree = "<group>";
 		};
 		CE2E825F08D3AD0FD76E6D78D7512ED0 /* Targets Support Files */ = {
@@ -204,9 +208,9 @@
 			isa = PBXGroup;
 			children = (
 				9D940727FF8FB9C785EB98E56350EF41 /* Podfile */,
-				CA6219E56317FEC252FA5B8EDD9E88A7 /* Development Pods */,
+				3F91BD8B63BE1E4886D7B61CF39FDBB3 /* Development Pods */,
 				D210D550F4EA176C3123ED886F8F87F5 /* Frameworks */,
-				5F7E2902F7878BE8BFCAB64640B78DB0 /* Products */,
+				1E318CAE401A5D0DDE7B7A995926935B /* Products */,
 				CE2E825F08D3AD0FD76E6D78D7512ED0 /* Targets Support Files */,
 			);
 			sourceTree = "<group>";
@@ -219,43 +223,42 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		D6C559FA7DF8C06D7671DC50E40BCBD0 /* Spockwift */ = {
+		DD737600EF44662E8735A07D1BDA9453 /* Support Files */ = {
 			isa = PBXGroup;
 			children = (
-				F4063614B05876334B5B3A5FD26195FF /* Pod */,
-				7049FE83F067866BE367FCCAD152DD68 /* SpockDummy */,
-				0925D8D12AD006F3F4277C1D6547D03F /* Support Files */,
+				FA8267C0D9E992DE88ED23C293FCE20B /* SpockSwift.modulemap */,
+				EDC667740C86CD393EE04DAE827C318B /* SpockSwift-dummy.m */,
+				050312EBA45EED570AC0A5D74D2A79D3 /* SpockSwift-Info.plist */,
+				E6275A64743BC93C647E572A7AB2A513 /* SpockSwift-prefix.pch */,
+				162BF098FBC821D1D7869AAA10BF1290 /* SpockSwift-umbrella.h */,
+				8BEFE5FC4AA3C29ACA6830B15723AD8F /* SpockSwift-Unit-SpockDummy-Tests-frameworks.sh */,
+				8F7B9B56F7BBB44C5229EA0E9E041553 /* SpockSwift-Unit-SpockDummy-Tests-Info.plist */,
+				332940EEDC64ECEFFAA6AA1A690345C3 /* SpockSwift-Unit-SpockDummy-Tests-prefix.pch */,
+				84973E38566DB65D35CD04E10DBEC412 /* SpockSwift.debug.xcconfig */,
+				47BFED1D75B856EB777C8EDDE408481A /* SpockSwift.release.xcconfig */,
+				4CB60634C70752B577959F733E2385AE /* SpockSwift.unit-spockdummy-tests.debug.xcconfig */,
+				4D6842202084E1FA436BBB376A2F816D /* SpockSwift.unit-spockdummy-tests.release.xcconfig */,
 			);
-			name = Spockwift;
-			path = ../..;
-			sourceTree = "<group>";
-		};
-		F4063614B05876334B5B3A5FD26195FF /* Pod */ = {
-			isa = PBXGroup;
-			children = (
-				828DF094AAC76D3E3744B3E04E38C7BD /* LICENSE */,
-				1C78014E81B3F4785299B6478070F417 /* README.md */,
-				596CDD2F7E65BF1DD469519D7FD4557C /* Spockwift.podspec */,
-			);
-			name = Pod;
+			name = "Support Files";
+			path = "Example/Pods/Target Support Files/SpockSwift";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
-		232D2A0D883C04B7EB0AF18A80A73E84 /* Headers */ = {
+		0532ED627D6116A8878E83170B6C107E /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7C67695FECB38771A3EA7AEEE0B8EC04 /* Pods-Example-umbrella.h in Headers */,
+				50528297088E80301CFA03ADAD9A364B /* SpockSwift-umbrella.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		F1F2581F2A92326185EF1EF9A22CA5F9 /* Headers */ = {
+		7162D4F6A5C0C64F97D94EFAF5EDA29C /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EF1092F129F6D633251662D83F23C76C /* Spockwift-umbrella.h in Headers */,
+				606A0BE2124D0DC8215DB73325565708 /* Pods-Example-umbrella.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -264,59 +267,59 @@
 /* Begin PBXNativeTarget section */
 		0AEE99A309977BD12A049FF48AF9BA4B /* Pods-Example */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 28EB92399B4CB6B4CD86CB53DAAC72D9 /* Build configuration list for PBXNativeTarget "Pods-Example" */;
+			buildConfigurationList = 6B12DDBFCCFF9E19060457A57DCBF952 /* Build configuration list for PBXNativeTarget "Pods-Example" */;
 			buildPhases = (
-				232D2A0D883C04B7EB0AF18A80A73E84 /* Headers */,
-				3EB5310D1454EE4A7F55128CC38603CF /* Sources */,
-				D28BF94D92C7B24F4100A85B800135BC /* Frameworks */,
-				7648B072C975C81ADF81463B4683176F /* Resources */,
+				7162D4F6A5C0C64F97D94EFAF5EDA29C /* Headers */,
+				8000DEF9D11563B7AA86CFA27467B76F /* Sources */,
+				079AD204A02F3472E67E2278B7BE1750 /* Frameworks */,
+				DBA53DBB1DB329D475742D17AC010D05 /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				2A8D696DAB9BAACB0D9B80E620EA1AF2 /* PBXTargetDependency */,
+				BD0F0CF996D3E49756F64D58112E6DEC /* PBXTargetDependency */,
 			);
 			name = "Pods-Example";
 			productName = Pods_Example;
 			productReference = 1F667CC0E19EAF34E5A4119E2121F585 /* Pods-Example */;
 			productType = "com.apple.product-type.framework";
 		};
-		5B52A50CD3419375AD6AA979113F0BB2 /* Spockwift */ = {
+		4E8477D6A67CC1C26228F67ED84C4402 /* SpockSwift-Unit-SpockDummy-Tests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = AF87E631C5619373F28FC97A425B486E /* Build configuration list for PBXNativeTarget "Spockwift" */;
+			buildConfigurationList = 56CE2B9839B5399A3AB48966E3B8EF65 /* Build configuration list for PBXNativeTarget "SpockSwift-Unit-SpockDummy-Tests" */;
 			buildPhases = (
-				F1F2581F2A92326185EF1EF9A22CA5F9 /* Headers */,
-				5074340A6CD7ECD082FF6C1BE920852F /* Sources */,
-				6119674E2DB40072C116D0A81F30C5DB /* Frameworks */,
-				0DE834E406FA24B448CD67DDF33DC13D /* Resources */,
+				AE643CAF7B1C3109EACA410F71B450EF /* Sources */,
+				53934B0A89CD166757BFE1C665FBDC1A /* Frameworks */,
+				667300221B7DF10C9F3EE5AC1C40E351 /* Resources */,
+				C86DFE2253C9512BA32C63243F60A89C /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				002E8AC162CD2719666A09AE4BDB01D5 /* PBXTargetDependency */,
 			);
-			name = Spockwift;
-			productName = Spockwift;
-			productReference = A7EA26F41999655A9E93F6C47BBA87C2 /* Spockwift */;
-			productType = "com.apple.product-type.framework";
-		};
-		97D0C77F1E4046D0ADB88E7C13208727 /* Spockwift-Unit-SpockDummy-Tests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 2EC1A8772808FDA9D616FB6C1540D766 /* Build configuration list for PBXNativeTarget "Spockwift-Unit-SpockDummy-Tests" */;
-			buildPhases = (
-				6BA65C79B5B9F2E3E8C9993771401857 /* Sources */,
-				3243665C94E2D1960245E2112C77817A /* Frameworks */,
-				B18811AECE572E688F1EAAFBA292B240 /* Resources */,
-				8D6236C5E8D5D2499A6073BAB6F62D31 /* [CP] Embed Pods Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				37E40613552342D574D36208D9B20D82 /* PBXTargetDependency */,
-			);
-			name = "Spockwift-Unit-SpockDummy-Tests";
-			productName = "Spockwift-Unit-SpockDummy-Tests";
-			productReference = 659D1A208DDFCB4207702D04A4E89319 /* Spockwift-Unit-SpockDummy-Tests */;
+			name = "SpockSwift-Unit-SpockDummy-Tests";
+			productName = "SpockSwift-Unit-SpockDummy-Tests";
+			productReference = B3CA96FA5B6A48AD32849D5409C93568 /* SpockSwift-Unit-SpockDummy-Tests */;
 			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		C797CCD7A82F1A20D844CF389E24B4C6 /* SpockSwift */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = BC0797FFCC1C45C2D845E4A255C76B8A /* Build configuration list for PBXNativeTarget "SpockSwift" */;
+			buildPhases = (
+				0532ED627D6116A8878E83170B6C107E /* Headers */,
+				88922E11AA2449B6D8FB1FB6F7C7456C /* Sources */,
+				D005212CBE6A00208BC1AC17B1849A0B /* Frameworks */,
+				F67382ECE15B7379B20A90F92D7F19C6 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SpockSwift;
+			productName = SpockSwift;
+			productReference = CC9E4D162D1B9A8AE1EB615D80C81360 /* SpockSwift */;
+			productType = "com.apple.product-type.framework";
 		};
 /* End PBXNativeTarget section */
 
@@ -336,33 +339,33 @@
 				en,
 			);
 			mainGroup = CF1408CF629C7361332E53B88F7BD30C;
-			productRefGroup = 5F7E2902F7878BE8BFCAB64640B78DB0 /* Products */;
+			productRefGroup = 1E318CAE401A5D0DDE7B7A995926935B /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
 				0AEE99A309977BD12A049FF48AF9BA4B /* Pods-Example */,
-				5B52A50CD3419375AD6AA979113F0BB2 /* Spockwift */,
-				97D0C77F1E4046D0ADB88E7C13208727 /* Spockwift-Unit-SpockDummy-Tests */,
+				C797CCD7A82F1A20D844CF389E24B4C6 /* SpockSwift */,
+				4E8477D6A67CC1C26228F67ED84C4402 /* SpockSwift-Unit-SpockDummy-Tests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		0DE834E406FA24B448CD67DDF33DC13D /* Resources */ = {
+		667300221B7DF10C9F3EE5AC1C40E351 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		7648B072C975C81ADF81463B4683176F /* Resources */ = {
+		DBA53DBB1DB329D475742D17AC010D05 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		B18811AECE572E688F1EAAFBA292B240 /* Resources */ = {
+		F67382ECE15B7379B20A90F92D7F19C6 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -372,70 +375,71 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		8D6236C5E8D5D2499A6073BAB6F62D31 /* [CP] Embed Pods Frameworks */ = {
+		C86DFE2253C9512BA32C63243F60A89C /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Spockwift/Spockwift-Unit-SpockDummy-Tests-frameworks-input-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/SpockSwift/SpockSwift-Unit-SpockDummy-Tests-frameworks-input-files.xcfilelist",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Spockwift/Spockwift-Unit-SpockDummy-Tests-frameworks-output-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/SpockSwift/SpockSwift-Unit-SpockDummy-Tests-frameworks-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Spockwift/Spockwift-Unit-SpockDummy-Tests-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/SpockSwift/SpockSwift-Unit-SpockDummy-Tests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		3EB5310D1454EE4A7F55128CC38603CF /* Sources */ = {
+		8000DEF9D11563B7AA86CFA27467B76F /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				702F9407F9CCBB20717C4EE1ABCBE811 /* Pods-Example-dummy.m in Sources */,
+				13BA5036E80583411BAE97D518C851E5 /* Pods-Example-dummy.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		5074340A6CD7ECD082FF6C1BE920852F /* Sources */ = {
+		88922E11AA2449B6D8FB1FB6F7C7456C /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				59F293068C4DF679C9C4F970FD95331A /* SpockableDummy.swift in Sources */,
-				64D87F453B16E6F83C2753B4CDD424CF /* SpockSingleValueContainer.swift in Sources */,
-				1B07E5281B10A3606EB006D660D67EAB /* SpockUnkeyedContainer.swift in Sources */,
-				F0A071487134B5C395B7501819EA9545 /* Spockwift-dummy.m in Sources */,
+				40791F0AA410FF8AF55225E233F1B29B /* SpockableDummy.md in Sources */,
+				D03BA04EC5AE0C9118B3584DE9BA278E /* SpockableDummy.swift in Sources */,
+				EDF3929716D57DF9752264F154961CDD /* SpockSingleValueContainer.swift in Sources */,
+				4705A8C8BDA1A51745CE70B5DE363848 /* SpockSwift-dummy.m in Sources */,
+				403C1A53D4480D85579964BAF58379FB /* SpockUnkeyedContainer.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		6BA65C79B5B9F2E3E8C9993771401857 /* Sources */ = {
+		AE643CAF7B1C3109EACA410F71B450EF /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8A1351C96C1D93A94BDDC5934579A629 /* Models.swift in Sources */,
-				D3F0F63E3D81F7C7BF6C90C934D7171F /* SpockDummyArrayTest.swift in Sources */,
-				81FB578262193C4B1169FD90323183DB /* SpockDummyNumbersTest.swift in Sources */,
-				A0CCE30407F4BA08C87CBFBE8AF6AC15 /* SpockDummyStringTest.swift in Sources */,
+				3969300DFF209A328CEA4723B4646DFB /* Models.swift in Sources */,
+				5CBEA37C7DA6A9E26A1FDFEFA12E387E /* SpockDummyArrayTest.swift in Sources */,
+				2FAEEABCFE3AD82B346791A8BEFABE3B /* SpockDummyNumbersTest.swift in Sources */,
+				8FCCB3BA025EF5EF5D5017B0343F2219 /* SpockDummyStringTest.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		2A8D696DAB9BAACB0D9B80E620EA1AF2 /* PBXTargetDependency */ = {
+		002E8AC162CD2719666A09AE4BDB01D5 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			name = Spockwift;
-			target = 5B52A50CD3419375AD6AA979113F0BB2 /* Spockwift */;
-			targetProxy = C618DD744D2A5AF53845DDDAD1FEF726 /* PBXContainerItemProxy */;
+			name = SpockSwift;
+			target = C797CCD7A82F1A20D844CF389E24B4C6 /* SpockSwift */;
+			targetProxy = 70BE4F054F8033C1255393118552D591 /* PBXContainerItemProxy */;
 		};
-		37E40613552342D574D36208D9B20D82 /* PBXTargetDependency */ = {
+		BD0F0CF996D3E49756F64D58112E6DEC /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			name = Spockwift;
-			target = 5B52A50CD3419375AD6AA979113F0BB2 /* Spockwift */;
-			targetProxy = 1523BD757A8B89E3C829144D1C8944F7 /* PBXContainerItemProxy */;
+			name = SpockSwift;
+			target = C797CCD7A82F1A20D844CF389E24B4C6 /* SpockSwift */;
+			targetProxy = 28717EB363B93D058829DE8D8170FC65 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -568,80 +572,9 @@
 			};
 			name = Release;
 		};
-		65EB2728D031E3181EB1924795111E5D /* Release */ = {
+		41F8E78F8E42DFC4704E49D6FD341F7B /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 68E511DD747A99DD2F3460C6D04A1887 /* Spockwift.release.xcconfig */;
-			buildSettings = {
-				CLANG_ENABLE_OBJC_WEAK = NO;
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GCC_PREFIX_HEADER = "Target Support Files/Spockwift/Spockwift-prefix.pch";
-				INFOPLIST_FILE = "Target Support Files/Spockwift/Spockwift-Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MODULEMAP_FILE = "Target Support Files/Spockwift/Spockwift.modulemap";
-				PRODUCT_MODULE_NAME = Spockwift;
-				PRODUCT_NAME = Spockwift;
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Release;
-		};
-		7CFBFF4F2879CA3C82DC86ECB3A07D19 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 0F7BAA69A0A6AF25F95970FFA9435FBB /* Spockwift.debug.xcconfig */;
-			buildSettings = {
-				CLANG_ENABLE_OBJC_WEAK = NO;
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GCC_PREFIX_HEADER = "Target Support Files/Spockwift/Spockwift-prefix.pch";
-				INFOPLIST_FILE = "Target Support Files/Spockwift/Spockwift-Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MODULEMAP_FILE = "Target Support Files/Spockwift/Spockwift.modulemap";
-				PRODUCT_MODULE_NAME = Spockwift;
-				PRODUCT_NAME = Spockwift;
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Debug;
-		};
-		A3C9DFEA74BF113FEEBE50C6054F945F /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 8F6B02E04EFA4FE46E6D61971004BA79 /* Spockwift.unit-spockdummy-tests.debug.xcconfig */;
+			baseConfigurationReference = 4D6842202084E1FA436BBB376A2F816D /* SpockSwift.unit-spockdummy-tests.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CLANG_ENABLE_OBJC_WEAK = NO;
@@ -651,17 +584,53 @@
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				GCC_PREFIX_HEADER = "Target Support Files/Spockwift/Spockwift-Unit-SpockDummy-Tests-prefix.pch";
-				INFOPLIST_FILE = "Target Support Files/Spockwift/Spockwift-Unit-SpockDummy-Tests-Info.plist";
+				GCC_PREFIX_HEADER = "Target Support Files/SpockSwift/SpockSwift-Unit-SpockDummy-Tests-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/SpockSwift/SpockSwift-Unit-SpockDummy-Tests-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				PRODUCT_NAME = "Spockwift-Unit-SpockDummy-Tests";
+				PRODUCT_NAME = "SpockSwift-Unit-SpockDummy-Tests";
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
 				SWIFT_VERSION = 5.0;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		5F4FFE03EC58052EA1CADCFD0D34F503 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 84973E38566DB65D35CD04E10DBEC412 /* SpockSwift.debug.xcconfig */;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_PREFIX_HEADER = "Target Support Files/SpockSwift/SpockSwift-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/SpockSwift/SpockSwift-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/SpockSwift/SpockSwift.modulemap";
+				PRODUCT_MODULE_NAME = SpockSwift;
+				PRODUCT_NAME = SpockSwift;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
 			};
 			name = Debug;
 		};
-		A4CBB6902551697B9E6D34A9F512822C /* Release */ = {
+		5FE05528C17C60B076A49807C7AB3E46 /* Release */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 243410B9535472556EA4BB6DBC133A0D /* Pods-Example.release.xcconfig */;
 			buildSettings = {
@@ -699,7 +668,65 @@
 			};
 			name = Release;
 		};
-		B7255CD8EE98975698B7320ED93C11AB /* Debug */ = {
+		62F590464FC0AC11E9E9D99403ED4478 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 47BFED1D75B856EB777C8EDDE408481A /* SpockSwift.release.xcconfig */;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_PREFIX_HEADER = "Target Support Files/SpockSwift/SpockSwift-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/SpockSwift/SpockSwift-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/SpockSwift/SpockSwift.modulemap";
+				PRODUCT_MODULE_NAME = SpockSwift;
+				PRODUCT_NAME = SpockSwift;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		66B981CF6923A2FBD4A8423E5A9C1440 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4CB60634C70752B577959F733E2385AE /* SpockSwift.unit-spockdummy-tests.debug.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGNING_ALLOWED = YES;
+				CODE_SIGNING_REQUIRED = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				GCC_PREFIX_HEADER = "Target Support Files/SpockSwift/SpockSwift-Unit-SpockDummy-Tests-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/SpockSwift/SpockSwift-Unit-SpockDummy-Tests-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				PRODUCT_NAME = "SpockSwift-Unit-SpockDummy-Tests";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		E9F415A0D3FA138EE918B802B12FD8C3 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B45138496B85A072654D1D0F8EBBEDE5 /* Pods-Example.debug.xcconfig */;
 			buildSettings = {
@@ -736,50 +763,9 @@
 			};
 			name = Debug;
 		};
-		CE330E5CDAEF1C65C2C38194A0F6C15B /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 690FE2192F76348DE165D6C8E697790D /* Spockwift.unit-spockdummy-tests.release.xcconfig */;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				CLANG_ENABLE_OBJC_WEAK = NO;
-				CODE_SIGNING_ALLOWED = YES;
-				CODE_SIGNING_REQUIRED = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				GCC_PREFIX_HEADER = "Target Support Files/Spockwift/Spockwift-Unit-SpockDummy-Tests-prefix.pch";
-				INFOPLIST_FILE = "Target Support Files/Spockwift/Spockwift-Unit-SpockDummy-Tests-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				PRODUCT_NAME = "Spockwift-Unit-SpockDummy-Tests";
-				SDKROOT = iphoneos;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_VERSION = 5.0;
-				VALIDATE_PRODUCT = YES;
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		28EB92399B4CB6B4CD86CB53DAAC72D9 /* Build configuration list for PBXNativeTarget "Pods-Example" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				B7255CD8EE98975698B7320ED93C11AB /* Debug */,
-				A4CBB6902551697B9E6D34A9F512822C /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		2EC1A8772808FDA9D616FB6C1540D766 /* Build configuration list for PBXNativeTarget "Spockwift-Unit-SpockDummy-Tests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				A3C9DFEA74BF113FEEBE50C6054F945F /* Debug */,
-				CE330E5CDAEF1C65C2C38194A0F6C15B /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		4821239608C13582E20E6DA73FD5F1F9 /* Build configuration list for PBXProject "Pods" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -789,11 +775,29 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		AF87E631C5619373F28FC97A425B486E /* Build configuration list for PBXNativeTarget "Spockwift" */ = {
+		56CE2B9839B5399A3AB48966E3B8EF65 /* Build configuration list for PBXNativeTarget "SpockSwift-Unit-SpockDummy-Tests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				7CFBFF4F2879CA3C82DC86ECB3A07D19 /* Debug */,
-				65EB2728D031E3181EB1924795111E5D /* Release */,
+				66B981CF6923A2FBD4A8423E5A9C1440 /* Debug */,
+				41F8E78F8E42DFC4704E49D6FD341F7B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		6B12DDBFCCFF9E19060457A57DCBF952 /* Build configuration list for PBXNativeTarget "Pods-Example" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E9F415A0D3FA138EE918B802B12FD8C3 /* Debug */,
+				5FE05528C17C60B076A49807C7AB3E46 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		BC0797FFCC1C45C2D845E4A255C76B8A /* Build configuration list for PBXNativeTarget "SpockSwift" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5F4FFE03EC58052EA1CADCFD0D34F503 /* Debug */,
+				62F590464FC0AC11E9E9D99403ED4478 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

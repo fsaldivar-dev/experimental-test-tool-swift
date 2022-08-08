@@ -1,13 +1,13 @@
 //
 //  SpockableDummyTest.swift
-//  Spockwift-Unit-Tests
+//  SpockSwift-Unit-Tests
 //
 //  Created by Francisco Javier Saldivar Rubio on 07/08/22.
 //
 
 import XCTest
 
-@testable import Spockwift
+@testable import SpockSwift
 
 final class SpockDummyStringTest: XCTestCase {
 
