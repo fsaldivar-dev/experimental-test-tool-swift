@@ -27,7 +27,12 @@
   "subspecs": [
     {
       "name": "SpockDummy",
-      "source_files": "Sources/SpockDummy/**",
+      "source_files": "Sources/SpockDummy/source/**/*",
+      "resource_bundles": {
+        "SpockDummy": [
+          "Sources/SpockDummy/assets/**/*"
+        ]
+      },
       "testspecs": [
         {
           "name": "Tests",
