@@ -4,12 +4,9 @@
 //
 //  Created by Francisco Javier Saldivar Rubio on 07/08/22.
 //
-
 import Foundation
 import Spockwift
-//User:name
-//User:profession:name
-//User:profession:university:name
+
 struct User: Codable, SpockDummy, Comparable {
     static func < (lhs: User, rhs: User) -> Bool {
         lhs == rhs
@@ -61,8 +58,6 @@ struct ListObject: Codable, SpockDummy {
     var boleans: [Bool]
     var users: [User]?
 }
-
-
 
 struct Perro {
     var name: String

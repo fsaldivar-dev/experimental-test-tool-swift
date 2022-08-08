@@ -12,6 +12,7 @@ import XCTest
 final class SpockDummyStringTest: XCTestCase {
 
     func testStrings() throws {
+        
         var user = try User.dummy(with:
                                     SpockDummyValue(at: "name", with: "Saldivar"),
                                     SpockDummyValue(at: "profession:name", with: "Developer"),
@@ -39,9 +40,11 @@ final class SpockDummyStringTest: XCTestCase {
     }
 
     func testNil() throws {
+        var profession: Profession = try .dummy()
+        profession.university.country = nil
         let user = try User.dummy(with:
                                     SpockDummyValue(at: "name", with: nil),
-                                    SpockDummyValue(at: "profession:university:country", with: nil)
+                                    SpockDummyValue(at: "profession", with: profession)
         )
 
         XCTAssertNil(user.name)
