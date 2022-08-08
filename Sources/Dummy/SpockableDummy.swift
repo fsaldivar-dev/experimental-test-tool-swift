@@ -1,10 +1,8 @@
-import Foundation
-
 
 public protocol SpockDummy: Decodable { }
 
 extension SpockDummy {
-
+    
     public static func dummy(with dummyValue: SpockDummyValue ...) throws -> Self {
         let spockDummyGenerator = SpockDummyGenerator<Self>()
         dummyValue.forEach { item in
@@ -28,7 +26,7 @@ public struct SpockDummyValue {
     }
 }
 
-public struct SpockDummyGenerator<T: SpockDummy> {
+public struct SpockDummyGenerator<T: Decodable> {
     let decoder: SpockDecoder
     
     init(with type: Decodable.Type = T.self) {
@@ -40,7 +38,7 @@ public struct SpockDummyGenerator<T: SpockDummy> {
         decoder.setDummyValue(at: attribute, with: value)
         return self
     }
-       
+    
     func generate() throws -> T {
         try T.init(from: decoder)
     }
@@ -52,50 +50,50 @@ final class SpockDecoder: Decoder {
     var userInfo: [CodingUserInfoKey : Any] = [:]
     var dumyValues: [String: Any?] = [:]
     var defaultNil: [String] = []
-    var className: String
+    var mainkey: String
     
     init(with className: String) {
-        self.className = className
+        self.mainkey = className
     }
     
-    init(parent: String,
-         at propertyName: String,
+    init(whit parentKey: String,
+         at subKey: String,
          values: ([String: Any?], [String]) ) {
-        className = "\(parent):\(propertyName)"
+        self.mainkey = "\(parentKey):\(subKey)"
         
         self.dumyValues = values.0
         self.defaultNil = values.1
     }
     
     func unkeyedContainer() throws -> UnkeyedDecodingContainer {
-        fatalError("Not implement")
+        return SpockUnkeyedContainer(decoder: self)
     }
     
     func singleValueContainer() throws -> SingleValueDecodingContainer {
-        fatalError("Not implement")
+        SpockSingleValueContainer(decoder: self)
     }
     
     @discardableResult
     public func setDummyValue(at attribute: String, with value: Any?) -> SpockDecoder {
-        let key = "\(className):\(attribute)"
+        let key = "\(mainkey):\(attribute)"
         if value != nil {
             dumyValues[key] = value
             return self
         }
         guard defaultNil.contains(key) else {
             defaultNil.append(key)
-          return self
+            return self
         }
         
         return self
     }
     
     func getDummyValue<T>(key: String) -> T? {
-        dumyValues["\(className):\(key)"] as? T
+        dumyValues["\(self.mainkey):\(key)"] as? T
     }
     
     func decodeNil(key: String) -> Bool {
-        let key = "\(className):\(key)"
+        let key = "\(self.mainkey):\(key)"
         return defaultNil.contains(key)
     }
     
@@ -197,7 +195,11 @@ struct SpockContainer<SpockCodinKey>: KeyedDecodingContainerProtocol where Spock
     }
     
     func decode<T>(_ type: T.Type, forKey key: SpockCodinKey) throws -> T where T : Decodable {
-        let decoder = SpockDecoder(parent: decoder.className,
+        if let result: T = decoder.getDummyValue(key: key.stringValue) {
+            return result
+        }
+        
+        let decoder = SpockDecoder(whit: decoder.mainkey,
                                    at: key.stringValue,
                                    values: (decoder.dumyValues, decoder.defaultNil))
         return try .init(from: decoder)
@@ -205,7 +207,7 @@ struct SpockContainer<SpockCodinKey>: KeyedDecodingContainerProtocol where Spock
     
     func nestedContainer<NestedKey>(keyedBy type: NestedKey.Type,
                                     forKey key: SpockCodinKey) throws -> KeyedDecodingContainer<NestedKey> where NestedKey : CodingKey {
-        fatalError("not implement")
+        try decoder.container(keyedBy: type)
     }
     
     func nestedUnkeyedContainer(forKey key: SpockCodinKey) throws -> UnkeyedDecodingContainer {
@@ -219,5 +221,5 @@ struct SpockContainer<SpockCodinKey>: KeyedDecodingContainerProtocol where Spock
     func superDecoder(forKey key: SpockCodinKey) throws -> Decoder {
         decoder
     }
-    
 }
+

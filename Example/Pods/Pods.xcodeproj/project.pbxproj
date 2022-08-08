@@ -16,7 +16,10 @@
 		B4E00EB54A6D3AFE4E06632600313502 /* Test.md in Sources */ = {isa = PBXBuildFile; fileRef = 23BBB518B13DB8C5B5C8CF8EBC3AF926 /* Test.md */; };
 		B6436E67289FEE2D00D9B5C2 /* SpockDummyStringTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6436E66289FEE2D00D9B5C2 /* SpockDummyStringTest.swift */; };
 		B6436E6D28A03A0000D9B5C2 /* SpockDummyNumbersTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6436E6C28A03A0000D9B5C2 /* SpockDummyNumbersTest.swift */; };
-		B6436E6F28A03A1700D9B5C2 /* StringModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6436E6E28A03A1700D9B5C2 /* StringModels.swift */; };
+		B6436E6F28A03A1700D9B5C2 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6436E6E28A03A1700D9B5C2 /* Models.swift */; };
+		B6436E7128A0809200D9B5C2 /* SpockDummyArrayTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6436E7028A0809200D9B5C2 /* SpockDummyArrayTest.swift */; };
+		B6436E7428A0885400D9B5C2 /* SpockUnkeyedContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6436E7228A0883700D9B5C2 /* SpockUnkeyedContainer.swift */; };
+		B6436E7728A088DC00D9B5C2 /* SpockSingleValueContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6436E7528A0887800D9B5C2 /* SpockSingleValueContainer.swift */; };
 		B6CD0AAB9ECB0A17FFE1CFFF416A87EE /* SpockableDummy.swift in Sources */ = {isa = PBXBuildFile; fileRef = E89D68DAC65615736E2822075B5F2812 /* SpockableDummy.swift */; };
 		C61AEB6C448560EA5F2770066C902838 /* Spockwift-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = F4E36563E5853C5A13F184E5EFB6AC13 /* Spockwift-dummy.m */; };
 		F94F58B2535CA1412EFE754D0D8A58F3 /* Spockwift-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 400890E47E9AA4FCE739426430995ABA /* Spockwift-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -67,7 +70,10 @@
 		B45138496B85A072654D1D0F8EBBEDE5 /* Pods-Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-Example.debug.xcconfig"; sourceTree = "<group>"; };
 		B6436E66289FEE2D00D9B5C2 /* SpockDummyStringTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SpockDummyStringTest.swift; path = Tests/SpockDummyStringTest.swift; sourceTree = "<group>"; };
 		B6436E6C28A03A0000D9B5C2 /* SpockDummyNumbersTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpockDummyNumbersTest.swift; sourceTree = "<group>"; };
-		B6436E6E28A03A1700D9B5C2 /* StringModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringModels.swift; sourceTree = "<group>"; };
+		B6436E6E28A03A1700D9B5C2 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
+		B6436E7028A0809200D9B5C2 /* SpockDummyArrayTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpockDummyArrayTest.swift; sourceTree = "<group>"; };
+		B6436E7228A0883700D9B5C2 /* SpockUnkeyedContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpockUnkeyedContainer.swift; sourceTree = "<group>"; };
+		B6436E7528A0887800D9B5C2 /* SpockSingleValueContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpockSingleValueContainer.swift; sourceTree = "<group>"; };
 		C27F0FBB587789FF4851C5F498E6BA02 /* Spockwift.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Spockwift.swift; sourceTree = "<group>"; };
 		CE8C19C3354B648901843D9BFBE6A8FC /* Spockwift.unit-tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Spockwift.unit-tests.release.xcconfig"; sourceTree = "<group>"; };
 		D6D7C498FA339E02BD53ECB8916CEA8E /* Pods-Example-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-Example-dummy.m"; sourceTree = "<group>"; };
@@ -109,6 +115,8 @@
 			isa = PBXGroup;
 			children = (
 				E89D68DAC65615736E2822075B5F2812 /* SpockableDummy.swift */,
+				B6436E7228A0883700D9B5C2 /* SpockUnkeyedContainer.swift */,
+				B6436E7528A0887800D9B5C2 /* SpockSingleValueContainer.swift */,
 			);
 			name = Dummy;
 			path = Sources/Dummy;
@@ -203,7 +211,7 @@
 		B6436E6B28A039C600D9B5C2 /* models */ = {
 			isa = PBXGroup;
 			children = (
-				B6436E6E28A03A1700D9B5C2 /* StringModels.swift */,
+				B6436E6E28A03A1700D9B5C2 /* Models.swift */,
 			);
 			name = models;
 			sourceTree = "<group>";
@@ -251,6 +259,7 @@
 				23BBB518B13DB8C5B5C8CF8EBC3AF926 /* Test.md */,
 				B6436E66289FEE2D00D9B5C2 /* SpockDummyStringTest.swift */,
 				B6436E6C28A03A0000D9B5C2 /* SpockDummyNumbersTest.swift */,
+				B6436E7028A0809200D9B5C2 /* SpockDummyArrayTest.swift */,
 			);
 			name = Tests;
 			sourceTree = "<group>";
@@ -426,6 +435,8 @@
 			files = (
 				B6CD0AAB9ECB0A17FFE1CFFF416A87EE /* SpockableDummy.swift in Sources */,
 				00FF7FD3E1C20130BE6C9AAED701439A /* Spockwift.swift in Sources */,
+				B6436E7428A0885400D9B5C2 /* SpockUnkeyedContainer.swift in Sources */,
+				B6436E7728A088DC00D9B5C2 /* SpockSingleValueContainer.swift in Sources */,
 				C61AEB6C448560EA5F2770066C902838 /* Spockwift-dummy.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -434,10 +445,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B6436E6F28A03A1700D9B5C2 /* StringModels.swift in Sources */,
+				B6436E6F28A03A1700D9B5C2 /* Models.swift in Sources */,
 				B4E00EB54A6D3AFE4E06632600313502 /* Test.md in Sources */,
 				B6436E6D28A03A0000D9B5C2 /* SpockDummyNumbersTest.swift in Sources */,
 				B6436E67289FEE2D00D9B5C2 /* SpockDummyStringTest.swift in Sources */,
+				B6436E7128A0809200D9B5C2 /* SpockDummyArrayTest.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
