@@ -20,6 +20,20 @@
                ReferencedContainer = "container:Example.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "NO"
+            buildForRunning = "YES"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "97D0C77F1E4046D0ADB88E7C13208727"
+               BuildableName = "Spockwift-Unit-SpockDummy-Tests.xctest"
+               BlueprintName = "Spockwift-Unit-SpockDummy-Tests"
+               ReferencedContainer = "container:Pods/Pods.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction
@@ -32,9 +46,9 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "97D0C77F1E4046D0ADB88E7C13208727"
-               BuildableName = "Spockwift-Unit-SpockDummy-Tests.xctest"
-               BlueprintName = "Spockwift-Unit-SpockDummy-Tests"
+               BlueprintIdentifier = "4E8477D6A67CC1C26228F67ED84C4402"
+               BuildableName = "SpockSwift-Unit-SpockDummy-Tests.xctest"
+               BlueprintName = "SpockSwift-Unit-SpockDummy-Tests"
                ReferencedContainer = "container:Pods/Pods.xcodeproj">
             </BuildableReference>
          </TestableReference>

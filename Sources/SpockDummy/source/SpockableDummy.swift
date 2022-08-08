@@ -98,6 +98,7 @@ final class SpockDecoder: Decoder {
     }
     
     func container<Key>(keyedBy type: Key.Type) throws ->  KeyedDecodingContainer<Key> where Key : CodingKey {
+        
         .init(SpockContainer<Key>(decoder: self))
     }
     
@@ -118,7 +119,7 @@ struct SpockCodinKey: CodingKey {
     }
 }
 
-struct SpockContainer<SpockCodinKey>: KeyedDecodingContainerProtocol where SpockCodinKey: CodingKey  {
+struct SpockContainer<T>: KeyedDecodingContainerProtocol where T: CodingKey  {
     typealias Key = SpockCodinKey
     
     var codingPath: [CodingKey] = []

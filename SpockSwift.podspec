@@ -15,8 +15,10 @@ Pod::Spec.new do |s|
   end
   
   s.subspec 'SpockDummy' do |sp|
-      sp.source_files = 'Sources/SpockDummy/**'
-      
+      sp.source_files = 'Sources/SpockDummy/source/**/*'
+      sp.resource_bundles = {
+          'SpockDummy' => ['Sources/SpockDummy/assets/**/*']
+      }
       sp.test_spec do |test_subspec|
           test_subspec.source_files = 'Tests/SpockDummy/**/*'
       end
