@@ -1,11 +1,11 @@
 //
 //  SpockDummyNumbersTest.swift
-//  Spockwift-Unit-Tests
+//  SpockSwift-Unit-Tests
 //
 //  Created by Francisco Javier Saldivar Rubio on 07/08/22.
 //
 
-@testable import Spockwift
+@testable import SpockSwift
 import func XCTest.XCTAssertEqual
 import class XCTest.XCTestCase
 

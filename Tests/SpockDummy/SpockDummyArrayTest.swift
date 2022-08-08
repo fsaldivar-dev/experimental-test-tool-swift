@@ -1,11 +1,11 @@
 //
 //  SpockDummyArrayTest.swift
-//  Spockwift-Unit-Tests
+//  SpockSwift-Unit-Tests
 //
 //  Created by Francisco Javier Saldivar Rubio on 07/08/22.
 //
 
-@testable import Spockwift
+@testable import SpockSwift
 
 import class XCTest.XCTestCase
 import func XCTest.XCTAssertNotNil
