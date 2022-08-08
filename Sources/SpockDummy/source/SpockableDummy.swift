@@ -104,22 +104,7 @@ final class SpockDecoder: Decoder {
     
 }
 
-struct SpockCodinKey: CodingKey {
-    var stringValue: String
-    
-    init?(stringValue: String) {
-        self.stringValue = stringValue
-    }
-    
-    var intValue: Int?
-    
-    init?(intValue: Int) {
-        self.intValue = intValue
-        stringValue = .init()
-    }
-}
-
-struct SpockContainer<T>: KeyedDecodingContainerProtocol where T: CodingKey  {
+struct SpockContainer<SpockCodinKey>: KeyedDecodingContainerProtocol where SpockCodinKey: CodingKey  {
     typealias Key = SpockCodinKey
     
     var codingPath: [CodingKey] = []
