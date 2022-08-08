@@ -1,11 +1,11 @@
 //
 //  StringModels.swift
-//  Spockwift-Unit-Tests
+//  SpockSwift-Unit-Tests
 //
 //  Created by Francisco Javier Saldivar Rubio on 07/08/22.
 //
 import Foundation
-import Spockwift
+import SpockSwift
 
 struct User: Codable, SpockDummy, Comparable {
     static func < (lhs: User, rhs: User) -> Bool {
