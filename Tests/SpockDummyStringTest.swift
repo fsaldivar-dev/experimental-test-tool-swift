@@ -6,6 +6,7 @@
 //
 
 import XCTest
+
 @testable import Spockwift
 
 final class SpockDummyStringTest: XCTestCase {
@@ -46,5 +47,24 @@ final class SpockDummyStringTest: XCTestCase {
         XCTAssertNil(user.name)
         XCTAssertNil(user.profession.university.country)
         
+    }
+    
+    func testDog() throws {
+        XCTAssertNoThrow(try Perro.dummy())
+        
+    }
+}
+
+extension Perro: SpockDummy {
+    enum key: String, CodingKey {
+        case name, age, owner, brithDay
+    }
+    
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: Perro.key.self)
+        self.name = try container.decode(String.self, forKey: .name)
+        self.age = try container.decode(Int.self, forKey: .age)
+        self.brithDay = try container.decode(Date.self, forKey: .brithDay)
+        self.owner = try container.decode(User.self, forKey: .owner)
     }
 }
