@@ -32,9 +32,9 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "475EAADDFA90F90BFAFB6BB4F5FD8CB7"
-               BuildableName = "Spockwift-Unit-Tests.xctest"
-               BlueprintName = "Spockwift-Unit-Tests"
+               BlueprintIdentifier = "97D0C77F1E4046D0ADB88E7C13208727"
+               BuildableName = "Spockwift-Unit-SpockDummy-Tests.xctest"
+               BlueprintName = "Spockwift-Unit-SpockDummy-Tests"
                ReferencedContainer = "container:Pods/Pods.xcodeproj">
             </BuildableReference>
          </TestableReference>
