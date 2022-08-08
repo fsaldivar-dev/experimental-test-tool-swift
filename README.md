@@ -14,7 +14,7 @@ Pod creado para facilitar la creación de pruebas únitarias mediante código si
 | SwiftPackage                       | ⌛ 👨‍💻         |
 | [CocoaPods](https://cocoapods.org) | 👨‍💻            |
 | Example                            | ✅            |
-| [Simple Dummy](./Sources/SpockDummy/SpockableDummy.md)| ✅            |
+| [Simple Dummy](./Sources/SpockDummy/assets//SpockableDummy.md)| ✅            |
 | Spy                                | ⌛ 👨‍💻         |
 | Mock                               | ⌛ 👨‍💻         |
 | Stubed                             | ⌛ 👨‍💻         |
@@ -40,9 +40,46 @@ In working
 In working
 ```
 
-## [Dummy](./Sources/SpockDummy/SpockableDummy.md)
+## [Dummy](./Sources/SpockDummy/assets//SpockableDummy.md)
 **Definición**
 Los objetos Dummy son objetos que no se utilizan en una prueba y solo actúan como marcadores de posición. Por lo general, no contiene ninguna implementación.
+### Ejemplo
+````Swift
+
+struct User: Codable, SpockDummy {
+  let name: String
+  var lastName: String
+  var age: Int
+  var profession: Profession
+}
+
+struct Profession: Codable, SpockDummy {
+  var name: String
+  var university: University
+}
+
+struct University: Codable: SpockDummy {
+   let name: String
+   var country: String
+}
+
+let user: User = try .dummy()
+print(user.name) // return ""
+print(user.age) // return 0
+print(user.profession.name) // return ""
+print(user.profession.university.name) // return ""
+print(user.profession.university.country) // return ""
+
+let user = try Profession.dummy()
+print(profession.name) // return ""
+print(profession.university.name) // return ""
+print(profession.university.country) // return ""
+
+let university = try University.dummy()
+print(university.name) // return ""
+print(university.country) // return ""
+````
+
 
 
 # Author & License
