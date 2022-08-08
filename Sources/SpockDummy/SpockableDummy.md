@@ -1,4 +1,13 @@
 # SpockableDummy
+| Caracteristica                 |     Estado    |     Test      |
+| -----------------------------  | ------------- | ------------- |
+| Soporte para datos primitivos  |       ✅      |       ✅       |
+| Soporte para arreglos          |       ✅      |       ✅       |
+| Soporte para objetos decodable |       ✅      |       ✅       |
+| implementación de datos fake   |       ✅      |       ✅       |
+|--------------------------------|---------------|-------------- |
+| Soporte a diccionarios         |              ❌                |
+| Documentación                  |              ❌                |
 
 SpockableDummy es una librería creada para librarnos de la creación de objetos inecesarios, ejemplo
  si tengo algo así un modelo con variables que quiere usar para un test de una clase como esta
@@ -103,14 +112,14 @@ para esto esa librería considero el uso de encodable, con esta poderosa librer�
             let roomClass = Roomclass(teacher: teacherDummy, students)
             
             /// Accert
-            XCTAccertEqual(roomclass.getAllStudens()[0].name, studentsDummy[0].name)
-            XCTAccertEqual(roomclass.getAllStudens()[1].name, studentsDummy[1].name)
+            XCTAccertEqual(roomClass.getAllStudens()[0].name, studentsDummy[0].name)
+            XCTAccertEqual(roomClass.getAllStudens()[1].name, studentsDummy[1].name)
             
         }
     }
 
 
 ```
-Solo implementando ``SpockableDummy`` y el modelo con la implementación de códable podemos hacer uso de la función ``.dummy()`` la cual crea el objetos con valores primitivos por defecto.
+Solo implementando ``SpockableDummy`` y el modelo con la implementación de códable podemos hacer uso de la función ``.dummy()``, esta función crea el objetos con valores primitivos por defecto.
 
 
