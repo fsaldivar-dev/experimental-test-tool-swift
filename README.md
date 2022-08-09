@@ -7,6 +7,8 @@
 [![GitHub forks](https://img.shields.io/github/forks/fsaldivar-dev/experimental-test-tool-swift?style=for-the-badge)](https://github.com/fsaldivar-dev/experimental-test-tool-swift/network)
 [![GitHub stars](https://img.shields.io/github/stars/fsaldivar-dev/experimental-test-tool-swift?style=for-the-badge)](https://github.com/fsaldivar-dev/experimental-test-tool-swift/stargazers)
 [![GitHub license](https://img.shields.io/github/license/fsaldivar-dev/experimental-test-tool-swift?style=for-the-badge)](https://github.com/fsaldivar-dev/experimental-test-tool-swift/blob/main/LICENSE.md)
+![Cocoapods](https://img.shields.io/cocoapods/v/SpockSwift?style=for-the-badge)
+![Cocoapods platforms](https://img.shields.io/cocoapods/p/SpockSwift?style=for-the-badge)
 
 Pod creado para facilitar la creación de pruebas únitarias mediante código simple
 
