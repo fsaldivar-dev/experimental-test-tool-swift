@@ -43,6 +43,8 @@ dependencies: [
 
 
 ```ruby
+source 'https://github.com/CocoaPods/Specs.git'
+
 # Integration tests
 target 'YOUR_TESTING_TARGET' do
   pod SpockSwift, '0.0.1'
