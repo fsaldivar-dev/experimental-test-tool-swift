@@ -7,5 +7,4 @@ target 'Example' do
   pod 'SpockSwift/SpockDummy', :path => '../', :testspecs => ['Tests'] 
   # Pods for Example
 
-
 end

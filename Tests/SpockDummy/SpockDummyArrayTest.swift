@@ -12,6 +12,7 @@ import func XCTest.XCTAssertNotNil
 import func XCTest.XCTAssert
 import func XCTest.XCTFail
 import func XCTest.XCTAssertNil
+import Foundation
 
 extension Array: SpockDummy where Element: Codable {}
 
