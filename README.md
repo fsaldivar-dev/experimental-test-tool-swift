@@ -41,7 +41,10 @@ In working
 
 
 ```ruby
- pod SpockSwift, '0.0.1'
+# Integration tests
+target 'YOUR_TESTING_TARGET' do
+  pod SpockSwift, '0.0.1'
+end
 ```
 
 ## [Dummy](./Sources/SpockDummy/assets//SpockableDummy.md)
