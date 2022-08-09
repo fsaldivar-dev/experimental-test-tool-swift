@@ -20,7 +20,7 @@ struct SpockContainer<SpockCodinKey>: KeyedDecodingContainerProtocol where Spock
     func contains(_ key: SpockCodinKey) -> Bool {
         true
     }
-    
+
     func decodeNil(forKey key: SpockCodinKey) throws -> Bool {
         decoder.decodeNil(key: key.stringValue)
     }
