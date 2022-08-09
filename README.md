@@ -16,7 +16,7 @@ Pod creado para facilitar la creación de pruebas únitarias mediante código si
 | -----------------------------------| ------------- |
 | Crear código base                  | ✅            |
 | SwiftPackage                       | ⌛ 👨‍💻         |
-| [CocoaPods](https://cocoapods.org) | 👨‍💻            |
+| [CocoaPods](https://cocoapods.org) | ✅            |
 | Example                            | ✅            |
 | [Simple Dummy](./Sources/SpockDummy/assets//SpockableDummy.md)| ✅            |
 | Spy                                | ⌛ 👨‍💻         |
