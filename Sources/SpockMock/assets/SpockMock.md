@@ -3,8 +3,8 @@
 | Caracteristica                 |     Estado    |     Test      |
 | -----------------------------  | ------------- | ------------- |
 | Spy                            |       ✅      |       ✅       |
-| Fake return                     |       ✅      |       ✅       |
-|--------------------------------|---------------|-------------- |
+| Fake return                    |       ✅      |       ✅       |
+|--------------------------------|---------------|--------------  |
 | Soporte a diccionarios         |              ❌                |
 | Documentación                  |              ❌                |
 
@@ -15,9 +15,9 @@ Una buena practica es abstraer el comportamiento de nuestras clases a interfaces
 revisando los protocolos anteriores, vemos que el protocolo ``presentador`` contiene el atributo ``View`` y el atributo  ``Interactor``, desde aquí podemos intuir que nuestro ``presenter`` interactuara con ellos 
 
 <details>
-    <summary>**Protocolos**:</summary>
+    <summary>Protocolos:</summary>
 
-    ```Swift
+```Swift
 
     protocol Interactor {
         func fetchAllUser() async throws -> [User]
@@ -40,12 +40,12 @@ revisando los protocolos anteriores, vemos que el protocolo ``presentador`` cont
         func loadData()
         func selectedUser(user: User)
     }
-    ```
+```
 </details>
 <details>
-    <summary>**Modelos**:</summary>
+    <summary>Modelos:</summary>
 
-    ```Swift
+```Swift
 
         struct User: Decodable {
             let name: String
@@ -67,12 +67,16 @@ revisando los protocolos anteriores, vemos que el protocolo ``presentador`` cont
             var numberAcount: Int
             var serialID: Int
         }
-    ```
+```
 </details>
+
 siguiendo el ejercicio, el ``presentador`` tendría la siguiente implementación
+
 <details>
-    <summary>**Presenter**:</summary>
+    <summary>Presenter:</summary>
+ 
 ```Swift
+
     final class PresenterImpl: Presenter {
         var view: View
         
