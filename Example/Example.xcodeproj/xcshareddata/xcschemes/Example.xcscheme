@@ -52,6 +52,16 @@
                ReferencedContainer = "container:Pods/Pods.xcodeproj">
             </BuildableReference>
          </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "53B387F6F36C94E7208F1D13644F8D29"
+               BuildableName = "SpockSwift-Unit-SpockMock-Tests.xctest"
+               BlueprintName = "SpockSwift-Unit-SpockMock-Tests"
+               ReferencedContainer = "container:Pods/Pods.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction
