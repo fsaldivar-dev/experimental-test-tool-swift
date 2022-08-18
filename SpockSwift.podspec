@@ -8,12 +8,8 @@ Pod::Spec.new do |s|
   s.source           = { :git => 'https://github.com/fsaldivar-dev/experimental-test-tool-swift.git', :tag => s.version.to_s }
   s.ios.deployment_target = '13.0'
   s.swift_version = '5.0'
-  s.source_files = 'Sources/**/*'
-  
-  s.test_spec 'Tests' do |test_spec|
-      test_spec.source_files = 'Tests/**/*'
-  end
-  
+  s.default_subspec = 'SpockDummy', 'SpockMock'
+    
   s.subspec 'SpockDummy' do |sp|
       sp.source_files = 'Sources/SpockDummy/source/**/*'
       sp.resource_bundles = {
@@ -21,6 +17,16 @@ Pod::Spec.new do |s|
       }
       sp.test_spec do |test_subspec|
           test_subspec.source_files = 'Tests/SpockDummy/**/*'
+      end
+  end
+
+  s.subspec 'SpockMock' do |sp|
+      sp.source_files = 'Sources/SpockMock/source/**/*'
+      sp.resource_bundles = {
+          'SpockSpy' => ['Sources/SpockMock/assets/**/*']
+      }
+      sp.test_spec do |test_subspec|
+          test_subspec.source_files = 'Tests/SpockMock/**/*'
       end
   end
 end

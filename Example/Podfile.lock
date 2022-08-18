@@ -1,18 +1,24 @@
 PODS:
+  - SpockSwift (0.0.1):
+    - SpockSwift/SpockDummy (= 0.0.1)
+    - SpockSwift/SpockMock (= 0.0.1)
   - SpockSwift/SpockDummy (0.0.1)
   - SpockSwift/SpockDummy/Tests (0.0.1)
+  - SpockSwift/SpockMock (0.0.1)
+  - SpockSwift/SpockMock/Tests (0.0.1)
 
 DEPENDENCIES:
-  - SpockSwift/SpockDummy (from `../`)
+  - SpockSwift (from `../`)
   - SpockSwift/SpockDummy/Tests (from `../`)
+  - SpockSwift/SpockMock/Tests (from `../`)
 
 EXTERNAL SOURCES:
   SpockSwift:
     :path: "../"
 
 SPEC CHECKSUMS:
-  SpockSwift: 9a4ab0bb35317a9f25b0e68a5063f76e59e594ab
+  SpockSwift: 831e89b7e4baaf49c2c5714c0de27160a13b9b4b
 
-PODFILE CHECKSUM: b01fa772e73049cf61bb47462b30b4184da78723
+PODFILE CHECKSUM: 9ab23f1bc220df752fb3ad4e463f4df7e5a33a67
 
 COCOAPODS: 1.11.2

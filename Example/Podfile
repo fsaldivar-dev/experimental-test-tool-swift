@@ -4,7 +4,8 @@
 target 'Example' do
   # Comment the next line if you don't want to use dynamic frameworks
   use_frameworks!
-  pod 'SpockSwift/SpockDummy', :path => '../', :testspecs => ['Tests'] 
+  pod 'SpockSwift', :path => '../', :testspecs => ['SpockMock/Tests', 'SpockDummy/Tests']
+  
   # Pods for Example
 
 end
