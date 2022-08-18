@@ -56,7 +56,9 @@ end
 ## [Dummy](./Sources/SpockDummy/assets//SpockableDummy.md)
 **Definición**
 Los objetos Dummy son objetos que no se utilizan en una prueba y solo actúan como marcadores de posición. Por lo general, no contiene ninguna implementación.
-### Ejemplo
+<details>
+    <summary>Ejemplo</summary>
+    
 ````Swift
 
 struct User: Codable, SpockDummy {
@@ -92,8 +94,135 @@ let university = try University.dummy()
 print(university.name) // return ""
 print(university.country) // return ""
 ````
+</details>
+
+## [Mock](./Sources/SpockMock/assets/SpockMock.md)
+
+| Caracteristica                 |     Estado    |     Test      |
+| -----------------------------  | ------------- | ------------- |
+| Spy                            |       ✅      |       ✅       |
+| Fake return                    |       ✅      |       ✅       |
+|--------------------------------|---------------|--------------  |
+| Soporte a diccionarios         |              ❌                |
+| Documentación                  |              ❌                |
+
+SpockMock librería creada para burlar implementación de funciones.
+
+<details>
+    <summary>Ejemplo</summary>
+    
+````Swift
+
+struct User: Decodable {
+    let name: String
+    let email: String
+    let phone: String
+    let age: Int
+}
 
 
+protocol Interactor {
+    func fetchAllUserAction() -> [Users]
+}
+
+protocol View {
+    func showUers(users: [Users])
+}
+
+final class Presenter {
+    private let interactor: Interactor
+    private let view: View
+
+    init(view: View, interactor: Interactor) {
+      self.interactor = interactor
+      self.view = view
+    }
+    
+    func loadData() {
+        let result = interactor.getFetchUsers()
+        view.showUsers(users: result)
+    }
+}
+````
+    
+### Mocks
+   
+````Swift
+    
+/// Create Mocks
+final class MockInteractor: Interactor, SpockMock {
+    @Stubbed<(), [User]>
+    var fetchAllUserAction
+    func fetchAllUser() -> [Users]
+        try? fetchAllUserAction.onCall(()) ?? []
+    }
+}
+
+final class MockView: View, SpockMock {
+    
+    @Stubbed<[User], Void>
+    var showUersAction
+    func showUers(users: [Users]) {
+        try? loadUserListAction.onCall(userList)
+    }
+    
+}    
+````
+   
+#### Test
+    
+````Swift
+    
+extension User: SpockDummy, Equatable {
+    static func == (lhs: User, rhs: User) -> Bool {
+        lhs.name == rhs.name &&
+        lhs.phone == rhs.phone &&
+        lhs.age == rhs.age &&
+        lhs.email == rhs.email
+    }
+}
+
+    
+final class SpockMockTest: XCTestCase {
+    var presenter: Presenter!
+    var mockInteractor = MockInteractor()
+    var mockView = MockView()
+    
+    override func setUpWithError() throws {
+        presenter = PresenterImpl(view: mockView,
+                                  interactor: mockInteractor,
+                                  task: mockTask)
+    }
+
+    override func tearDownWithError() throws {
+        presenter = nil
+    }
+
+    func testLoadData() async throws {
+         // Arrage
+        /// Create dummy List
+        let listUserSpected: [User] = [
+            try .dummy(with: .init(at: "name", with: "Fran")),
+            try .dummy(with: .init(at: "name", with: "Javi"))
+        ]
+        
+        // wehn call fetchAllUser return list spected
+        mockInteractor.fetchAllUserAction.whenRun { _ in
+            listUserSpected
+        }
+        
+        // Act, execute load data
+        presenter.loadData()
+        
+        // Accert
+        XCTAssert(mockInteractor.isInvoked(stub: { $0.fetchAllUserAction }))
+        XCTAssert(mockView.isInvoked(stub: {$0.showUers}))
+        XCTAssert(mockView.compare(stub: {$0.showUers}, to: listUserSpected))
+    }
+}
+
+````
+</details>
 
 # Author & License
 
