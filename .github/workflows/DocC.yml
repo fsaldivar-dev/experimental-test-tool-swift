@@ -39,9 +39,9 @@ jobs:
       - name: Build DocC
         run: |
           cd Example
-          swift package resolve
+          # swift package resolve
           
-          xcodebuild docbuild -workspace 'Example.xcworkspace' -scheme Example -derivedDataPath /tmp/docbuild -destination 'platform=iOS Simulator,name=iPhone 12'
+          # xcodebuild docbuild -workspace 'Example.xcworkspace' -scheme Example -derivedDataPath /tmp/docbuild -destination 'platform=iOS Simulator,name=iPhone 12'
           
           echo "Archiving documentation..."
           
