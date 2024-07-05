@@ -46,7 +46,7 @@ jobs:
           echo "Archiving documentation..."
           
           $(xcrun --find docc) process-archive \
-            transform-for-static-hosting /tmp/docbuild/Build/Products/Debug-iphonesimulator/Project.doccarchive \
+            transform-for-static-hosting ../docs/Build/Products/Debug-iphonesimulator/AnnotationSwift.doccarchive \
             --output-path docs \
             --hosting-base-path ''
             
