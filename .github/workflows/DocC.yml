@@ -34,7 +34,19 @@ jobs:
         run: |
           
           echo "Archiving documentation..."
-          
+
+          SCHEME_NAME="AnnotationSwift"
+          DESTINATION="generic/platform=iOS"
+          OUTPUT_DIR="./docs"
+          # Crear el directorio de salida si no existe
+          mkdir -p $OUTPUT_DIR
+          # Generar la documentación
+          xcodebuild docbuild \
+            -scheme $SCHEME_NAME \
+            -destination $DESTINATION \
+            -derivedDataPath $OUTPUT_DIR \
+            -allowProvisioningUpdates
+
           $(xcrun --find docc) process-archive transform-for-static-hosting \ docs/Build/Products/Debug-iphonesimulator/AnnotationSwift.doccarchive \
             --output-path docs \
             --hosting-base-path ''
