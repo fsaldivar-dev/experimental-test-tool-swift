@@ -1,28 +1,22 @@
 name: Deploy DocC Documentation to Github Pages
 
 on:
-  # Permitir que el workflow sea disparado manualmente
   workflow_dispatch:
-  # También puede correr en pushes a la rama master
   push:
     branches: ["master"]
 
-# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
   contents: read
   pages: write
   id-token: write
 
-# Allow one concurrent deployment
 concurrency:
   group: "pages"
   cancel-in-progress: true
   
 jobs:
-  # One deployment deploy job since we're just deploying
   deploy:
     environment:
-      # Must set to this for deploying to GitHub Pages
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: macos-12
@@ -33,20 +27,15 @@ jobs:
       - name: Force Xcode 13.3.1 
         run: sudo xcode-select -s "/Applications/Xcode_13.3.1.app"
 
-      - name: Install CocoaPods
-        run: cd Example && pod install
+      #- name: Install CocoaPods
+       # run: cd Example && pod install
 
       - name: Build DocC
         run: |
-          cd Example
-          # swift package resolve
-          
-          # xcodebuild docbuild -workspace 'Example.xcworkspace' -scheme Example -derivedDataPath /tmp/docbuild -destination 'platform=iOS Simulator,name=iPhone 12'
           
           echo "Archiving documentation..."
           
-          $(xcrun --find docc) process-archive \
-            transform-for-static-hosting ../docs/Build/Products/Debug-iphonesimulator/AnnotationSwift.doccarchive \
+          $(xcrun --find docc) process-archive transform-for-static-hosting \ docs/Build/Products/Debug-iphonesimulator/AnnotationSwift.doccarchive \
             --output-path docs \
             --hosting-base-path ''
             
@@ -57,7 +46,6 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:
-          # Upload only docs directory
           path: 'Example/docs'
 
       - name: Deploy to GitHub Pages
