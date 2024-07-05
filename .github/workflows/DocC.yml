@@ -35,7 +35,7 @@ jobs:
       - name: Build DocC
         run: |
           # Variables configurables
-          SCHEME_NAME="AnnotationSwift"
+          SCHEME_NAME="SpockSwift"
           DESTINATION="generic/platform=iOS"
           OUTPUT_DIR="./docs"
 
