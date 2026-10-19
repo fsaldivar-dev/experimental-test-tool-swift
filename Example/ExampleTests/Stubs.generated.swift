@@ -6,7 +6,9 @@
 //
 
 import Foundation
+#if canImport(Example)
 @testable import Example
+#endif
 
 extension Pet {
     public static func stub(
@@ -16,6 +18,16 @@ extension Pet {
         Pet(
             name: name,
             age: age
+        )
+    }
+}
+
+extension MoreStub {
+    public static func stub(
+        string: String = "dummy_string"
+    ) -> MoreStub {
+        MoreStub(
+            string: string
         )
     }
 }

@@ -523,6 +523,65 @@ struct SpockGenPhase6Tests {
         #expect(content2.contains("No active @Stub declarations found."))
     }
 
+    @Test("Generate stubs identifica modelos usados en tests con .stub() y actualiza stubs cuando el modelo cambia")
+    func testAutoDiscoverAndReconcileModels() throws {
+        let tempDir = FileManager.default.temporaryDirectory.appendingPathComponent("test-autodiscover-\(UUID().uuidString)")
+        let sourcesDir = tempDir.appendingPathComponent("Sources")
+        let testsDir = tempDir.appendingPathComponent("Tests")
+        try FileManager.default.createDirectory(at: sourcesDir, withIntermediateDirectories: true)
+        try FileManager.default.createDirectory(at: testsDir, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: tempDir) }
+
+        // 1. Modelo inicial
+        let userModelPath = sourcesDir.appendingPathComponent("User.swift")
+        try "public struct User { public var name: String }".write(to: userModelPath, atomically: true, encoding: .utf8)
+
+        // 2. Test que usa User.stub() SIN anotar @Stub explícitamente
+        let testPath = testsDir.appendingPathComponent("UserTests.swift")
+        try """
+        import Testing
+        struct UserTests {
+            @Test func testUser() {
+                let user = User.stub()
+                #expect(user.name == "dummy_name")
+            }
+        }
+        """.write(to: testPath, atomically: true, encoding: .utf8)
+
+        let outputSwift = testsDir.appendingPathComponent("Stubs.generated.swift")
+        let config = SpockGenEngine.Configuration(
+            sourcesDirectories: [sourcesDir.path],
+            testsDirectories: [testsDir.path],
+            outputPath: outputSwift.path
+        )
+        let engine = SpockGenEngine(config: config)
+
+        // 3. Ejecución inicial: detecta User automáticamente por el uso en test
+        let result1 = try engine.run()
+        guard case .generated(let count, _) = result1 else {
+            Issue.record("Debió auto-descubrir y generar stubs para User")
+            return
+        }
+        #expect(count == 1)
+        var content = try String(contentsOf: outputSwift, encoding: .utf8)
+        #expect(content.contains("extension User {"))
+        #expect(content.contains("name: String = \"dummy_name\""))
+
+        // 4. El modelo en producción cambia: se agrega el campo 'email'
+        try "public struct User { public var name: String; public var email: String }".write(to: userModelPath, atomically: true, encoding: .utf8)
+
+        // 5. Segunda ejecución: actualiza el stub con el nuevo campo manteniendo la compatibilidad
+        let result2 = try engine.run()
+        guard case .generated(let count2, _) = result2 else {
+            Issue.record("Debió regenerar con el modelo actualizado")
+            return
+        }
+        #expect(count2 == 1)
+        content = try String(contentsOf: outputSwift, encoding: .utf8)
+        #expect(content.contains("name: String = \"dummy_name\""))
+        #expect(content.contains("email: String = \"dummy_email\""))
+    }
+
     @Test("DaemonManager gestiona archivo PID y estado del proceso")
     func testDaemonManagerLifecycle() throws {
         let tempPidFile = FileManager.default.temporaryDirectory.appendingPathComponent("test-\(UUID().uuidString).pid")

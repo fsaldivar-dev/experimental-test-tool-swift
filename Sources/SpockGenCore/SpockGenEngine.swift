@@ -83,20 +83,21 @@ public final class SpockGenEngine: Sendable {
             }
         }
 
-        // 4. Escanear Declaraciones @Stub en Tests
+        // 4. Escanear Declaraciones @Stub, llamadas .stub() y modelos usados en Tests
         var allDeclarations: [StubDeclaration] = []
         var allImports: [String] = []
+        let knownModelNames = Set(availableModels.keys)
 
         for filePath in testFiles {
             guard let content = try? String(contentsOfFile: filePath, encoding: .utf8) else { continue }
-            let scanResult = TestScanner.scanDetailed(source: content, filePath: filePath)
+            let scanResult = TestScanner.scanDetailed(source: content, filePath: filePath, knownModelNames: knownModelNames)
             allDeclarations.append(contentsOf: scanResult.stubs)
             allImports.append(contentsOf: scanResult.imports)
         }
 
         if allDeclarations.isEmpty {
             if config.verbose {
-                print("[SpockGen] ℹ️ No se encontraron anotaciones @Stub activas.")
+                print("[SpockGen] ℹ️ No se encontraron anotaciones @Stub ni modelos usados en tests.")
             }
 
             // Cleaner: Si no hay stubs declarados (o todos fueron borrados),
@@ -218,5 +219,23 @@ public final class SpockGenEngine: Sendable {
         }
 
         return files
+    }
+
+    private func extractExistingExtensionNames(from source: String) -> [String] {
+        var names: [String] = []
+        let lines = source.components(separatedBy: .newlines)
+        for line in lines {
+            let trimmed = line.trimmingCharacters(in: .whitespaces)
+            if trimmed.hasPrefix("extension ") {
+                let parts = trimmed.components(separatedBy: " ")
+                if parts.count >= 2 {
+                    let name = parts[1].trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
+                    if !name.isEmpty, name.first?.isUppercase == true {
+                        names.append(name)
+                    }
+                }
+            }
+        }
+        return names
     }
 }

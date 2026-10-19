@@ -33,7 +33,14 @@ public final class CodeGenerator: Sendable {
         let uniqueImports = Array(Set(imports)).sorted()
         for imp in uniqueImports {
             if imp != "import Foundation" {
-                lines.append(imp)
+                if imp.hasPrefix("@testable import ") {
+                    let module = imp.replacingOccurrences(of: "@testable import ", with: "").trimmingCharacters(in: .whitespacesAndNewlines)
+                    lines.append("#if canImport(\(module))")
+                    lines.append(imp)
+                    lines.append("#endif")
+                } else {
+                    lines.append(imp)
+                }
             }
         }
         lines.append("")

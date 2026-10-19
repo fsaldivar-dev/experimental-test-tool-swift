@@ -14,6 +14,13 @@ import SpockSwift
 @Stub
 extension User {}
 
+struct MoreStub {
+    var string: String
+}
+@Stub
+extension MoreStub {
+    
+}
 @Suite("Example - Stubs y autoTree")
 struct UserStubTests {
 

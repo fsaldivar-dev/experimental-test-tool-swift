@@ -214,17 +214,37 @@ if args.first == "clean" {
         }
     }
 
-    if cOutput == nil, let detected = autoDetectConfig() {
-        cOutput = detected.output
+    var cSources: [String] = []
+    var cTests: [String] = []
+
+    if let detected = autoDetectConfig() {
+        if cOutput == nil { cOutput = detected.output }
+        cSources = detected.sources
+        cTests = detected.tests
     }
 
-    let fm = FileManager.default
-    if let cachePath = cCache, fm.fileExists(atPath: cachePath) {
-        try? fm.removeItem(atPath: cachePath)
-        print("🧹 Archivo de caché (\(cachePath)) eliminado.")
-    }
-
-    if let out = cOutput {
+    if let out = cOutput, !cSources.isEmpty, !cTests.isEmpty {
+        let cleanEngine = SpockGenEngine(config: SpockGenEngine.Configuration(
+            sourcesDirectories: cSources,
+            testsDirectories: cTests,
+            outputPath: out,
+            cachePath: nil,
+            verbose: true
+        ))
+        do {
+            let res = try cleanEngine.run()
+            switch res {
+            case .generated(let count, let path):
+                print("🧹 SpockGen Clean: \(count) modelos reconciliados y actualizados en \(path).")
+            case .upToDate:
+                print("🧹 SpockGen Clean: Modelos verificados y actualizados.")
+            case .noStubsFound:
+                print("🧹 SpockGen Clean: No se encontraron modelos activos. Archivo reseteado.")
+            }
+        } catch {
+            print("❌ Error durante clean: \(error.localizedDescription)")
+        }
+    } else if let out = cOutput {
         let cleanPlaceholder = """
         //
         //  Stubs.generated.swift
@@ -238,7 +258,7 @@ if args.first == "clean" {
 
         """
         try? cleanPlaceholder.write(toFile: out, atomically: true, encoding: .utf8)
-        print("🧹 Archivo de stubs (\(out)) reseteado a estado limpio.")
+        print("🧹 Archivo de stubs (\(out)) reseteado.")
     }
 
     print("✅ SpockGen limpiado exitosamente.")
