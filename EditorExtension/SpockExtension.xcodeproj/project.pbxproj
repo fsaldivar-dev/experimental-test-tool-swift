@@ -62,7 +62,7 @@
 		25F743FE1DA97E9000CCD5AD /* HostApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HostApp.swift; sourceTree = "<group>"; };
 		25F744021DA97E9000CCD5AD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		25F744071DA97E9000CCD5AD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		25F744111DA97ED800CCD5AD /* Spock.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Spock.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		25F744111DA97ED800CCD5AD /* Spock.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = Spock.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		25F744131DA97ED800CCD5AD /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		25F744181DA97ED800CCD5AD /* SourceEditorExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceEditorExtension.swift; sourceTree = "<group>"; };
 		25F7441A1DA97ED800CCD5AD /* SourceEditorCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceEditorCommand.swift; sourceTree = "<group>"; };
@@ -219,15 +219,17 @@
 				TargetAttributes = {
 					25F743FA1DA97E9000CCD5AD = {
 						CreatedOnToolsVersion = 8.0;
+						DevelopmentTeam = W7DAJUM9J6;
 						ProvisioningStyle = Automatic;
 					};
 					25F744101DA97ED800CCD5AD = {
 						CreatedOnToolsVersion = 8.0;
+						DevelopmentTeam = W7DAJUM9J6;
 						ProvisioningStyle = Automatic;
 					};
 				};
 			};
-			buildConfigurationList = 25F743F61DA97E9000CCD5AD /* Build configuration list for PBXProject "SpockXcodeExtension" */;
+			buildConfigurationList = 25F743F61DA97E9000CCD5AD /* Build configuration list for PBXProject "SpockExtension" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -344,7 +346,7 @@
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
@@ -404,7 +406,7 @@
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -431,17 +433,18 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				COMBINE_HIDPI_IMAGES = YES;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = W7DAJUM9J6;
+				CODE_SIGN_STYLE = Automatic;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/Host/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.fsaldivar.spock";
+				PRODUCT_BUNDLE_IDENTIFIER = com.fsaldivar.spock;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 			};
@@ -452,17 +455,18 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				COMBINE_HIDPI_IMAGES = YES;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = W7DAJUM9J6;
+				CODE_SIGN_STYLE = Automatic;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/Host/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.fsaldivar.spock";
+				PRODUCT_BUNDLE_IDENTIFIER = com.fsaldivar.spock;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 			};
@@ -472,10 +476,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = SpockXcodeExtension/SpockXcodeExtension.entitlements;
-				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				COMBINE_HIDPI_IMAGES = YES;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = W7DAJUM9J6;
+				CODE_SIGN_STYLE = Automatic;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = SpockXcodeExtension/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -483,8 +488,8 @@
 					"@executable_path/../Frameworks",
 					"@executable_path/../../../../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.fsaldivar.spock.extension";
-				PRODUCT_NAME = "Spock";
+				PRODUCT_BUNDLE_IDENTIFIER = com.fsaldivar.spock.extension;
+				PRODUCT_NAME = Spock;
 				SKIP_INSTALL = YES;
 				SWIFT_INSTALL_OBJC_HEADER = NO;
 				SWIFT_OBJC_INTERFACE_HEADER_NAME = "";
@@ -497,10 +502,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = SpockXcodeExtension/SpockXcodeExtension.entitlements;
-				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				COMBINE_HIDPI_IMAGES = YES;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = W7DAJUM9J6;
+				CODE_SIGN_STYLE = Automatic;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = SpockXcodeExtension/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -508,8 +514,8 @@
 					"@executable_path/../Frameworks",
 					"@executable_path/../../../../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.fsaldivar.spock.extension";
-				PRODUCT_NAME = "Spock";
+				PRODUCT_BUNDLE_IDENTIFIER = com.fsaldivar.spock.extension;
+				PRODUCT_NAME = Spock;
 				SKIP_INSTALL = YES;
 				SWIFT_INSTALL_OBJC_HEADER = NO;
 				SWIFT_OBJC_INTERFACE_HEADER_NAME = "";
@@ -521,7 +527,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		25F743F61DA97E9000CCD5AD /* Build configuration list for PBXProject "SpockXcodeExtension" */ = {
+		25F743F61DA97E9000CCD5AD /* Build configuration list for PBXProject "SpockExtension" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				25F744081DA97E9000CCD5AD /* Debug */,
