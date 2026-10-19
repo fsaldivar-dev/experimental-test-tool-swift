@@ -59,7 +59,7 @@ public final class SpockGenEngine: Sendable {
             cachedManifest = manager.loadManifest()
 
             if fileManager.fileExists(atPath: config.outputPath),
-               manager.isCacheValid(for: allInputFiles, cachedManifest: cachedManifest) {
+               manager.isCacheValid(for: allInputFiles, outputPath: config.outputPath, cachedManifest: cachedManifest) {
                 if config.verbose {
                     print("[SpockGen] ⚡ Cache HIT: Ningún archivo fuente o de test ha cambiado (< 5ms).")
                 }

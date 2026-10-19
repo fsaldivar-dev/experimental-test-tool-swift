@@ -86,10 +86,11 @@ public final class CacheManager: Sendable {
         return hash(data: data)
     }
 
-    /// Evalúa si el caché es válido para una lista de archivos fuente
+    /// Evalúa si el caché es válido para una lista de archivos fuente y opcionalmente el archivo generado
     /// Devuelve `true` únicamente si todos los archivos existen y sus hashes coinciden exactamente con el manifiesto.
     public func isCacheValid(
         for filePaths: [String],
+        outputPath: String? = nil,
         cachedManifest: SpockCacheManifest?
     ) -> Bool {
         guard let manifest = cachedManifest else { return false }
@@ -101,6 +102,16 @@ public final class CacheManager: Sendable {
             guard let cachedHash = manifest.fileHashes[path],
                   let currentHash = hash(fileAt: path),
                   cachedHash == currentHash else {
+                return false
+            }
+        }
+
+        // Si se especificó un archivo de salida, debe existir y coincidir con el hash registrado
+        if let outputPath = outputPath {
+            guard FileManager.default.fileExists(atPath: outputPath),
+                  let cachedOutputHash = manifest.outputHash,
+                  let currentOutputHash = hash(fileAt: outputPath),
+                  cachedOutputHash == currentOutputHash else {
                 return false
             }
         }
