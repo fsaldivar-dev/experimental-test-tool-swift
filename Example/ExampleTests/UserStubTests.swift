@@ -18,6 +18,16 @@ extension User {}
 struct TestCustomModel {
     var some: String
 }
+@Stub
+struct NewName {
+    var name: String
+}
+
+struct Some {
+    var nome: String
+}
+@Stub
+extension Some {}
 
 @Suite("Example - Stubs y autoTree")
 struct UserStubTests {

@@ -434,6 +434,38 @@ struct SpockGenPhase6Tests {
         #expect(generatedCode.contains("some: String = \"dummy_some\""))
         #expect(generatedCode.contains("count: Int = 0"))
     }
+
+    @Test("SyntaxValidator detecta errores de sintaxis en Swift incompleto")
+    func testSyntaxValidatorDetectsErrors() {
+        let incompleteCode = "struct User { var name: "
+        #expect(SyntaxValidator.hasSyntaxErrors(source: incompleteCode) == true)
+
+        let validCode = "struct User { var name: String }"
+        #expect(SyntaxValidator.hasSyntaxErrors(source: validCode) == false)
+    }
+
+    @Test("XcodeProjectIntegrator garantiza la existencia del archivo de stubs para evitar errores de manifest")
+    func testEnsureGeneratedFileExists() {
+        let tempFile = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString).appendingPathComponent("Stubs.generated.swift")
+        defer { try? FileManager.default.removeItem(at: tempFile) }
+
+        #expect(!FileManager.default.fileExists(atPath: tempFile.path))
+        XcodeProjectIntegrator.ensureGeneratedFileExists(atPath: tempFile.path)
+        #expect(FileManager.default.fileExists(atPath: tempFile.path))
+
+        let content = (try? String(contentsOf: tempFile, encoding: .utf8)) ?? ""
+        #expect(content.contains("import Foundation"))
+    }
+
+    @Test("XcodeProjectIntegrator detecta cuando project.pbxproj ya está integrado")
+    func testIntegrateAlreadyIntegrated() throws {
+        let status = try XcodeProjectIntegrator.integrate(
+            projectPbxprojPath: "Example/Example.xcodeproj/project.pbxproj",
+            sourcesDir: "Example/Example/Domain",
+            testsDir: "Example/ExampleTests"
+        )
+        #expect(status == .alreadyIntegrated)
+    }
 }
 
 
