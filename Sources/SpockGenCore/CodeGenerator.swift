@@ -17,7 +17,8 @@ public final class CodeGenerator: Sendable {
 
     public func generate(
         models: [ModelDefinition],
-        availableModels: [String: ModelDefinition]
+        availableModels: [String: ModelDefinition],
+        imports: [String] = []
     ) -> String {
         var lines: [String] = []
         lines.append("//")
@@ -28,6 +29,13 @@ public final class CodeGenerator: Sendable {
         lines.append("//")
         lines.append("")
         lines.append("import Foundation")
+
+        let uniqueImports = Array(Set(imports)).sorted()
+        for imp in uniqueImports {
+            if imp != "import Foundation" {
+                lines.append(imp)
+            }
+        }
         lines.append("")
 
         for model in models {

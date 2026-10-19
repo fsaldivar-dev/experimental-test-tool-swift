@@ -13,6 +13,7 @@ import SwiftParser
 public final class TestScanner: SyntaxVisitor, @unchecked Sendable {
     private let filePath: String
     public private(set) var stubDeclarations: [StubDeclaration] = []
+    public private(set) var importStatements: [String] = []
 
     public init(filePath: String = "") {
         self.filePath = filePath
@@ -20,15 +21,27 @@ public final class TestScanner: SyntaxVisitor, @unchecked Sendable {
     }
 
     public static func scan(source: String, filePath: String = "") -> [StubDeclaration] {
+        scanDetailed(source: source, filePath: filePath).stubs
+    }
+
+    public static func scanDetailed(source: String, filePath: String = "") -> (stubs: [StubDeclaration], imports: [String]) {
         let sourceFile = Parser.parse(source: source)
         let scanner = TestScanner(filePath: filePath)
         scanner.walk(sourceFile)
-        return scanner.stubDeclarations
+        return (scanner.stubDeclarations, scanner.importStatements)
     }
 
     public static func scan(fileURL: URL) throws -> [StubDeclaration] {
         let source = try String(contentsOf: fileURL, encoding: .utf8)
         return scan(source: source, filePath: fileURL.path)
+    }
+
+    public override func visit(_ node: ImportDeclSyntax) -> SyntaxVisitorContinueKind {
+        let importDesc = node.trimmedDescription
+        if !importDesc.contains("SpockSwift") && !importDesc.contains("Testing") && !importDesc.contains("XCTest") {
+            importStatements.append(importDesc)
+        }
+        return .skipChildren
     }
 
     public override func visit(_ node: ExtensionDeclSyntax) -> SyntaxVisitorContinueKind {

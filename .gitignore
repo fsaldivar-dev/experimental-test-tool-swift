@@ -47,6 +47,9 @@ playground.xcworkspace
 # .swiftpm
 
 .build/
+.spock-cache.json
+.DS_Store
+*.DS_Store
 
 # CocoaPods
 #

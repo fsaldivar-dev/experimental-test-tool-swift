@@ -80,11 +80,13 @@ public final class SpockGenEngine: Sendable {
 
         // 4. Escanear Declaraciones @Stub en Tests
         var allDeclarations: [StubDeclaration] = []
+        var allImports: [String] = []
 
         for filePath in testFiles {
             guard let content = try? String(contentsOfFile: filePath, encoding: .utf8) else { continue }
-            let decls = TestScanner.scan(source: content, filePath: filePath)
-            allDeclarations.append(contentsOf: decls)
+            let scanResult = TestScanner.scanDetailed(source: content, filePath: filePath)
+            allDeclarations.append(contentsOf: scanResult.stubs)
+            allImports.append(contentsOf: scanResult.imports)
         }
 
         if allDeclarations.isEmpty {
@@ -113,7 +115,11 @@ public final class SpockGenEngine: Sendable {
 
         // 7. Generar código Swift limpio
         let generator = CodeGenerator()
-        let generatedSwift = generator.generate(models: autoTreeResult.modelsToGenerate, availableModels: availableModels)
+        let generatedSwift = generator.generate(
+            models: autoTreeResult.modelsToGenerate,
+            availableModels: availableModels,
+            imports: allImports
+        )
 
         // 8. Escribir resultado en outputPath
         let outputURL = URL(fileURLWithPath: config.outputPath)

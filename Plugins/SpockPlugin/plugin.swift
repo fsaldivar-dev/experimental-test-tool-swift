@@ -16,9 +16,9 @@ struct SpockPlugin: BuildToolPlugin {
         }
 
         let executable = try context.tool(named: "spock-gen")
-        let outputDirectory = context.pluginWorkDirectory.appending(["Generated"])
-        let outputFile = outputDirectory.appending(["Stubs.generated.swift"])
-        let cacheFile = context.pluginWorkDirectory.appending([".spock-cache.json"])
+        let outputDirectory = context.pluginWorkDirectoryURL.appendingPathComponent("Generated")
+        let outputFile = outputDirectory.appendingPathComponent("Stubs.generated.swift")
+        let cacheFile = context.pluginWorkDirectoryURL.appendingPathComponent(".spock-cache.json")
 
         let testDir = sourceTarget.directory.string
 
@@ -41,21 +41,21 @@ struct SpockPlugin: BuildToolPlugin {
         }
 
         if sourceDirs.isEmpty {
-            sourceDirs.append(context.package.directory.appending(["Sources"]).string)
+            sourceDirs.append(context.package.directory.string + "/Sources")
         }
 
         var arguments: [String] = ["--sources"]
         arguments.append(contentsOf: sourceDirs)
         arguments.append(contentsOf: [
             "--tests", testDir,
-            "--output", outputFile.string,
-            "--cache", cacheFile.string
+            "--output", outputFile.path,
+            "--cache", cacheFile.path
         ])
 
         return [
             .prebuildCommand(
                 displayName: "SpockSwift 2: AutoTree Stub Generation",
-                executable: executable.path,
+                executable: executable.url,
                 arguments: arguments,
                 outputFilesDirectory: outputDirectory
             )

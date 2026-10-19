@@ -89,6 +89,22 @@ let package = Package(
             name: "SpockGenTests",
             dependencies: ["SpockGenCore"],
             path: "Tests/SpockGenTests"
+        ),
+
+        // 8. Módulo de Dominio del Example
+        .target(
+            name: "ExampleDomain",
+            path: "Example/Example/Domain"
+        ),
+
+        // 9. Pruebas del Example usando SpockSwift y SpockPlugin
+        .testTarget(
+            name: "ExampleDomainTests",
+            dependencies: [
+                "ExampleDomain",
+                "SpockSwift"
+            ],
+            path: "Example/ExampleTests"
         )
     ]
 )
