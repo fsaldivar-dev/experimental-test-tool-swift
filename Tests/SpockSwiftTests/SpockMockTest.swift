@@ -25,7 +25,7 @@ final class SpockMockTest: XCTestCase {
     }
 
     func testLoadData() async throws {
-        let listUserSpected: [User] = [
+        let listUserSpected: [MockUser] = [
             try .dummy(with: .init(at: "name", with: "Fran")),
             try .dummy(with: .init(at: "name", with: "Javi"))
         ]

@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct User: Decodable {
+struct MockUser: Decodable, Sendable {
     let name: String
     let email: String
     let phone: String
@@ -16,45 +16,45 @@ struct User: Decodable {
     let acount: Account
 }
 
-struct Address: Decodable {
+struct Address: Decodable, Sendable {
     let stret: String
     let cp: String
     let intNumber: Int
     let extNumber: Int
 }
 
-struct Account: Decodable {
+struct Account: Decodable, Sendable {
     var numberAcount: Int
     var serialID: Int
 }
 
-protocol Interactor {
-    func fetchAllUser() async throws -> [User]
-    func fetchUser(at serialID: Int) async throws -> User
-    func searchParents(at serialID: Int) async throws -> User
+protocol Interactor: Sendable {
+    func fetchAllUser() async throws -> [MockUser]
+    func fetchUser(at serialID: Int) async throws -> MockUser
+    func searchParents(at serialID: Int) async throws -> MockUser
 }
 
 
-protocol View {
+protocol View: AnyObject, Sendable {
     @MainActor
-    func loadUserList(userList: [User])
+    func loadUserList(userList: [MockUser])
     @MainActor
-    func showParents(user: User)
+    func showParents(user: MockUser)
 }
 
-protocol Presenter {
+protocol Presenter: AnyObject {
     var view: View { get }
     var interactor: Interactor { get }
     
     func loadData()
-    func selectedUser(user: User)
+    func selectedUser(user: MockUser)
 }
 
-protocol TaskCustom {
-    func run(_ task: @escaping () async throws -> Void )
+protocol TaskCustom: Sendable {
+    func run(_ task: @escaping @Sendable () async throws -> Void )
 }
 
-final class PresenterImpl: Presenter {
+final class PresenterImpl: Presenter, @unchecked Sendable {
     var view: View
     
     var interactor: Interactor
@@ -72,7 +72,7 @@ final class PresenterImpl: Presenter {
         }
     }
     
-    func selectedUser(user: User) {
+    func selectedUser(user: MockUser) {
         task.run {
             let user = try await self.interactor.searchParents(at: user.acount.serialID)
             await self.view.showParents(user: user)
