@@ -46,6 +46,28 @@ public struct XcodeProjectIntegrator: Sendable {
 
         for _ in 0..<5 {
             if let items = try? fileManager.contentsOfDirectory(atPath: currentURL.path) {
+                // 1. Si hay un .xcworkspace, resolver los .xcodeproj declarados en contents.xcworkspacedata
+                for item in items where item.hasSuffix(".xcworkspace") {
+                    let workspaceURL = currentURL.appendingPathComponent(item)
+                    let dataURL = workspaceURL.appendingPathComponent("contents.xcworkspacedata")
+                    if let xml = try? String(contentsOf: dataURL, encoding: .utf8) {
+                        for line in xml.components(separatedBy: .newlines) {
+                            if line.contains(".xcodeproj") {
+                                let parts = line.components(separatedBy: "\"")
+                                for part in parts where part.contains(".xcodeproj") {
+                                    let cleaned = part.replacingOccurrences(of: "group:", with: "")
+                                                      .replacingOccurrences(of: "container:", with: "")
+                                    let resolvedProjURL = currentURL.appendingPathComponent(cleaned).appendingPathComponent("project.pbxproj")
+                                    if fileManager.fileExists(atPath: resolvedProjURL.path) {
+                                        return resolvedProjURL.path
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // 2. Búsqueda directa de .xcodeproj
                 for item in items where item.hasSuffix(".xcodeproj") {
                     let pbxPath = currentURL.appendingPathComponent(item).appendingPathComponent("project.pbxproj").path
                     if fileManager.fileExists(atPath: pbxPath) {

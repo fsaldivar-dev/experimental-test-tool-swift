@@ -60,6 +60,16 @@ extension User {
     }
 }
 
+extension NewName {
+    public static func stub(
+        name: String = "dummy_name"
+    ) -> NewName {
+        NewName(
+            name: name
+        )
+    }
+}
+
 extension TestCustomModel {
     public static func stub(
         some: String = "dummy_some"
@@ -70,12 +80,12 @@ extension TestCustomModel {
     }
 }
 
-extension NewName {
+extension Some2 {
     public static func stub(
-        name: String = "dummy_name"
-    ) -> NewName {
-        NewName(
-            name: name
+        some: String = "dummy_some"
+    ) -> Some2 {
+        Some2(
+            some: some
         )
     }
 }

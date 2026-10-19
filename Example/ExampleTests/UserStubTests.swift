@@ -29,6 +29,14 @@ struct Some {
 @Stub
 extension Some {}
 
+struct Some2 {
+    var some: String
+}
+
+@Stub
+extension Some2 {
+}
+
 @Suite("Example - Stubs y autoTree")
 struct UserStubTests {
 

@@ -466,6 +466,13 @@ struct SpockGenPhase6Tests {
         )
         #expect(status == .alreadyIntegrated)
     }
+
+    @Test("XcodeProjectIntegrator resuelve el project.pbxproj a través de un .xcworkspace")
+    func testFindXcodeProjectThroughWorkspace() {
+        let foundPath = XcodeProjectIntegrator.findXcodeProject(nearPath: "Example/ExampleTests/Stubs.generated.swift")
+        #expect(foundPath != nil)
+        #expect(foundPath?.hasSuffix("Example/Example.xcodeproj/project.pbxproj") == true)
+    }
 }
 
 
