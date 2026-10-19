@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-	<string>SpockXcodeExtension</string>
+	<string>Spock</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -34,7 +34,7 @@
 					<key>XCSourceEditorCommandIdentifier</key>
 					<string>com.fsaldivar.SpockXcodeExtension.generateStubs</string>
 					<key>XCSourceEditorCommandName</key>
-					<string>Spock: Generate Stubs</string>
+					<string>Generate Stubs</string>
 				</dict>
 				<dict>
 					<key>XCSourceEditorCommandClassName</key>
@@ -42,7 +42,7 @@
 					<key>XCSourceEditorCommandIdentifier</key>
 					<string>com.fsaldivar.SpockXcodeExtension.addStubToSelection</string>
 					<key>XCSourceEditorCommandName</key>
-					<string>Spock: Add @Stub to Selection</string>
+					<string>Add @Stub to Selection</string>
 				</dict>
 				<dict>
 					<key>XCSourceEditorCommandClassName</key>
@@ -50,7 +50,7 @@
 					<key>XCSourceEditorCommandIdentifier</key>
 					<string>com.fsaldivar.SpockXcodeExtension.cleanStubs</string>
 					<key>XCSourceEditorCommandName</key>
-					<string>Spock: Clean Stubs</string>
+					<string>Clean Stubs</string>
 				</dict>
 				<dict>
 					<key>XCSourceEditorCommandClassName</key>
@@ -58,7 +58,7 @@
 					<key>XCSourceEditorCommandIdentifier</key>
 					<string>com.fsaldivar.SpockXcodeExtension.toggleDaemon</string>
 					<key>XCSourceEditorCommandName</key>
-					<string>Spock: Toggle Watch Daemon</string>
+					<string>Toggle Watch Daemon</string>
 				</dict>
 			</array>
 			<key>XCSourceEditorExtensionPrincipalClass</key>

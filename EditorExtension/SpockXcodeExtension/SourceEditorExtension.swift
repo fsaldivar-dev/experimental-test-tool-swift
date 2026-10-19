@@ -18,22 +18,22 @@ final class SourceEditorExtension: NSObject, XCSourceEditorExtension {
             [
                 .classNameKey: SourceEditorCommand.className(),
                 .identifierKey: "com.fsaldivar.SpockXcodeExtension.generateStubs",
-                .nameKey: "Spock: Generate Stubs"
+                .nameKey: "Generate Stubs"
             ],
             [
                 .classNameKey: SourceEditorCommand.className(),
                 .identifierKey: "com.fsaldivar.SpockXcodeExtension.addStubToSelection",
-                .nameKey: "Spock: Add @Stub to Selection"
+                .nameKey: "Add @Stub to Selection"
             ],
             [
                 .classNameKey: SourceEditorCommand.className(),
                 .identifierKey: "com.fsaldivar.SpockXcodeExtension.cleanStubs",
-                .nameKey: "Spock: Clean Stubs"
+                .nameKey: "Clean Stubs"
             ],
             [
                 .classNameKey: SourceEditorCommand.className(),
                 .identifierKey: "com.fsaldivar.SpockXcodeExtension.toggleDaemon",
-                .nameKey: "Spock: Toggle Watch Daemon"
+                .nameKey: "Toggle Watch Daemon"
             ]
         ]
     }
