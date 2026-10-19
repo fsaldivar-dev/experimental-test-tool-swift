@@ -314,22 +314,6 @@ guard let outputPath = output else {
     exit(1)
 }
 
-// Garantizar que el archivo existe en disco para que Xcode nunca falle por archivo inexistente
-XcodeProjectIntegrator.ensureGeneratedFileExists(atPath: outputPath)
-
-// Auto-sincronización con el manifiesto project.pbxproj si existe proyecto Xcode
-if let pbxPath = XcodeProjectIntegrator.findXcodeProject(nearPath: outputPath) {
-    let fileName = (outputPath as NSString).lastPathComponent
-    if let status = try? XcodeProjectIntegrator.integrate(
-        projectPbxprojPath: pbxPath,
-        generatedFileName: fileName,
-        sourcesDir: sources.first ?? "",
-        testsDir: tests.first ?? ""
-    ), case .integrated = status {
-        print("🛠️ SpockGen: \(fileName) y build phase sincronizados automáticamente con el manifiesto de Xcode.")
-    }
-}
-
 let config = SpockGenEngine.Configuration(
     sourcesDirectories: sources,
     testsDirectories: tests,
@@ -361,8 +345,24 @@ func executeRun() {
     }
 }
 
-// Ejecución inicial
+// 1. Ejecución inicial del motor de generación
 executeRun()
+
+// 2. Garantizar como salvaguarda que el archivo existe en disco para que Xcode nunca falle
+XcodeProjectIntegrator.ensureGeneratedFileExists(atPath: outputPath)
+
+// 3. Auto-sincronización con el manifiesto project.pbxproj si existe proyecto Xcode
+if let pbxPath = XcodeProjectIntegrator.findXcodeProject(nearPath: outputPath) {
+    let fileName = (outputPath as NSString).lastPathComponent
+    if let status = try? XcodeProjectIntegrator.integrate(
+        projectPbxprojPath: pbxPath,
+        generatedFileName: fileName,
+        sourcesDir: sources.first ?? "",
+        testsDir: tests.first ?? ""
+    ), case .integrated = status {
+        print("🛠️ SpockGen: \(fileName) y build phase sincronizados automáticamente con el manifiesto de Xcode.")
+    }
+}
 
 // Si se activó modo watch
 if watchMode {

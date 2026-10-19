@@ -20,19 +20,19 @@ struct SpockPlugin: BuildToolPlugin {
         let outputFile = outputDirectory.appendingPathComponent("Stubs.generated.swift")
         let cacheFile = context.pluginWorkDirectoryURL.appendingPathComponent(".spock-cache.json")
 
-        let testDir = sourceTarget.directory.string
+        let testDir = sourceTarget.directory.description
 
         var sourceDirs: [String] = []
         for dep in sourceTarget.dependencies {
             switch dep {
             case .target(let target):
                 if let src = target as? SourceModuleTarget {
-                    sourceDirs.append(src.directory.string)
+                    sourceDirs.append(src.directory.description)
                 }
             case .product(let product):
                 for target in product.targets {
                     if let src = target as? SourceModuleTarget {
-                        sourceDirs.append(src.directory.string)
+                        sourceDirs.append(src.directory.description)
                     }
                 }
             @unknown default:
@@ -41,7 +41,7 @@ struct SpockPlugin: BuildToolPlugin {
         }
 
         if sourceDirs.isEmpty {
-            sourceDirs.append(context.package.directory.string + "/Sources")
+            sourceDirs.append(context.package.directory.description + "/Sources")
         }
 
         var arguments: [String] = ["--sources"]
