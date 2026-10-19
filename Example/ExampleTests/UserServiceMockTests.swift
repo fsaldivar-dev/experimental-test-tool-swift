@@ -7,7 +7,7 @@
 
 import Testing
 import SpockSwift
-@testable import ExampleDomain
+@testable import Example
 
 final class MockUserRepository: UserRepositoryProtocol, SpockMock, @unchecked Sendable {
     @Stubbed<Int, User>

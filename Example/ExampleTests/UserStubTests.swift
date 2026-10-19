@@ -7,7 +7,7 @@
 
 import Testing
 import SpockSwift
-@testable import ExampleDomain
+@testable import Example
 
 // Anotación declarativa @Stub:
 // autoTree descubrirá automáticamente Profile y Pet recursivamente!

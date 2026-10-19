@@ -156,7 +156,7 @@ public final class SpockGenEngine: Sendable {
 
                 guard let enumerator = fileManager.enumerator(atPath: dir) else { continue }
                 while let element = enumerator.nextObject() as? String {
-                    if element.hasSuffix(".swift") && !element.contains(".build") && !element.contains(".spock") {
+                    if element.hasSuffix(".swift") && !element.contains(".build") && !element.contains(".spock") && !element.hasSuffix(".generated.swift") {
                         let fullPath = (dir as NSString).appendingPathComponent(element)
                         files.append(fullPath)
                     }

@@ -6,7 +6,7 @@
 //
 
 import Foundation
-@testable import ExampleDomain
+@testable import Example
 
 extension Pet {
     public static func stub(

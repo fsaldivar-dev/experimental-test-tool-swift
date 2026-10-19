@@ -93,15 +93,15 @@ let package = Package(
 
         // 8. Módulo de Dominio del Example
         .target(
-            name: "ExampleDomain",
+            name: "Example",
             path: "Example/Example/Domain"
         ),
 
         // 9. Pruebas del Example usando SpockSwift y SpockPlugin
         .testTarget(
-            name: "ExampleDomainTests",
+            name: "ExampleTests",
             dependencies: [
-                "ExampleDomain",
+                "Example",
                 "SpockSwift"
             ],
             path: "Example/ExampleTests"
