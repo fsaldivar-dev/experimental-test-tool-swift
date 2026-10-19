@@ -6,6 +6,7 @@
 //
 
 import Testing
+import Foundation
 @testable import SpockGenCore
 
 @Suite("SpockGenCore - Fase 2: Inspección y Deduplicación")
@@ -233,6 +234,62 @@ struct SpockGenPhase4Tests {
         #expect(code.contains("extension EmptyModel {"))
         #expect(code.contains("public static func stub() -> EmptyModel {"))
         #expect(code.contains("EmptyModel()"))
+    }
+}
+
+@Suite("SpockGenCore - Fase 5: CacheManager")
+struct SpockGenPhase5Tests {
+
+    @Test("CacheManager calcula SHA256 determinista")
+    func testSHA256Computation() {
+        let manager = CacheManager(cacheFilePath: "/tmp/dummy-cache.json")
+        let hash1 = manager.hash(string: "hello world")
+        let hash2 = manager.hash(string: "hello world")
+        let hash3 = manager.hash(string: "different content")
+
+        #expect(hash1 == hash2)
+        #expect(hash1 != hash3)
+        #expect(hash1 == "b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9")
+    }
+
+    @Test("CacheManager detecta caché válido e invalidación ante cambios")
+    func testCacheInvalidation() throws {
+        let tempDir = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        try FileManager.default.createDirectory(at: tempDir, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: tempDir) }
+
+        let file1 = tempDir.appendingPathComponent("ModelA.swift")
+        let file2 = tempDir.appendingPathComponent("ModelB.swift")
+        let cacheFile = tempDir.appendingPathComponent(".spock-cache.json")
+
+        try "struct ModelA {}".write(to: file1, atomically: true, encoding: .utf8)
+        try "struct ModelB {}".write(to: file2, atomically: true, encoding: .utf8)
+
+        let manager = CacheManager(cacheFilePath: cacheFile.path)
+        let manifest = manager.createManifest(
+            filePaths: [file1.path, file2.path],
+            generatedCode: "// Generated code"
+        )
+        try manager.saveManifest(manifest)
+
+        let loadedManifest = manager.loadManifest()
+        #expect(loadedManifest != nil)
+        #expect(loadedManifest?.fileHashes.count == 2)
+
+        // Cache válido sin cambios
+        let isValid = manager.isCacheValid(
+            for: [file1.path, file2.path],
+            cachedManifest: loadedManifest
+        )
+        #expect(isValid == true)
+
+        // Modificamos un archivo: debe invalidar el caché
+        try "struct ModelA { var x: Int }".write(to: file1, atomically: true, encoding: .utf8)
+        let isStillValid = manager.isCacheValid(
+            for: [file1.path, file2.path],
+            cachedManifest: loadedManifest
+        )
+        #expect(isStillValid == false)
     }
 }
 
