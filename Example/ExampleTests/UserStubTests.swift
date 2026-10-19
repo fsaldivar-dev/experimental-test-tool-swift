@@ -26,16 +26,6 @@ struct NewName {
 struct Some {
     var nome: String
 }
-@Stub
-extension Some {}
-
-struct Some2 {
-    var some: String
-}
-
-@Stub
-extension Some2 {
-}
 
 @Suite("Example - Stubs y autoTree")
 struct UserStubTests {
@@ -76,5 +66,14 @@ struct UserStubTests {
 
         let custom = TestCustomModel.stub(some: "Hola Mundo")
         #expect(custom.some == "Hola Mundo")
+    }
+
+    @Test("NewName.stub() generado automáticamente desde @Stub struct")
+    func testNewNameStub() {
+        let model = NewName.stub()
+        #expect(model.name == "dummy_name")
+
+        let custom = NewName.stub(name: "SwiftDager")
+        #expect(custom.name == "SwiftDager")
     }
 }

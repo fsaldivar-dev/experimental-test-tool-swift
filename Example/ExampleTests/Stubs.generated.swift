@@ -8,12 +8,12 @@
 import Foundation
 @testable import Example
 
-extension Some {
+extension TestCustomModel {
     public static func stub(
-        nome: String = "dummy_nome"
-    ) -> Some {
-        Some(
-            nome: nome
+        some: String = "dummy_some"
+    ) -> TestCustomModel {
+        TestCustomModel(
+            some: some
         )
     }
 }
@@ -66,26 +66,6 @@ extension NewName {
     ) -> NewName {
         NewName(
             name: name
-        )
-    }
-}
-
-extension TestCustomModel {
-    public static func stub(
-        some: String = "dummy_some"
-    ) -> TestCustomModel {
-        TestCustomModel(
-            some: some
-        )
-    }
-}
-
-extension Some2 {
-    public static func stub(
-        some: String = "dummy_some"
-    ) -> Some2 {
-        Some2(
-            some: some
         )
     }
 }

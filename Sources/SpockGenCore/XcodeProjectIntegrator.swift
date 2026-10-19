@@ -97,32 +97,49 @@ public struct XcodeProjectIntegrator: Sendable {
         var content = originalContent
         var modified = false
 
-        // 1. Verificar si Stubs.generated.swift ya está referenciado
-        if !content.contains(generatedFileName) {
-            // Inyectar PBXBuildFile
+        // 1. Comprobar granularmente cada sección requerida
+        let isFileReferenced = content.contains("/* \(generatedFileName) */ = {isa = PBXFileReference")
+        let isBuildFileReferenced = content.contains("/* \(generatedFileName) in Sources */ = {isa = PBXBuildFile")
+        let isInSourcesPhase = content.contains("/* \(generatedFileName) in Sources */,")
+        let isInGroup = content.contains("/* \(generatedFileName) */,")
+
+        // 1.1 Inyectar PBXBuildFile si falta
+        if !isBuildFileReferenced {
             let buildFile = "\t\t\(defaultBuildFileId) /* \(generatedFileName) in Sources */ = {isa = PBXBuildFile; fileRef = \(defaultFileRefId) /* \(generatedFileName) */; };\n"
             content = content.replaceOnce(target: "/* Begin PBXBuildFile section */\n", replacement: "/* Begin PBXBuildFile section */\n" + buildFile)
+            modified = true
+        }
 
-            // Inyectar PBXFileReference
+        // 1.2 Inyectar PBXFileReference si falta
+        if !isFileReferenced {
             let fileRef = "\t\t\(defaultFileRefId) /* \(generatedFileName) */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = \(generatedFileName); sourceTree = \"<group>\"; };\n"
             content = content.replaceOnce(target: "/* Begin PBXFileReference section */\n", replacement: "/* Begin PBXFileReference section */\n" + fileRef)
+            modified = true
+        }
 
-            // Inyectar en PBXGroup de Tests
+        // 1.3 Inyectar en PBXGroup si falta
+        if !isInGroup {
             if let groupRange = content.range(of: "path = ExampleTests;\n\t\t\tsourceTree = \"<group>\";") ?? content.range(of: "path = Tests;\n\t\t\tsourceTree = \"<group>\";") {
                 let prefix = content[..<groupRange.lowerBound]
                 if let lastParen = prefix.range(of: ");", options: .backwards) {
                     let insertion = "\t\t\t\t\(defaultFileRefId) /* \(generatedFileName) */,\n\t\t\t"
                     content.insert(contentsOf: insertion, at: lastParen.lowerBound)
+                    modified = true
                 }
             }
+        }
 
-            // Inyectar en PBXSourcesBuildPhase de Tests
-            if let sourcesRange = content.range(of: "BD6A96DAEC2042729D26303D /* UserServiceMockTests.swift in Sources */,\n") {
+        // 1.4 Inyectar en PBXSourcesBuildPhase si falta
+        if !isInSourcesPhase {
+            if let testSourcesRange = content.range(of: "UserStubTests.swift in Sources */,\n") ?? content.range(of: "UserServiceMockTests.swift in Sources */,\n") {
                 let insertion = "\t\t\t\t\(defaultBuildFileId) /* \(generatedFileName) in Sources */,\n"
-                content.insert(contentsOf: insertion, at: sourcesRange.upperBound)
+                content.insert(contentsOf: insertion, at: testSourcesRange.upperBound)
+                modified = true
+            } else if let genericSourcesRange = content.range(of: "/* Sources */ = {\n\t\t\tisa = PBXSourcesBuildPhase;\n\t\t\tbuildActionMask = 2147483647;\n\t\t\tfiles = (\n", options: .backwards) {
+                let insertion = "\t\t\t\t\(defaultBuildFileId) /* \(generatedFileName) in Sources */,\n"
+                content.insert(contentsOf: insertion, at: genericSourcesRange.upperBound)
+                modified = true
             }
-
-            modified = true
         }
 
         // 2. Verificar si el Run Script Phase ya está presente
