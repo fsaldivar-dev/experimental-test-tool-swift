@@ -52,12 +52,14 @@ public final class SpockGenEngine: Sendable {
 
         // 2. Comprobar Caché Incremental
         let cacheManager: CacheManager?
+        let cachedManifest: SpockCacheManifest?
         if let cachePath = config.cachePath {
             let manager = CacheManager(cacheFilePath: cachePath)
             cacheManager = manager
+            cachedManifest = manager.loadManifest()
 
             if fileManager.fileExists(atPath: config.outputPath),
-               manager.isCacheValid(for: allInputFiles, cachedManifest: manager.loadManifest()) {
+               manager.isCacheValid(for: allInputFiles, cachedManifest: cachedManifest) {
                 if config.verbose {
                     print("[SpockGen] ⚡ Cache HIT: Ningún archivo fuente o de test ha cambiado (< 5ms).")
                 }
@@ -65,6 +67,7 @@ public final class SpockGenEngine: Sendable {
             }
         } else {
             cacheManager = nil
+            cachedManifest = nil
         }
 
         // 3. Parsear Modelos de Producción y de Tests
@@ -93,8 +96,43 @@ public final class SpockGenEngine: Sendable {
 
         if allDeclarations.isEmpty {
             if config.verbose {
-                print("[SpockGen] ℹ️ No se encontraron anotaciones @Stub en los tests.")
+                print("[SpockGen] ℹ️ No se encontraron anotaciones @Stub activas.")
             }
+
+            // Cleaner: Si no hay stubs declarados (o todos fueron borrados),
+            // limpiamos Stubs.generated.swift para que no queden modelos fantasmas ni errores de compilación.
+            let cleanPlaceholder = """
+            //
+            //  Stubs.generated.swift
+            //  SpockSwift 2 - Prebuild Generated Stubs
+            //
+            //  Generated automatically by spock-gen.
+            //  No active @Stub declarations found.
+            //
+
+            import Foundation
+
+            """
+            let outputURL = URL(fileURLWithPath: config.outputPath)
+            let parentDir = outputURL.deletingLastPathComponent()
+            if !fileManager.fileExists(atPath: parentDir.path) {
+                try fileManager.createDirectory(at: parentDir, withIntermediateDirectories: true)
+            }
+            try cleanPlaceholder.write(to: outputURL, atomically: true, encoding: .utf8)
+
+            if let cacheManager = cacheManager {
+                let manifest = cacheManager.createManifest(
+                    filePaths: allInputFiles,
+                    generatedCode: cleanPlaceholder,
+                    generatedModels: []
+                )
+                try? cacheManager.saveManifest(manifest)
+            }
+
+            if let cached = cachedManifest, !cached.generatedModels.isEmpty {
+                print("[SpockGen] 🧹 Cleaner: Se purgaron todos los stubs huérfanos (\(cached.generatedModels.joined(separator: ", "))).")
+            }
+
             return .noStubsFound
         }
 
@@ -115,6 +153,15 @@ public final class SpockGenEngine: Sendable {
             print("[SpockGen] ⚠️ Ciclo detectado en dependencias: \(cycle)")
         }
 
+        // Cleaner: Detectar si algún modelo previamente generado ya no existe en el nuevo árbol
+        let currentModelNames = Set(autoTreeResult.modelsToGenerate.map(\.name))
+        if let previousModels = cachedManifest?.generatedModels, !previousModels.isEmpty {
+            let purgedModels = previousModels.filter { !currentModelNames.contains($0) }
+            if !purgedModels.isEmpty {
+                print("[SpockGen] 🧹 Cleaner: Modelos eliminados purgados de los stubs: \(purgedModels.joined(separator: ", "))")
+            }
+        }
+
         // 7. Generar código Swift limpio
         let generator = CodeGenerator()
         let generatedSwift = generator.generate(
@@ -133,7 +180,11 @@ public final class SpockGenEngine: Sendable {
 
         // 9. Actualizar Manifiesto de Caché
         if let cacheManager = cacheManager {
-            let manifest = cacheManager.createManifest(filePaths: allInputFiles, generatedCode: generatedSwift)
+            let manifest = cacheManager.createManifest(
+                filePaths: allInputFiles,
+                generatedCode: generatedSwift,
+                generatedModels: Array(currentModelNames).sorted()
+            )
             try? cacheManager.saveManifest(manifest)
         }
 

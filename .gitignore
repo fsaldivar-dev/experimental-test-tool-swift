@@ -48,6 +48,8 @@ playground.xcworkspace
 
 .build/
 .spock-cache.json
+.spock-daemon.log
+.spock-daemon.pid
 .DS_Store
 *.DS_Store
 

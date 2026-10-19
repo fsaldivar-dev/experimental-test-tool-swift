@@ -473,6 +473,116 @@ struct SpockGenPhase6Tests {
         #expect(foundPath != nil)
         #expect(foundPath?.hasSuffix("Example/Example.xcodeproj/project.pbxproj") == true)
     }
+
+    @Test("Cleaner purga stubs huérfanos cuando se eliminan las declaraciones @Stub")
+    func testCleanerPurgesOrphanedStubs() throws {
+        let tempDir = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        try FileManager.default.createDirectory(at: tempDir, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: tempDir) }
+
+        let sourcesDir = tempDir.appendingPathComponent("Sources")
+        let testsDir = tempDir.appendingPathComponent("Tests")
+        try FileManager.default.createDirectory(at: sourcesDir, withIntermediateDirectories: true)
+        try FileManager.default.createDirectory(at: testsDir, withIntermediateDirectories: true)
+
+        let userSwift = sourcesDir.appendingPathComponent("User.swift")
+        try "struct User { var name: String }".write(to: userSwift, atomically: true, encoding: .utf8)
+
+        let testSwift = testsDir.appendingPathComponent("UserTests.swift")
+        try "@Stub extension User {}".write(to: testSwift, atomically: true, encoding: .utf8)
+
+        let outputSwift = testsDir.appendingPathComponent("Stubs.generated.swift")
+        let cacheFile = tempDir.appendingPathComponent(".cache.json")
+
+        let config = SpockGenEngine.Configuration(
+            sourcesDirectories: [sourcesDir.path],
+            testsDirectories: [testsDir.path],
+            outputPath: outputSwift.path,
+            cachePath: cacheFile.path
+        )
+        let engine = SpockGenEngine(config: config)
+
+        // 1. Primera ejecución: genera stubs
+        let result1 = try engine.run()
+        guard case .generated(let count, _) = result1 else {
+            Issue.record("Debió generar stubs")
+            return
+        }
+        #expect(count == 1)
+        let content1 = try String(contentsOf: outputSwift, encoding: .utf8)
+        #expect(content1.contains("extension User {"))
+
+        // 2. El usuario elimina la anotación @Stub
+        try "// Sin anotaciones @Stub".write(to: testSwift, atomically: true, encoding: .utf8)
+
+        // 3. Segunda ejecución: el cleaner debe limpiar Stubs.generated.swift para que no queden stubs huérfanos
+        let result2 = try engine.run()
+        #expect(result2 == .noStubsFound)
+        let content2 = try String(contentsOf: outputSwift, encoding: .utf8)
+        #expect(!content2.contains("extension User {"))
+        #expect(content2.contains("No active @Stub declarations found."))
+    }
+
+    @Test("DaemonManager gestiona archivo PID y estado del proceso")
+    func testDaemonManagerLifecycle() throws {
+        let tempPidFile = FileManager.default.temporaryDirectory.appendingPathComponent("test-\(UUID().uuidString).pid")
+        let tempLogFile = FileManager.default.temporaryDirectory.appendingPathComponent("test-\(UUID().uuidString).log")
+        defer {
+            try? FileManager.default.removeItem(at: tempPidFile)
+            try? FileManager.default.removeItem(at: tempLogFile)
+        }
+
+        let manager = DaemonManager(pidFilePath: tempPidFile.path, logFilePath: tempLogFile.path)
+
+        // Inicialmente detenido
+        #expect(manager.status().isRunning == false)
+
+        // Guardar PID del proceso actual
+        let currentPid = ProcessInfo.processInfo.processIdentifier
+        try manager.savePid(currentPid)
+
+        // Debe reportarse activo
+        let activeStatus = manager.status()
+        #expect(activeStatus.isRunning == true)
+        #expect(activeStatus.pid == currentPid)
+        #expect(manager.readPid() == currentPid)
+
+        // Limpiar archivo PID
+        manager.removePidFile()
+        #expect(manager.status().isRunning == false)
+    }
+
+    @Test("CacheManager serializa y deserializa generatedModels con compatibilidad retroactiva")
+    func testCacheManagerGeneratedModels() throws {
+        let manifest = SpockCacheManifest(
+            version: "2.0.0",
+            fileHashes: ["File.swift": "abc123hash"],
+            outputHash: "outputHash456",
+            generatedModels: ["User", "Profile"]
+        )
+
+        let encoder = JSONEncoder()
+        let data = try encoder.encode(manifest)
+
+        let decoder = JSONDecoder()
+        let decoded = try decoder.decode(SpockCacheManifest.self, from: data)
+
+        #expect(decoded.generatedModels == ["User", "Profile"])
+        #expect(decoded.fileHashes["File.swift"] == "abc123hash")
+
+        // Probar retrocompatibilidad con JSON sin generatedModels
+        let legacyJson = """
+        {
+            "version": "2.0.0",
+            "fileHashes": { "Old.swift": "oldHash" },
+            "outputHash": "outHash"
+        }
+        """.data(using: .utf8)!
+
+        let legacyDecoded = try decoder.decode(SpockCacheManifest.self, from: legacyJson)
+        #expect(legacyDecoded.generatedModels == [])
+        #expect(legacyDecoded.fileHashes["Old.swift"] == "oldHash")
+    }
 }
 
 

@@ -75,15 +75,32 @@ public final class FileWatcher: @unchecked Sendable {
 
     private func checkTimestamps() {
         var hasChanges = false
-        for (file, lastDate) in scanCurrentTimestamps() {
-            if let prevDate = lastFileTimestamps[file] {
-                if lastDate > prevDate {
+        let current = scanCurrentTimestamps()
+
+        // 1. Detectar archivos eliminados o agregados
+        if current.count != lastFileTimestamps.count {
+            hasChanges = true
+        } else {
+            // 2. Detectar refactors de rutas o archivos renombrados
+            for file in lastFileTimestamps.keys {
+                if current[file] == nil {
                     hasChanges = true
                     break
                 }
-            } else {
-                hasChanges = true
-                break
+            }
+            // 3. Detectar modificaciones en archivos existentes
+            if !hasChanges {
+                for (file, lastDate) in current {
+                    if let prevDate = lastFileTimestamps[file] {
+                        if lastDate > prevDate {
+                            hasChanges = true
+                            break
+                        }
+                    } else {
+                        hasChanges = true
+                        break
+                    }
+                }
             }
         }
 

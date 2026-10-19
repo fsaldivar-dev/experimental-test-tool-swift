@@ -1,20 +1,37 @@
 import Foundation
 import CryptoKit
 
-/// Representa el manifiesto persistido en `.spock-cache.json`
 public struct SpockCacheManifest: Codable, Sendable, Equatable {
     public var version: String
     public var fileHashes: [String: String] // ruta o identificador -> sha256
     public var outputHash: String?
+    public var generatedModels: [String]
 
     public init(
         version: String = "2.0.0",
         fileHashes: [String: String] = [:],
-        outputHash: String? = nil
+        outputHash: String? = nil,
+        generatedModels: [String] = []
     ) {
         self.version = version
         self.fileHashes = fileHashes
         self.outputHash = outputHash
+        self.generatedModels = generatedModels
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case version
+        case fileHashes
+        case outputHash
+        case generatedModels
+    }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.version = try container.decodeIfPresent(String.self, forKey: .version) ?? "2.0.0"
+        self.fileHashes = try container.decodeIfPresent([String: String].self, forKey: .fileHashes) ?? [:]
+        self.outputHash = try container.decodeIfPresent(String.self, forKey: .outputHash)
+        self.generatedModels = try container.decodeIfPresent([String].self, forKey: .generatedModels) ?? []
     }
 }
 
@@ -91,10 +108,11 @@ public final class CacheManager: Sendable {
         return true
     }
 
-    /// Construye un nuevo manifiesto a partir de una lista de archivos y el contenido generado
+    /// Construye un nuevo manifiesto a partir de una lista de archivos, el contenido generado y los modelos generados
     public func createManifest(
         filePaths: [String],
-        generatedCode: String
+        generatedCode: String,
+        generatedModels: [String] = []
     ) -> SpockCacheManifest {
         var hashes: [String: String] = [:]
         for path in filePaths {
@@ -106,7 +124,8 @@ public final class CacheManager: Sendable {
         return SpockCacheManifest(
             version: "2.0.0",
             fileHashes: hashes,
-            outputHash: codeHash
+            outputHash: codeHash,
+            generatedModels: generatedModels
         )
     }
 }
