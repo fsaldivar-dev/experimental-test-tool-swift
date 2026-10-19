@@ -115,9 +115,75 @@ Para resolver estos problemas de raíz, **SpockSwift 2** redefine por completo l
 4. **Deduplicación Consciente del Archivo Fuente:**
    Si `@Stub extension User` se declara en dos archivos de prueba diferentes, el generador sabe qué archivo lo originó y evita generar extensiones duplicadas (*"invalid redeclaration"*).
 5. **Caché Inteligente Incremental (SHA256):**
-   Si los modelos no cambian, el prebuild no reescribe nada en disco y toma **0 ms**. Si un modelo cambia en producción, actualiza la firma del stub automáticamente.
+   Si los modelos no cambian, el prebuild no reescribe nada en disco y toma **< 5 ms**. Si un modelo cambia en producción, actualiza la firma del stub automáticamente.
 6. **Modernización de `SpockMock` para Swift 6:**
-   Mocks thread-safe, preparados para actores y Swift Testing (`@Test` / `#expect`).
+   Mocks thread-safe protegidos contra data races, preparados para concurrencia estricta y Swift Testing (`@Test` / `#expect`).
+
+---
+
+## 🛠️ 4. Uso de SpockSwift 2
+
+### En tu `Package.swift` (Target de Tests)
+
+Conecta el plugin de compilación automática en tu target de pruebas:
+
+```swift
+// swift-tools-version: 6.0
+.testTarget(
+    name: "MyFeatureTests",
+    dependencies: [
+        "MyFeature",
+        .product(name: "SpockSwift", package: "experimental-test-tool-swift")
+    ],
+    plugins: [
+        .plugin(name: "SpockPlugin", package: "experimental-test-tool-swift")
+    ]
+)
+```
+
+### En tus archivos de Test
+
+Simplemente declara qué modelos necesitas en tu archivo de prueba con `@Stub`:
+
+```swift
+import Testing
+import SpockSwift
+@testable import MyFeature
+
+// 1. Declaras qué stubs deseas para tu suite de pruebas:
+@Stub
+extension User {}
+
+@Suite("User Tests")
+struct UserTests {
+    @Test("Prueba con stub por defecto")
+    func testDefault() {
+        // Generado automáticamente con .stub(...) y autoTree para todos sus hijos:
+        let user = User.stub()
+        #expect(!user.name.isEmpty)
+        #expect(user.pet.name == "dummy_name")
+    }
+
+    @Test("Prueba con campos personalizados")
+    func testCustom() {
+        let user = User.stub(name: "Francisco", pet: .stub(name: "Firulais"))
+        #expect(user.name == "Francisco")
+        #expect(user.pet.name == "Firulais")
+    }
+}
+```
+
+### Ejecución por Línea de Comandos (`spock-gen` CLI)
+
+También puedes usar `spock-gen` de forma manual o en un Build Phase de Xcode (`.xcodeproj`):
+
+```bash
+swift run spock-gen \
+  --sources Sources/ \
+  --tests Tests/ \
+  --output Tests/Generated/Stubs.generated.swift \
+  --cache .spock-cache.json
+```
 
 ---
 
