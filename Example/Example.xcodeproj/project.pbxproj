@@ -136,9 +136,9 @@
 		DEBD4B00168E447ABAFCB246 /* ExampleTests */ = {
 			isa = PBXGroup;
 			children = (
-								467F1FBD7E554847B5B76584 /* Stubs.generated.swift */,
 				E7FFAD3E91B14831B429A8C8 /* UserStubTests.swift */,
 				FC03D86FE13847BEB41B3724 /* UserServiceMockTests.swift */,
+							467F1FBD7E554847B5B76584 /* Stubs.generated.swift */,
 			);
 			path = ExampleTests;
 			sourceTree = "<group>";

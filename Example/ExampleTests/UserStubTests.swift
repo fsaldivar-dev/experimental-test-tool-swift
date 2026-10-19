@@ -15,16 +15,8 @@ import SpockSwift
 extension User {}
 
 @Stub
-struct TestCustomModel {
-    var some: String
-}
-@Stub
-struct NewName {
-    var name: String
-}
-
-struct Some {
-    var nome: String
+struct AutoSaveTest {
+    var title: String
 }
 
 @Suite("Example - Stubs y autoTree")
@@ -59,21 +51,12 @@ struct UserStubTests {
         #expect(customUser.profile.pet.age == 3)
     }
 
-    @Test("TestCustomModel.stub() generado automáticamente desde @Stub struct en tests")
-    func testCustomModelStub() {
-        let model = TestCustomModel.stub()
-        #expect(model.some == "dummy_some")
+    @Test("AutoSaveTest.stub() generado automáticamente desde @Stub struct")
+    func testAutoSaveTestStub() {
+        let model = AutoSaveTest.stub()
+        #expect(model.title == "dummy_title")
 
-        let custom = TestCustomModel.stub(some: "Hola Mundo")
-        #expect(custom.some == "Hola Mundo")
-    }
-
-    @Test("NewName.stub() generado automáticamente desde @Stub struct")
-    func testNewNameStub() {
-        let model = NewName.stub()
-        #expect(model.name == "dummy_name")
-
-        let custom = NewName.stub(name: "SwiftDager")
-        #expect(custom.name == "SwiftDager")
+        let custom = AutoSaveTest.stub(title: "Mi Titulo")
+        #expect(custom.title == "Mi Titulo")
     }
 }
