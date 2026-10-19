@@ -1,231 +1,143 @@
-# experimental-test-tool-swift
+# 🖖 SpockSwift (v1.0.0)
 
-
-<img width="640" alt="Captura de Pantalla 2022-08-08 a la(s) 7 07 24" src="https://user-images.githubusercontent.com/16517868/183414396-108611c1-8585-4ce5-8b4f-088ea4d15f04.png">
+<img width="640" alt="SpockSwift Banner" src="https://user-images.githubusercontent.com/16517868/183414396-108611c1-8585-4ce5-8b4f-088ea4d15f04.png">
 
 [![GitHub issues](https://img.shields.io/github/issues/fsaldivar-dev/experimental-test-tool-swift?style=for-the-badge)](https://github.com/fsaldivar-dev/experimental-test-tool-swift/issues)
-[![GitHub forks](https://img.shields.io/github/forks/fsaldivar-dev/experimental-test-tool-swift?style=for-the-badge)](https://github.com/fsaldivar-dev/experimental-test-tool-swift/network)
 [![GitHub stars](https://img.shields.io/github/stars/fsaldivar-dev/experimental-test-tool-swift?style=for-the-badge)](https://github.com/fsaldivar-dev/experimental-test-tool-swift/stargazers)
 [![GitHub license](https://img.shields.io/github/license/fsaldivar-dev/experimental-test-tool-swift?style=for-the-badge)](https://github.com/fsaldivar-dev/experimental-test-tool-swift/blob/main/LICENSE.md)
+![Swift Version](https://img.shields.io/badge/Swift-5.0+-orange?style=for-the-badge&logo=swift)
 ![Cocoapods](https://img.shields.io/cocoapods/v/SpockSwift?style=for-the-badge)
-![Cocoapods platforms](https://img.shields.io/cocoapods/p/SpockSwift?style=for-the-badge)
 
-Pod creado para facilitar la creación de pruebas únitarias mediante código simple
+Librería para Swift inspirada en el framework **Spock** (de Java/Groovy) diseñada para agilizar y simplificar la creación de **Mocks, Dummies y Spies** mediante código declarativo y ligero.
 
-# Roadmap
+---
 
-|                Roadmap             |    Estado     |
-| -----------------------------------| ------------- |
-| Crear código base                  | ✅            |
-| SwiftPackage                       | ✅            |
-| [CocoaPods](https://cocoapods.org) | ✅            |
-| Example                            | ✅            |
-| [Simple Dummy](./Sources/SpockDummy/assets//SpockableDummy.md)| ✅            |
-| Spy                                | ⌛ 👨‍💻         |
-| Mock                               | ⌛ 👨‍💻         |
-| Stubed                             | ⌛ 👨‍💻         |
-| UnitTest                           | ⌛ 👨‍💻         |
-| Documentación                      | ⌛  👨‍💻        |
-| Extensiones                        | ⌛  👨‍💻        |
+## 📖 1. ¿Cómo funcionaba SpockSwift v1.0.0?
 
+En su versión 1.0.0, SpockSwift abordó la falta de reflexión en Swift mediante dos componentes centrales:
 
-### Swift Package Manager
-Swift Package Manager es una herramienta para automatizar la distribución de código Swift y está integrado en el compilador Swift. Está en desarrollo temprano, pero experimental-annotation-swift admite su uso en plataformas compatibles.
+### A. Dummies Automáticos vía `Decodable` (`SpockDummy`)
+La idea consistió en usar el motor nativo de `Decodable` de Swift a través de un decodificador sintético (`SpockDecoder`) para instanciar estructuras complejas sin tener que llenar 20 parámetros a mano:
 
-
-Una vez que haya configurado su paquete Swift, agregar experimental-annotation-swift como dependencia es tan fácil como agregarlo al valor de dependencias de su Package.swift.
 ```swift
-dependencies: [
-    .package(url: "https://github.com/fsaldivar-dev/experimental-test-tool-swift", .upToNextMajor(from: "0.0.1"))
-]
-```
-
-### CocoaPods
-[CocoaPods](https://cocoapods.org) es un administrador de dependencias para proyectos Cocoa. Para obtener instrucciones de uso e instalación, visite su sitio web. Para integrar AnnotationSwift en su proyecto Xcode usando CocoaPods, especifíquelo en su `Podfile`:
-
-
-```ruby
-source 'https://github.com/CocoaPods/Specs.git'
-
-# Integration tests
-target 'YOUR_TESTING_TARGET' do
-  pod SpockSwift, '0.0.2'
-end
-```
-
-## [Dummy](./Sources/SpockDummy/assets//SpockableDummy.md)
-**Definición**
-Los objetos Dummy son objetos que no se utilizan en una prueba y solo actúan como marcadores de posición. Por lo general, no contiene ninguna implementación.
-<details>
-    <summary>Ejemplo</summary>
-    
-````Swift
-
+// En v1: El modelo requería conformar SpockDummy
 struct User: Codable, SpockDummy {
-  let name: String
-  var lastName: String
-  var age: Int
-  var profession: Profession
-}
-
-struct Profession: Codable, SpockDummy {
-  var name: String
-  var university: University
-}
-
-struct University: Codable: SpockDummy {
-   let name: String
-   var country: String
-}
-
-let user: User = try .dummy()
-print(user.name) // return ""
-print(user.age) // return 0
-print(user.profession.name) // return ""
-print(user.profession.university.name) // return ""
-print(user.profession.university.country) // return ""
-
-let user = try Profession.dummy()
-print(profession.name) // return ""
-print(profession.university.name) // return ""
-print(profession.university.country) // return ""
-
-let university = try University.dummy()
-print(university.name) // return ""
-print(university.country) // return ""
-````
-</details>
-
-## [Mock](./Sources/SpockMock/assets/SpockMock.md)
-
-| Caracteristica                 |     Estado    |     Test      |
-| -----------------------------  | ------------- | ------------- |
-| Spy                            |       ✅      |       ✅       |
-| Fake return                    |       ✅      |       ✅       |
-|--------------------------------|---------------|--------------  |
-| Soporte a diccionarios         |              ❌                |
-| Documentación                  |              ❌                |
-
-SpockMock librería creada para burlar implementación de funciones.
-
-<details>
-    <summary>Ejemplo</summary>
-    
-````Swift
-
-struct User: Decodable {
     let name: String
-    let email: String
-    let phone: String
-    let age: Int
+    var age: Int
+    var profession: Profession
 }
 
+// Generación con valores por defecto:
+let user: User = try .dummy()
 
-protocol Interactor {
-    func fetchAllUserAction() -> [Users]
-}
+// Sobreescritura mediante strings:
+let customUser: User = try .dummy(with: .init(at: "name", with: "Francisco"))
+```
 
-protocol View {
-    func showUers(users: [Users])
-}
+### B. Mocks y Spies mediante Property Wrappers (`@Stubbed` y `SpockMock`)
+Permite registrar llamadas, contar invocaciones y mockear retornos sin herramientas externas pesadas (como Cuckoo o Sourcery):
 
-final class Presenter {
-    private let interactor: Interactor
-    private let view: View
-
-    init(view: View, interactor: Interactor) {
-      self.interactor = interactor
-      self.view = view
-    }
-    
-    func loadData() {
-        let result = interactor.getFetchUsers()
-        view.showUsers(users: result)
-    }
-}
-````
-    
-### Mocks
-   
-````Swift
-    
-/// Create Mocks
+```swift
 final class MockInteractor: Interactor, SpockMock {
     @Stubbed<(), [User]>
     var fetchAllUserAction
-    func fetchAllUser() -> [Users]
+    
+    func fetchAllUser() -> [User] {
         try? fetchAllUserAction.onCall(()) ?? []
     }
 }
 
-final class MockView: View, SpockMock {
-    
-    @Stubbed<[User], Void>
-    var showUersAction
-    func showUers(users: [Users]) {
-        try? loadUserListAction.onCall(userList)
-    }
-    
-}    
-````
-   
-#### Test
-    
-````Swift
-    
-extension User: SpockDummy, Equatable {
-    static func == (lhs: User, rhs: User) -> Bool {
-        lhs.name == rhs.name &&
-        lhs.phone == rhs.phone &&
-        lhs.age == rhs.age &&
-        lhs.email == rhs.email
-    }
-}
+// En el test:
+mockInteractor.fetchAllUserAction.whenRun { _ in expectedUsers }
+presenter.loadData()
 
-    
-final class SpockMockTest: XCTestCase {
-    var presenter: Presenter!
-    var mockInteractor = MockInteractor()
-    var mockView = MockView()
-    
-    override func setUpWithError() throws {
-        presenter = PresenterImpl(view: mockView,
-                                  interactor: mockInteractor,
-                                  task: mockTask)
-    }
+XCTAssert(mockInteractor.isInvoked(stub: { $0.fetchAllUserAction }))
+```
 
-    override func tearDownWithError() throws {
-        presenter = nil
-    }
+---
 
-    func testLoadData() async throws {
-         // Arrage
-        /// Create dummy List
-        let listUserSpected: [User] = [
-            try .dummy(with: .init(at: "name", with: "Fran")),
-            try .dummy(with: .init(at: "name", with: "Javi"))
-        ]
-        
-        // wehn call fetchAllUser return list spected
-        mockInteractor.fetchAllUserAction.whenRun { _ in
-            listUserSpected
-        }
-        
-        // Act, execute load data
-        presenter.loadData()
-        
-        // Accert
-        XCTAssert(mockInteractor.isInvoked(stub: { $0.fetchAllUserAction }))
-        XCTAssert(mockView.isInvoked(stub: {$0.showUers}))
-        XCTAssert(mockView.compare(stub: {$0.showUers}, to: listUserSpected))
-    }
-}
+## 🛑 2. Diagnóstico Técnico: Límites y Dolores Reales de v1.0.0
 
-````
-</details>
+A pesar de ser un experimento ingenioso, la implementación basada en `Decodable` demostró severas limitaciones en proyectos de producción:
 
-# Author & License
+### 💥 Dolor 1: Contaminación de Entidades de Dominio (Clean Architecture Roto)
+* **El problema:** Obligaba a que tus modelos de negocio de producción (`struct User`, `struct Order`) conformaran `SpockDummy: Decodable`.
+* **Consecuencia:** Contamina el dominio con protocolos de testing. Peor aún: si una entidad tiene propiedades no-Codable (closures como `() -> Void`, delegados o tipos `Any`), **Swift prohíbe que sea `Decodable`** y el modelo no puede usarse con la librería.
 
-Proyecto creado por **Francisco Javier Saldivar** [![image](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](www.linkedin.com/in/fsaldivar-dev)
+### 💥 Dolor 2: El Desastre de los Enums, UUIDs, Dates y URLs (Runtime Crashes)
+* **El problema:** `SpockDecoder` inyecta valores primitivos ciegos: `""` para Strings y `0` para números.
+* **El fallo:**
+  ```swift
+  enum Role: String, Codable { case admin = "ADMIN", client = "CLIENT" }
+  ```
+  Al decodificar `Role`, `SpockDecoder` le entregaba `""`. Swift ejecutaba `Role(rawValue: "")`, fallaba y lanzaba `DecodingError.dataCorrupted`, **haciendo crashear la prueba unitaria**.
+  Lo mismo ocurría con `UUID(uuidString: "")` y `URL(string: "")`, que devolvían `nil` y abortaban la inicialización.
 
+### 💥 Dolor 3: Strings Mágicos sin Tipado Estático
+* Para sobreescribir un campo se usaban strings literales: `.init(at: "name", with: "Javi")`.
+* Si en el modelo de producción se renombraba `name` a `fullName`, el test no fallaba en compilación; fallaba silenciosamente en runtime.
 
+### 💥 Dolor 4: Concurrencia y Swift 6 Data Races
+* Las clases `Spy` y `Stub` no contaban con sincronización por hilos ni aislamiento a actores. Al usarse dentro de `Task` asíncronos concurrentes, producían condiciones de carrera en `invokedCount += 1`.
+
+---
+
+## 🚀 3. La Evolución: Hacia SpockSwift 2 (`Spock 2`)
+
+Para resolver estos problemas de raíz, **SpockSwift 2** redefine por completo la estrategia: **abandonamos los trucos de runtime con `Decodable` y adoptamos una arquitectura híbrida de Prebuild Tool + Macros de Swift**.
+
+```text
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                       ARQUITECTURA DE SPOCK 2                               │
+├─────────────────────────────────────┬───────────────────────────────────────┤
+│ En tus Tests (Solo lo que necesitas)│ Generado Automáticamente (Stubs)      │
+├─────────────────────────────────────┼───────────────────────────────────────┤
+│ @Stub                               │ extension User {                      │
+│ extension User {}                   │     public static func stub(          │
+│                                     │         name: String = "dummy_name",  │
+│                                     │         pet: Pet = .stub()            │
+│                                     │     ) -> User { ... }                 │
+│                                     │ }                                     │
+│                                     │ extension Pet {                       │
+│                                     │     public static func stub(...)      │
+│                                     │ }                                     │
+└─────────────────────────────────────┴───────────────────────────────────────┘
+```
+
+### Pilares de Spock 2:
+
+1. **Cero Contaminación en Producción:**
+   Tus modelos de dominio en `Sources/` no llevan ningún protocolo, ningún import y ninguna anotación de testing.
+2. **Sintaxis Directa `.stub(...)`:**
+   Sin envoltorios innecesarios ni nombres largos. Extensiones nativas en Swift con parámetros con valores por defecto.
+3. **Motor `autoTree` (Resolución Recursiva en Cascada):**
+   Si `User` contiene a `Pet`, y `Pet` contiene a `Breed`, anotar `@Stub extension User {}` detecta todo el árbol y genera los stubs de los hijos automáticamente para que `.stub()` se encadene solo.
+4. **Deduplicación Consciente del Archivo Fuente:**
+   Si `@Stub extension User` se declara en dos archivos de prueba diferentes, el generador sabe qué archivo lo originó y evita generar extensiones duplicadas (*"invalid redeclaration"*).
+5. **Caché Inteligente Incremental (SHA256):**
+   Si los modelos no cambian, el prebuild no reescribe nada en disco y toma **0 ms**. Si un modelo cambia en producción, actualiza la firma del stub automáticamente.
+6. **Modernización de `SpockMock` para Swift 6:**
+   Mocks thread-safe, preparados para actores y Swift Testing (`@Test` / `#expect`).
+
+---
+
+## 📦 Instalación Legacy (v1.0.0)
+
+### Swift Package Manager
+```swift
+dependencies: [
+    .package(url: "https://github.com/fsaldivar-dev/experimental-test-tool-swift", from: "1.0.0")
+]
+```
+
+### CocoaPods
+```ruby
+pod 'SpockSwift', '~> 1.0.0'
+```
+
+---
+
+## 👤 Autor y Licencia
+
+Creado por **Francisco Javier Saldivar** ([LinkedIn](https://www.linkedin.com/in/fsaldivar-dev))  
+Licenciado bajo **MIT License**.

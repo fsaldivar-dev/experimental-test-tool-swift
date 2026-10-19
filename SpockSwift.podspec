@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'SpockSwift'
-  s.version          = '0.0.1'
+  s.version          = '1.0.0'
   s.summary          = 'Libreria para agulizar el desarrollo de pruebas'
   s.homepage         = 'https://github.com/fsaldivar-dev/experimental-test-tool-swift'
   s.license          = { :type => 'MIT', :file => 'LICENSE.md' }
