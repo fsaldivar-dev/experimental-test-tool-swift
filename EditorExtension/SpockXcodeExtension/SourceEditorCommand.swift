@@ -79,8 +79,22 @@ final class SourceEditorCommand: NSObject, XCSourceEditorCommand {
         }
 
         let typeName = selectedText.isEmpty ? "Model" : selectedText
-        let stubSnippet = "\n@Stub\nextension \(typeName) {}\n"
 
+        // Si el modelo seleccionado vive en este mismo archivo, generar su stub completo inmediatamente
+        let models = ModelParser.parse(source: buffer.completeBuffer)
+        if let matchedModel = models.first(where: { $0.name == typeName }) {
+            let generator = CodeGenerator()
+            let fullExtension = generator.generate(models: [matchedModel], availableModels: [matchedModel.name: matchedModel])
+            if let extStart = fullExtension.range(of: "extension \(matchedModel.name)") {
+                let stubSnippet = "\n@Stub\n" + String(fullExtension[extStart.lowerBound...]) + "\n"
+                let insertIndex = min(endLine + 1, lines.count)
+                lines.insert(stubSnippet, at: insertIndex)
+                _ = runEngineInProcess()
+                return
+            }
+        }
+
+        let stubSnippet = "\n@Stub\nextension \(typeName) {}\n"
         let insertIndex = min(endLine + 1, lines.count)
         lines.insert(stubSnippet, at: insertIndex)
 
@@ -89,7 +103,11 @@ final class SourceEditorCommand: NSObject, XCSourceEditorCommand {
     }
 
     private func handleGenerateStubs(invocation: XCSourceEditorCommandInvocation) throws {
-        // Ejecutar motor de generación in-process
+        // 1. Si el archivo activo contiene definiciones de modelos locales (ej. MoreStub en tests),
+        // rellenar automáticamente cualquier bloque @Stub extension vacío en el editor
+        populateEmptyStubExtensions(in: invocation.buffer)
+
+        // 2. Ejecutar motor de generación in-process para el proyecto
         if let generated = runEngineInProcess() {
             if isStubsGeneratedBuffer(invocation.buffer) {
                 invocation.buffer.completeBuffer = generated
@@ -245,6 +263,37 @@ final class SourceEditorCommand: NSObject, XCSourceEditorCommand {
         }
 
         return start...end
+    }
+
+    private func populateEmptyStubExtensions(in buffer: XCSourceTextBuffer) {
+        let content = buffer.completeBuffer
+        let models = ModelParser.parse(source: content)
+        guard !models.isEmpty else { return }
+
+        var modelsByName: [String: ModelDefinition] = [:]
+        for m in models {
+            modelsByName[m.name] = m
+        }
+
+        let generator = CodeGenerator()
+
+        for model in models {
+            let extensionHeader = "extension \(model.name) {"
+            guard let range = content.range(of: extensionHeader) else { continue }
+            let after = content[range.upperBound...]
+            if let closingBrace = after.range(of: "}") {
+                let inside = String(after[..<closingBrace.lowerBound]).trimmingCharacters(in: .whitespacesAndNewlines)
+                // Si el bloque de la extensión no contiene 'func stub', está vacío
+                if !inside.contains("func stub") {
+                    let fullExtension = generator.generate(models: [model], availableModels: modelsByName)
+                    if let extStart = fullExtension.range(of: "extension \(model.name)") {
+                        let stubCode = String(fullExtension[extStart.lowerBound...])
+                        let oldBlock = String(content[range.lowerBound...closingBrace.upperBound])
+                        buffer.completeBuffer = buffer.completeBuffer.replacingOccurrences(of: oldBlock, with: stubCode)
+                    }
+                }
+            }
+        }
     }
 
     private func resolveConfiguration() -> SpockGenEngine.Configuration? {

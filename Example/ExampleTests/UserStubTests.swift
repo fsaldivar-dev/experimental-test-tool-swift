@@ -53,4 +53,13 @@ struct UserStubTests {
         #expect(customUser.profile.pet.age == 3)
     }
 
+    @Test("MoreStub.stub() declarado dentro del test funciona correctamente")
+    func testMoreStubInsideTest() {
+        let more = MoreStub.stub()
+        #expect(more.string == "dummy_string")
+
+        let custom = MoreStub.stub(string: "Hola Spock")
+        #expect(custom.string == "Hola Spock")
+    }
+
 }

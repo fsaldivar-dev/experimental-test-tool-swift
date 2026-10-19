@@ -54,3 +54,9 @@ public struct User: Equatable, Sendable {
         self.profile = profile
     }
 }
+
+
+public struct SomeStub {
+    var named: String
+    var age: Int
+}

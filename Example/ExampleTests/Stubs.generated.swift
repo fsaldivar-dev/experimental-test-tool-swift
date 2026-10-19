@@ -22,16 +22,6 @@ extension Pet {
     }
 }
 
-extension MoreStub {
-    public static func stub(
-        string: String = "dummy_string"
-    ) -> MoreStub {
-        MoreStub(
-            string: string
-        )
-    }
-}
-
 extension Profile {
     public static func stub(
         bio: String = "dummy_bio",
@@ -58,6 +48,16 @@ extension User {
             email: email,
             role: role,
             profile: profile
+        )
+    }
+}
+
+extension MoreStub {
+    public static func stub(
+        string: String = "dummy_string"
+    ) -> MoreStub {
+        MoreStub(
+            string: string
         )
     }
 }
