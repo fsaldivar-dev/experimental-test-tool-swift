@@ -183,3 +183,57 @@ struct SpockGenPhase3Tests {
     }
 }
 
+@Suite("SpockGenCore - Fase 4: CodeGenerator")
+struct SpockGenPhase4Tests {
+
+    @Test("CodeGenerator genera extensiones limpias con .stub(...)")
+    func testCodeGeneratorOutput() {
+        let roleEnum = ModelDefinition(name: "Role", filePath: "Role.swift", isEnum: true, enumCases: ["admin", "guest"])
+        let petModel = ModelDefinition(name: "Pet", filePath: "Pet.swift", properties: [
+            ModelProperty(name: "name", typeName: "String")
+        ])
+        let userModel = ModelDefinition(name: "User", filePath: "User.swift", properties: [
+            ModelProperty(name: "name", typeName: "String"),
+            ModelProperty(name: "role", typeName: "Role"),
+            ModelProperty(name: "pet", typeName: "Pet")
+        ])
+
+        let availableModels: [String: ModelDefinition] = [
+            "Role": roleEnum,
+            "Pet": petModel,
+            "User": userModel
+        ]
+
+        let generator = CodeGenerator()
+        let generatedCode = generator.generate(
+            models: [petModel, userModel],
+            availableModels: availableModels
+        )
+
+        // Verificar que Pet tiene su extension y .stub()
+        #expect(generatedCode.contains("extension Pet {"))
+        #expect(generatedCode.contains("public static func stub("))
+        #expect(generatedCode.contains("name: String = \"dummy_name\""))
+
+        // Verificar que User tiene su extension y encadena pet con .stub()
+        #expect(generatedCode.contains("extension User {"))
+        #expect(generatedCode.contains("role: Role = .admin"))
+        #expect(generatedCode.contains("pet: Pet = .stub()"))
+
+        // Los enums no deben tener bloque extension
+        #expect(!generatedCode.contains("extension Role {"))
+    }
+
+    @Test("CodeGenerator maneja structs vacíos sin parámetros")
+    func testCodeGeneratorEmptyStruct() {
+        let emptyModel = ModelDefinition(name: "EmptyModel", filePath: "Empty.swift", properties: [])
+        let generator = CodeGenerator()
+        let code = generator.generate(models: [emptyModel], availableModels: ["EmptyModel": emptyModel])
+
+        #expect(code.contains("extension EmptyModel {"))
+        #expect(code.contains("public static func stub() -> EmptyModel {"))
+        #expect(code.contains("EmptyModel()"))
+    }
+}
+
+
