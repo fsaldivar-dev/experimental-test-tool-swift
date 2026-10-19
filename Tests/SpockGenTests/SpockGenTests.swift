@@ -108,3 +108,78 @@ struct SpockGenPhase2Tests {
         #expect(result.warnings[0].contains("ProfileTests.swift"))
     }
 }
+
+@Suite("SpockGenCore - Fase 3: autoTree y Default Values")
+struct SpockGenPhase3Tests {
+
+    @Test("DefaultValueProvider sintetiza valores inteligentes según el tipo")
+    func testDefaultValueProvider() {
+        let provider = DefaultValueProvider()
+        let availableModels: [String: ModelDefinition] = [
+            "Status": ModelDefinition(name: "Status", filePath: "Status.swift", isEnum: true, enumCases: ["active", "inactive"]),
+            "Pet": ModelDefinition(name: "Pet", filePath: "Pet.swift", isEnum: false, properties: [])
+        ]
+
+        #expect(provider.defaultValue(for: ModelProperty(name: "name", typeName: "String"), availableModels: availableModels) == "\"dummy_name\"")
+        #expect(provider.defaultValue(for: ModelProperty(name: "userId", typeName: "Int"), availableModels: availableModels) == "1")
+        #expect(provider.defaultValue(for: ModelProperty(name: "count", typeName: "Int"), availableModels: availableModels) == "0")
+        #expect(provider.defaultValue(for: ModelProperty(name: "isVerified", typeName: "Bool"), availableModels: availableModels) == "false")
+        #expect(provider.defaultValue(for: ModelProperty(name: "id", typeName: "UUID"), availableModels: availableModels) == "UUID()")
+        #expect(provider.defaultValue(for: ModelProperty(name: "createdAt", typeName: "Date"), availableModels: availableModels) == "Date()")
+        #expect(provider.defaultValue(for: ModelProperty(name: "website", typeName: "URL"), availableModels: availableModels) == "URL(string: \"https://example.com\")!")
+        #expect(provider.defaultValue(for: ModelProperty(name: "tags", typeName: "[String]"), availableModels: availableModels) == "[]")
+        #expect(provider.defaultValue(for: ModelProperty(name: "nickname", typeName: "String", isOptional: true), availableModels: availableModels) == "nil")
+        #expect(provider.defaultValue(for: ModelProperty(name: "status", typeName: "Status"), availableModels: availableModels) == ".active")
+        #expect(provider.defaultValue(for: ModelProperty(name: "pet", typeName: "Pet"), availableModels: availableModels) == ".stub()")
+    }
+
+    @Test("AutoTreeResolver resuelve árbol de 3 niveles A -> B -> C automáticamente")
+    func testAutoTreeCascading() {
+        let models: [String: ModelDefinition] = [
+            "Breed": ModelDefinition(name: "Breed", filePath: "Breed.swift", properties: [
+                ModelProperty(name: "name", typeName: "String")
+            ]),
+            "Pet": ModelDefinition(name: "Pet", filePath: "Pet.swift", properties: [
+                ModelProperty(name: "name", typeName: "String"),
+                ModelProperty(name: "breed", typeName: "Breed")
+            ]),
+            "User": ModelDefinition(name: "User", filePath: "User.swift", properties: [
+                ModelProperty(name: "name", typeName: "String"),
+                ModelProperty(name: "pet", typeName: "Pet")
+            ])
+        ]
+
+        let resolver = AutoTreeResolver()
+        // El developer en los tests SOLO pidió User
+        let result = resolver.resolve(rootTypes: ["User"], availableModels: models)
+
+        // Debe generar los 3: Breed, Pet, User en orden topológico
+        #expect(result.modelsToGenerate.count == 3)
+        let generatedNames = result.modelsToGenerate.map { $0.name }
+        #expect(generatedNames == ["Breed", "Pet", "User"])
+
+        // Pet y Breed deben figurar en autoDiscoveredTypes
+        #expect(result.autoDiscoveredTypes.contains("Pet"))
+        #expect(result.autoDiscoveredTypes.contains("Breed"))
+        #expect(result.detectedCycles.isEmpty)
+    }
+
+    @Test("AutoTreeResolver detecta ciclos infinitos sin crashear")
+    func testAutoTreeCycleDetection() {
+        let models: [String: ModelDefinition] = [
+            "NodeA": ModelDefinition(name: "NodeA", filePath: "NodeA.swift", properties: [
+                ModelProperty(name: "b", typeName: "NodeB")
+            ]),
+            "NodeB": ModelDefinition(name: "NodeB", filePath: "NodeB.swift", properties: [
+                ModelProperty(name: "a", typeName: "NodeA") // 👈 Ciclo: A -> B -> A
+            ])
+        ]
+
+        let resolver = AutoTreeResolver()
+        let result = resolver.resolve(rootTypes: ["NodeA"], availableModels: models)
+
+        #expect(result.detectedCycles.count > 0)
+        #expect(result.detectedCycles[0].contains("NodeA -> NodeB -> NodeA"))
+    }
+}
+
