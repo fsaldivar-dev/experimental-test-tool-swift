@@ -52,12 +52,14 @@ extension User {
     }
 }
 
-extension MoreStub {
+extension SomeStub {
     public static func stub(
-        string: String = "dummy_string"
-    ) -> MoreStub {
-        MoreStub(
-            string: string
+        named: String = "dummy_named",
+        age: Int = 0
+    ) -> SomeStub {
+        SomeStub(
+            named: named,
+            age: age
         )
     }
 }

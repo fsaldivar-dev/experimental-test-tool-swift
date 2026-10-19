@@ -103,18 +103,20 @@ final class SourceEditorCommand: NSObject, XCSourceEditorCommand {
     }
 
     private func handleGenerateStubs(invocation: XCSourceEditorCommandInvocation) throws {
-        // 1. Si el archivo activo contiene definiciones de modelos locales (ej. MoreStub en tests),
-        // rellenar automáticamente cualquier bloque @Stub extension vacío en el editor
-        populateEmptyStubExtensions(in: invocation.buffer)
+        let buffer = invocation.buffer
 
-        // 2. Ejecutar motor de generación in-process para el proyecto
+        if let config = resolveConfiguration() {
+            saveActiveBufferIfKnown(buffer: buffer, config: config)
+        }
+
+        // 1. Ejecutar motor de generación in-process para el proyecto
         if let generated = runEngineInProcess() {
-            if isStubsGeneratedBuffer(invocation.buffer) {
-                invocation.buffer.completeBuffer = generated
+            if isStubsGeneratedBuffer(buffer) {
+                buffer.completeBuffer = generated
             }
         } else if let diskContent = readDiskGeneratedStubs() {
-            if isStubsGeneratedBuffer(invocation.buffer) {
-                invocation.buffer.completeBuffer = diskContent
+            if isStubsGeneratedBuffer(buffer) {
+                buffer.completeBuffer = diskContent
             }
         }
     }
@@ -123,81 +125,67 @@ final class SourceEditorCommand: NSObject, XCSourceEditorCommand {
         let buffer = invocation.buffer
         let isStubsBuffer = isStubsGeneratedBuffer(buffer)
 
+        if let config = resolveConfiguration() {
+            saveActiveBufferIfKnown(buffer: buffer, config: config)
+        }
+
+        // 1. Si el usuario está viendo Stubs.generated.swift en el editor:
         if isStubsBuffer {
-            let lines = buffer.lines
-            var cleanedSpecificBlock = false
-
-            // 1. Si el cursor o selección está en o dentro de un bloque 'extension Model { ... }'
-            if let selections = buffer.selections as? [XCSourceTextRange], let selection = selections.first {
-                let currentLine = selection.start.line
-                if currentLine < lines.count, let range = findExtensionBlock(around: currentLine, in: lines) {
-                    for idx in stride(from: range.upperBound, through: range.lowerBound, by: -1) {
-                        if idx < lines.count {
-                            lines.removeObject(at: idx)
-                        }
-                    }
-                    cleanedSpecificBlock = true
-                    syncToDiskIfPossible(content: buffer.completeBuffer)
-                }
-            }
-
-            if cleanedSpecificBlock {
-                return
-            }
-
-            // 2. Si no hay bloque específico seleccionado, intentar recargar desde el motor o disco
-            // donde los stubs ya fueron limpiados de modelos huérfanos
             if let generated = runEngineInProcess() {
                 buffer.completeBuffer = generated
-                return
-            }
-
-            if let diskContent = readDiskGeneratedStubs(), !diskContent.isEmpty {
+                syncToDiskIfPossible(content: generated)
+            } else if let diskContent = readDiskGeneratedStubs(), !diskContent.isEmpty {
                 buffer.completeBuffer = diskContent
-                return
+            } else {
+                let cleanPlaceholder = """
+                //
+                //  Stubs.generated.swift
+                //  SpockSwift 2 - Prebuild Generated Stubs
+                //
+                //  Generated automatically by spock-gen clean.
+                //  No active @Stub declarations found.
+                //
+
+                import Foundation
+
+                """
+                buffer.completeBuffer = cleanPlaceholder
+                syncToDiskIfPossible(content: cleanPlaceholder)
             }
-
-            // 3. Fallback: resetear buffer a estado limpio
-            let cleanPlaceholder = """
-            //
-            //  Stubs.generated.swift
-            //  SpockSwift 2 - Prebuild Generated Stubs
-            //
-            //  Generated automatically by spock-gen clean.
-            //  No active @Stub declarations found.
-            //
-
-            import Foundation
-
-            """
-            buffer.completeBuffer = cleanPlaceholder
-            syncToDiskIfPossible(content: cleanPlaceholder)
             return
         }
 
-        // Si el archivo es un archivo de tests (ej. UserStubTests.swift)
-        // Eliminar las anotaciones @Stub seleccionadas
+        // 2. Si el usuario está en un archivo de test (ej. UserStubTests.swift)
+        let lines = buffer.lines
+
+        // A) Si hay selección específica, remover cualquier anotación @Stub o extension dentro de la selección
         if let selections = buffer.selections as? [XCSourceTextRange], let selection = selections.first {
             let startLine = selection.start.line
             let endLine = selection.end.line
-            let lines = buffer.lines
-
-            var toRemove = [Int]()
-            let searchStart = max(0, startLine - 1)
-            let searchEnd = min(lines.count - 1, endLine + 1)
-            for idx in searchStart...searchEnd {
-                let lineStr = lines[idx] as? String ?? ""
-                if lineStr.contains("@Stub") || lineStr.contains("extension ") {
-                    toRemove.append(idx)
+            if startLine != endLine || selection.start.column != selection.end.column {
+                var toRemove = [Int]()
+                let searchStart = max(0, startLine - 1)
+                let searchEnd = min(lines.count - 1, endLine + 1)
+                for idx in searchStart...searchEnd {
+                    let lineStr = lines[idx] as? String ?? ""
+                    if lineStr.contains("@Stub") || lineStr.contains("extension ") {
+                        toRemove.append(idx)
+                    }
+                }
+                for idx in toRemove.sorted(by: >) {
+                    lines.removeObject(at: idx)
                 }
             }
-            for idx in toRemove.sorted(by: >) {
-                lines.removeObject(at: idx)
-            }
-
-            // Tras remover la anotación, regenerar stubs en segundo plano para purgar
-            _ = runEngineInProcess()
         }
+
+        // B) Limpiar declaraciones @Stub de modelos eliminados (huérfanos) en el archivo actual
+        cleanOrphanedStubsInTestBuffer(buffer: buffer)
+
+        // C) Guardar cambios en disco y ejecutar motor para actualizar Stubs.generated.swift
+        if let config = resolveConfiguration() {
+            saveActiveBufferIfKnown(buffer: buffer, config: config)
+        }
+        _ = runEngineInProcess()
     }
 
     private func handleToggleDaemon(invocation: XCSourceEditorCommandInvocation) throws {
@@ -214,84 +202,135 @@ final class SourceEditorCommand: NSObject, XCSourceEditorCommand {
         return text.contains("Stubs.generated.swift") || text.contains("SpockSwift 2 - Prebuild Generated Stubs")
     }
 
-    private func findExtensionBlock(around lineIndex: Int, in lines: NSMutableArray) -> ClosedRange<Int>? {
-        guard lineIndex >= 0 && lineIndex < lines.count else { return nil }
+    private func saveActiveBufferIfKnown(buffer: XCSourceTextBuffer, config: SpockGenEngine.Configuration) {
+        if isStubsGeneratedBuffer(buffer) { return }
+        let text = buffer.completeBuffer
 
-        // Buscar el inicio de 'extension ' hacia arriba
-        var start = lineIndex
-        while start >= 0 {
-            let line = (lines[start] as? String ?? "").trimmingCharacters(in: .whitespaces)
-            if line.hasPrefix("extension ") || line.contains(" extension ") {
-                break
-            }
-            if lineIndex - start > 60 {
-                return nil
-            }
-            start -= 1
-        }
-        guard start >= 0 else { return nil }
-
-        // Desde 'start', buscar el cierre de llaves '{' ... '}'
-        var openBraces = 0
-        var foundOpening = false
-        var end = start
-
-        while end < lines.count {
-            let line = lines[end] as? String ?? ""
-            for char in line {
-                if char == "{" {
-                    openBraces += 1
-                    foundOpening = true
-                } else if char == "}" {
-                    openBraces -= 1
+        // 1. Buscar nombre de archivo en los comentarios iniciales: "//  UserStubTests.swift"
+        let lines = text.components(separatedBy: .newlines).prefix(10)
+        var fileName: String?
+        for line in lines {
+            let trimmed = line.trimmingCharacters(in: .whitespaces)
+            if trimmed.hasPrefix("//") && trimmed.contains(".swift") {
+                let parts = trimmed.components(separatedBy: .whitespaces)
+                if let match = parts.first(where: { $0.hasSuffix(".swift") }) {
+                    fileName = match
+                    break
                 }
             }
-            if foundOpening && openBraces <= 0 {
-                break
-            }
-            end += 1
         }
 
-        guard foundOpening && openBraces <= 0 && end < lines.count else { return nil }
+        let allDirs = config.sourcesDirectories + config.testsDirectories
+        let fm = FileManager.default
 
-        // Incluir una línea vacía posterior si existe
-        if end + 1 < lines.count {
-            let nextLine = (lines[end + 1] as? String ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
-            if nextLine.isEmpty {
-                end += 1
-            }
-        }
-
-        return start...end
-    }
-
-    private func populateEmptyStubExtensions(in buffer: XCSourceTextBuffer) {
-        let content = buffer.completeBuffer
-        let models = ModelParser.parse(source: content)
-        guard !models.isEmpty else { return }
-
-        var modelsByName: [String: ModelDefinition] = [:]
-        for m in models {
-            modelsByName[m.name] = m
-        }
-
-        let generator = CodeGenerator()
-
-        for model in models {
-            let extensionHeader = "extension \(model.name) {"
-            guard let range = content.range(of: extensionHeader) else { continue }
-            let after = content[range.upperBound...]
-            if let closingBrace = after.range(of: "}") {
-                let inside = String(after[..<closingBrace.lowerBound]).trimmingCharacters(in: .whitespacesAndNewlines)
-                // Si el bloque de la extensión no contiene 'func stub', está vacío
-                if !inside.contains("func stub") {
-                    let fullExtension = generator.generate(models: [model], availableModels: modelsByName)
-                    if let extStart = fullExtension.range(of: "extension \(model.name)") {
-                        let stubCode = String(fullExtension[extStart.lowerBound...])
-                        let oldBlock = String(content[range.lowerBound...closingBrace.upperBound])
-                        buffer.completeBuffer = buffer.completeBuffer.replacingOccurrences(of: oldBlock, with: stubCode)
+        if let targetName = fileName {
+            for dir in allDirs {
+                let candidate = (dir as NSString).appendingPathComponent(targetName)
+                if fm.fileExists(atPath: candidate) {
+                    try? text.write(toFile: candidate, atomically: true, encoding: .utf8)
+                    return
+                }
+                if let enumerator = fm.enumerator(atPath: dir) {
+                    while let relPath = enumerator.nextObject() as? String {
+                        if relPath.hasSuffix(targetName) {
+                            let full = (dir as NSString).appendingPathComponent(relPath)
+                            try? text.write(toFile: full, atomically: true, encoding: .utf8)
+                            return
+                        }
                     }
                 }
+            }
+        }
+    }
+
+    private func cleanOrphanedStubsInTestBuffer(buffer: XCSourceTextBuffer) {
+        guard let config = resolveConfiguration() else { return }
+
+        // Recolectar todos los nombres de modelos válidos en el proyecto
+        var availableModelNames = Set<String>()
+        let fm = FileManager.default
+        let allDirs = config.sourcesDirectories + config.testsDirectories
+
+        for dir in allDirs {
+            var isDir: ObjCBool = false
+            if fm.fileExists(atPath: dir, isDirectory: &isDir) {
+                if !isDir.boolValue && dir.hasSuffix(".swift") {
+                    if let content = try? String(contentsOfFile: dir, encoding: .utf8) {
+                        for m in ModelParser.parse(source: content, filePath: dir) {
+                            availableModelNames.insert(m.name)
+                        }
+                    }
+                    continue
+                }
+
+                if let enumerator = fm.enumerator(atPath: dir) {
+                    while let relPath = enumerator.nextObject() as? String {
+                        if relPath.hasSuffix(".swift") && !relPath.hasSuffix(".generated.swift") {
+                            let fullPath = (dir as NSString).appendingPathComponent(relPath)
+                            if let content = try? String(contentsOfFile: fullPath, encoding: .utf8) {
+                                for m in ModelParser.parse(source: content, filePath: fullPath) {
+                                    availableModelNames.insert(m.name)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // Incluir modelos definidos en el buffer actual
+        for m in ModelParser.parse(source: buffer.completeBuffer) {
+            availableModelNames.insert(m.name)
+        }
+
+        // Buscar anotaciones @Stub y extensiones de modelos que ya no existen
+        let lines = buffer.lines
+        var indicesToRemove = [Int]()
+
+        var i = 0
+        while i < lines.count {
+            let line = (lines[i] as? String ?? "").trimmingCharacters(in: .whitespaces)
+            if line.hasPrefix("@Stub") {
+                var targetType: String?
+                var extEndLine = i
+                for j in (i + 1)..<min(i + 5, lines.count) {
+                    let nextLine = (lines[j] as? String ?? "").trimmingCharacters(in: .whitespaces)
+                    if nextLine.hasPrefix("extension ") {
+                        let parts = nextLine.components(separatedBy: " ")
+                        if parts.count >= 2 {
+                            let rawName = parts[1].trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
+                            targetType = rawName
+                            extEndLine = j
+                            if nextLine.contains("}") {
+                                break
+                            }
+                            // Buscar cierre de llave '}'
+                            for k in (j + 1)..<min(j + 5, lines.count) {
+                                let closeLine = (lines[k] as? String ?? "").trimmingCharacters(in: .whitespaces)
+                                if closeLine.contains("}") {
+                                    extEndLine = k
+                                    break
+                                }
+                            }
+                            break
+                        }
+                    }
+                }
+
+                if let type = targetType, !availableModelNames.contains(type) {
+                    for k in i...extEndLine {
+                        indicesToRemove.append(k)
+                    }
+                    i = extEndLine + 1
+                    continue
+                }
+            }
+            i += 1
+        }
+
+        for idx in Set(indicesToRemove).sorted(by: >) {
+            if idx < lines.count {
+                lines.removeObject(at: idx)
             }
         }
     }
@@ -318,7 +357,7 @@ final class SourceEditorCommand: NSObject, XCSourceEditorCommand {
         let home = fm.homeDirectoryForCurrentUser.path
         let candidateProjectRoot = "\(home)/Documents/experimental-test-tool-swift"
         let fallbackOut = "\(candidateProjectRoot)/Example/ExampleTests/Stubs.generated.swift"
-        let fallbackSrc = ["\(candidateProjectRoot)/Example/Example/Domain"]
+        let fallbackSrc = ["\(candidateProjectRoot)/Example/Example"]
         let fallbackTst = ["\(candidateProjectRoot)/Example/ExampleTests"]
 
         if fm.fileExists(atPath: "\(candidateProjectRoot)/Example") {

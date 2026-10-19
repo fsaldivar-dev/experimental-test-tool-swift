@@ -14,13 +14,9 @@ import SpockSwift
 @Stub
 extension User {}
 
-struct MoreStub {
-    var string: String
-}
 @Stub
-extension MoreStub {
-    
-}
+extension SomeStub {}
+
 @Suite("Example - Stubs y autoTree")
 struct UserStubTests {
 
@@ -53,13 +49,15 @@ struct UserStubTests {
         #expect(customUser.profile.pet.age == 3)
     }
 
-    @Test("MoreStub.stub() declarado dentro del test funciona correctamente")
-    func testMoreStubInsideTest() {
-        let more = MoreStub.stub()
-        #expect(more.string == "dummy_string")
+    @Test("SomeStub.stub() funciona correctamente")
+    func testSomeStub() {
+        let some = SomeStub.stub()
+        #expect(some.named == "dummy_named")
+        #expect(some.age == 0)
 
-        let custom = MoreStub.stub(string: "Hola Spock")
-        #expect(custom.string == "Hola Spock")
+        let custom = SomeStub.stub(named: "Spock", age: 42)
+        #expect(custom.named == "Spock")
+        #expect(custom.age == 42)
     }
 
 }
