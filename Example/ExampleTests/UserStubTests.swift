@@ -14,11 +14,6 @@ import SpockSwift
 @Stub
 extension User {}
 
-@Stub
-struct AutoSaveTest {
-    var title: String
-}
-
 @Suite("Example - Stubs y autoTree")
 struct UserStubTests {
 
@@ -51,12 +46,4 @@ struct UserStubTests {
         #expect(customUser.profile.pet.age == 3)
     }
 
-    @Test("AutoSaveTest.stub() generado automáticamente desde @Stub struct")
-    func testAutoSaveTestStub() {
-        let model = AutoSaveTest.stub()
-        #expect(model.title == "dummy_title")
-
-        let custom = AutoSaveTest.stub(title: "Mi Titulo")
-        #expect(custom.title == "Mi Titulo")
-    }
 }

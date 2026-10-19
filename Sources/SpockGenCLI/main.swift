@@ -75,7 +75,7 @@ func autoDetectConfig() -> (sources: [String], tests: [String], output: String)?
 
 let args = Array(CommandLine.arguments.dropFirst())
 
-if args.isEmpty || args.contains("-h") || args.contains("--help") {
+if args.contains("-h") || args.contains("--help") {
     printUsage()
     exit(0)
 }
@@ -321,6 +321,23 @@ let config = SpockGenEngine.Configuration(
     cachePath: cache,
     verbose: verbose
 )
+
+// Persistir metadata con rutas absolutas para comunicación in-process con la extensión de Xcode
+let cwd = FileManager.default.currentDirectoryPath
+let absOutput = (outputPath as NSString).isAbsolutePath ? outputPath : URL(fileURLWithPath: cwd).appendingPathComponent(outputPath).standardized.path
+let absSources = sources.map { ($0 as NSString).isAbsolutePath ? $0 : URL(fileURLWithPath: cwd).appendingPathComponent($0).standardized.path }
+let absTests = tests.map { ($0 as NSString).isAbsolutePath ? $0 : URL(fileURLWithPath: cwd).appendingPathComponent($0).standardized.path }
+
+let projectMetadata: [String: Any] = [
+    "projectRoot": cwd,
+    "outputPath": absOutput,
+    "sources": absSources,
+    "tests": absTests,
+    "timestamp": Date().timeIntervalSince1970
+]
+if let data = try? JSONSerialization.data(withJSONObject: projectMetadata, options: .prettyPrinted) {
+    try? data.write(to: URL(fileURLWithPath: "/tmp/.spock_active_project.json"))
+}
 
 let engine = SpockGenEngine(config: config)
 
