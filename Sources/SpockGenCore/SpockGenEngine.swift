@@ -67,14 +67,16 @@ public final class SpockGenEngine: Sendable {
             cacheManager = nil
         }
 
-        // 3. Parsear Modelos de Producción
+        // 3. Parsear Modelos de Producción y de Tests
         var availableModels: [String: ModelDefinition] = [:]
 
-        for filePath in sourceFiles {
+        for filePath in (sourceFiles + testFiles) {
             guard let content = try? String(contentsOfFile: filePath, encoding: .utf8) else { continue }
             let models = ModelParser.parse(source: content, filePath: filePath)
             for model in models {
-                availableModels[model.name] = model
+                if availableModels[model.name] == nil {
+                    availableModels[model.name] = model
+                }
             }
         }
 

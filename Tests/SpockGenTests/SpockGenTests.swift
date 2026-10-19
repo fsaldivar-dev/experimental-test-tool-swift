@@ -380,6 +380,60 @@ struct SpockGenPhase6Tests {
         }
         #expect(countAfterDuplicate == 2)
     }
+
+    @Test("Engine genera stubs tanto para @Stub extension como para @Stub struct declarado en tests")
+    func testEngineSupportsStubOnStructInTests() throws {
+        let tempDir = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        try FileManager.default.createDirectory(at: tempDir, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: tempDir) }
+
+        let sourcesDir = tempDir.appendingPathComponent("Sources")
+        let testsDir = tempDir.appendingPathComponent("Tests")
+        let outputSwift = tempDir.appendingPathComponent("Generated/Stubs.generated.swift")
+
+        try FileManager.default.createDirectory(at: sourcesDir, withIntermediateDirectories: true)
+        try FileManager.default.createDirectory(at: testsDir, withIntermediateDirectories: true)
+
+        // 1. Modelo en Sources: User
+        let userModel = "public struct User { public var name: String }"
+        try userModel.write(to: sourcesDir.appendingPathComponent("User.swift"), atomically: true, encoding: .utf8)
+
+        // 2. Tests con @Stub extension User Y @Stub struct LocalTestModel
+        let testContent = """
+        import SpockSwift
+
+        @Stub
+        extension User {}
+
+        @Stub
+        struct LocalTestModel {
+            var some: String
+            var count: Int
+        }
+        """
+        try testContent.write(to: testsDir.appendingPathComponent("CombinedTests.swift"), atomically: true, encoding: .utf8)
+
+        let config = SpockGenEngine.Configuration(
+            sourcesDirectories: [sourcesDir.path],
+            testsDirectories: [testsDir.path],
+            outputPath: outputSwift.path,
+            verbose: false
+        )
+        let engine = SpockGenEngine(config: config)
+        let result = try engine.run()
+
+        guard case .generated(let count, _) = result else {
+            Issue.record("Se esperaba .generated, se obtuvo \(result)")
+            return
+        }
+
+        #expect(count == 2)
+        let generatedCode = try String(contentsOf: outputSwift, encoding: .utf8)
+        #expect(generatedCode.contains("extension User {"))
+        #expect(generatedCode.contains("extension LocalTestModel {"))
+        #expect(generatedCode.contains("some: String = \"dummy_some\""))
+        #expect(generatedCode.contains("count: Int = 0"))
+    }
 }
 
 

@@ -14,6 +14,11 @@ import SpockSwift
 @Stub
 extension User {}
 
+@Stub
+struct TestCustomModel {
+    var some: String
+}
+
 @Suite("Example - Stubs y autoTree")
 struct UserStubTests {
 
@@ -44,5 +49,14 @@ struct UserStubTests {
         #expect(customUser.profile.bio == "Software Architect")
         #expect(customUser.profile.pet.name == "Firulais")
         #expect(customUser.profile.pet.age == 3)
+    }
+
+    @Test("TestCustomModel.stub() generado automáticamente desde @Stub struct en tests")
+    func testCustomModelStub() {
+        let model = TestCustomModel.stub()
+        #expect(model.some == "dummy_some")
+
+        let custom = TestCustomModel.stub(some: "Hola Mundo")
+        #expect(custom.some == "Hola Mundo")
     }
 }

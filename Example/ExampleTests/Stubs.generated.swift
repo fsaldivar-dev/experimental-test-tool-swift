@@ -8,6 +8,16 @@
 import Foundation
 @testable import Example
 
+extension TestCustomModel {
+    public static func stub(
+        some: String = "dummy_some"
+    ) -> TestCustomModel {
+        TestCustomModel(
+            some: some
+        )
+    }
+}
+
 extension Pet {
     public static func stub(
         name: String = "dummy_name",
