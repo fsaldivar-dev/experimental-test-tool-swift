@@ -293,4 +293,93 @@ struct SpockGenPhase5Tests {
     }
 }
 
+@Suite("SpockGenCore - Fase 6: SpockGenEngine End-to-End")
+struct SpockGenPhase6Tests {
+
+    @Test("SpockGenEngine orquesta inspección, autoTree, generación y caché correctamente")
+    func testEngineEndToEnd() throws {
+        let tempDir = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        try FileManager.default.createDirectory(at: tempDir, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: tempDir) }
+
+        let sourcesDir = tempDir.appendingPathComponent("Sources")
+        let testsDir = tempDir.appendingPathComponent("Tests")
+        let outputSwift = tempDir.appendingPathComponent("Generated/Stubs.generated.swift")
+        let cacheJson = tempDir.appendingPathComponent(".spock-cache.json")
+
+        try FileManager.default.createDirectory(at: sourcesDir, withIntermediateDirectories: true)
+        try FileManager.default.createDirectory(at: testsDir, withIntermediateDirectories: true)
+
+        // 1. Modelos en Sources/
+        let userModelContent = """
+        struct Pet {
+            var name: String
+        }
+
+        struct User {
+            var id: Int
+            var name: String
+            var pet: Pet
+        }
+        """
+        try userModelContent.write(to: sourcesDir.appendingPathComponent("User.swift"), atomically: true, encoding: .utf8)
+
+        // 2. Test con @Stub en Tests/
+        let testContent = """
+        import SpockSwift
+
+        @Stub
+        extension User {}
+        """
+        try testContent.write(to: testsDir.appendingPathComponent("UserTests.swift"), atomically: true, encoding: .utf8)
+
+        // 3. Ejecutar Engine por primera vez
+        let config = SpockGenEngine.Configuration(
+            sourcesDirectories: [sourcesDir.path],
+            testsDirectories: [testsDir.path],
+            outputPath: outputSwift.path,
+            cachePath: cacheJson.path,
+            verbose: false
+        )
+        let engine = SpockGenEngine(config: config)
+        let firstResult = try engine.run()
+
+        guard case .generated(let count, _) = firstResult else {
+            Issue.record("Se esperaba .generated, se obtuvo \(firstResult)")
+            return
+        }
+
+        #expect(count == 2) // User y Pet descubiertos
+        #expect(FileManager.default.fileExists(atPath: outputSwift.path))
+
+        let generatedCode = try String(contentsOf: outputSwift, encoding: .utf8)
+        #expect(generatedCode.contains("extension User {"))
+        #expect(generatedCode.contains("extension Pet {"))
+        #expect(generatedCode.contains("pet: Pet = .stub()"))
+
+        // 4. Ejecutar por segunda vez sin cambios: debe ser Cache HIT (.upToDate)
+        let secondResult = try engine.run()
+        guard case .upToDate = secondResult else {
+            Issue.record("Se esperaba .upToDate por cache hit, se obtuvo \(secondResult)")
+            return
+        }
+
+        // 5. Agregar un duplicado en otro archivo de tests: no debe crashear ni duplicar
+        let duplicateTestContent = """
+        import SpockSwift
+
+        @Stub
+        extension User {}
+        """
+        try duplicateTestContent.write(to: testsDir.appendingPathComponent("ProfileTests.swift"), atomically: true, encoding: .utf8)
+
+        let thirdResult = try engine.run()
+        guard case .generated(let countAfterDuplicate, _) = thirdResult else {
+            Issue.record("Se esperaba .generated, se obtuvo \(thirdResult)")
+            return
+        }
+        #expect(countAfterDuplicate == 2)
+    }
+}
+
 
