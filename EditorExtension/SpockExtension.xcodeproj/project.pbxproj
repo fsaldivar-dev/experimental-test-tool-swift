@@ -20,9 +20,6 @@
 		999BA10F291497D300706E88 /* SpockGenCore in Frameworks */ = {isa = PBXBuildFile; productRef = 999BA10E291497D300706E88 /* SpockGenCore */; };
 		999BA111291497D300706E88 /* SwiftSyntax in Frameworks */ = {isa = PBXBuildFile; productRef = 999BA110291497D300706E88 /* SwiftSyntax */; };
 		999BA113291497D300706E88 /* SwiftSyntaxBuilder in Frameworks */ = {isa = PBXBuildFile; productRef = 999BA112291497D300706E88 /* SwiftSyntaxBuilder */; };
-		999BA11529149D8500706E88 /* CommandDiscovery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 999BA11429149D8500706E88 /* CommandDiscovery.swift */; };
-		999BA11729149F4200706E88 /* Bridge.h in Sources */ = {isa = PBXBuildFile; fileRef = 999BA11629149F4200706E88 /* Bridge.h */; };
-		999BA11B2914B25900706E88 /* RefactoringRegistry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 999BA11A2914B25900706E88 /* RefactoringRegistry.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -73,9 +70,6 @@
 		999BA0F42914952D00706E88 /* XcodeKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XcodeKit.framework; path = Library/Frameworks/XcodeKit.framework; sourceTree = DEVELOPER_DIR; };
 		999BA0F8291495FC00706E88 /* SpockXcodeExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SpockXcodeExtension.entitlements; sourceTree = "<group>"; };
 		999BA0FF291497AD00706E88 /* swift-syntax */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = "swift-syntax"; path = ..; sourceTree = "<group>"; };
-		999BA11429149D8500706E88 /* CommandDiscovery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandDiscovery.swift; sourceTree = "<group>"; };
-		999BA11629149F4200706E88 /* Bridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Bridge.h; sourceTree = "<group>"; };
-		999BA11A2914B25900706E88 /* RefactoringRegistry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefactoringRegistry.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -147,9 +141,6 @@
 			children = (
 				25F744181DA97ED800CCD5AD /* SourceEditorExtension.swift */,
 				25F7441A1DA97ED800CCD5AD /* SourceEditorCommand.swift */,
-				999BA11A2914B25900706E88 /* RefactoringRegistry.swift */,
-				999BA11429149D8500706E88 /* CommandDiscovery.swift */,
-				999BA11629149F4200706E88 /* Bridge.h */,
 				25F7441C1DA97ED800CCD5AD /* Info.plist */,
 				25F744161DA97ED800CCD5AD /* Supporting Files */,
 			);
@@ -286,9 +277,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				999BA11729149F4200706E88 /* Bridge.h in Sources */,
-				999BA11B2914B25900706E88 /* RefactoringRegistry.swift in Sources */,
-				999BA11529149D8500706E88 /* CommandDiscovery.swift in Sources */,
 				25F744191DA97ED800CCD5AD /* SourceEditorExtension.swift in Sources */,
 				25F7441B1DA97ED800CCD5AD /* SourceEditorCommand.swift in Sources */,
 			);
@@ -453,7 +441,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.fsaldivar.spock.host";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.fsaldivar.spock";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 			};
@@ -474,7 +462,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.fsaldivar.spock.host";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.fsaldivar.spock";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 			};
@@ -499,7 +487,6 @@
 				PRODUCT_NAME = "Spock";
 				SKIP_INSTALL = YES;
 				SWIFT_INSTALL_OBJC_HEADER = NO;
-				SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/SpockXcodeExtension/Bridge.h";
 				SWIFT_OBJC_INTERFACE_HEADER_NAME = "";
 				SWIFT_PRECOMPILE_BRIDGING_HEADER = YES;
 				SWIFT_VERSION = 5.0;
@@ -525,7 +512,6 @@
 				PRODUCT_NAME = "Spock";
 				SKIP_INSTALL = YES;
 				SWIFT_INSTALL_OBJC_HEADER = NO;
-				SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/SpockXcodeExtension/Bridge.h";
 				SWIFT_OBJC_INTERFACE_HEADER_NAME = "";
 				SWIFT_PRECOMPILE_BRIDGING_HEADER = YES;
 				SWIFT_VERSION = 5.0;
