@@ -1,6 +1,6 @@
 # 🖖 SpockSwift 2
 
-<img width="640" alt="SpockSwift Banner" src="https://user-images.githubusercontent.com/16517868/183414396-108611c1-8585-4ce5-8b4f-088ea4d15f04.png">
+<img alt="Spock-Swift: a testing, mocking and spying framework for Swift" src="Assets/cover.jpg" width="100%">
 
 [![GitHub issues](https://img.shields.io/github/issues/fsaldivar-dev/experimental-test-tool-swift?style=for-the-badge)](https://github.com/fsaldivar-dev/experimental-test-tool-swift/issues)
 [![GitHub stars](https://img.shields.io/github/stars/fsaldivar-dev/experimental-test-tool-swift?style=for-the-badge)](https://github.com/fsaldivar-dev/experimental-test-tool-swift/stargazers)
