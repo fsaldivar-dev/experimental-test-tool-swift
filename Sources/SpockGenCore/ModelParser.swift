@@ -9,26 +9,35 @@ import Foundation
 import SwiftSyntax
 import SwiftParser
 
-/// Analizador de sintaxis de Swift que extrae la definición de structs y enums en Sources/.
+/// Analizador de sintaxis de Swift que extrae la definición de structs y enums de un archivo.
 public final class ModelParser: SyntaxVisitor, @unchecked Sendable {
     private let filePath: String
+    private let module: String
+    private let relativeDirectory: String
     public private(set) var models: [ModelDefinition] = []
 
-    public init(filePath: String = "") {
+    public init(filePath: String = "", module: String = "", relativeDirectory: String = "") {
         self.filePath = filePath
+        self.module = module
+        self.relativeDirectory = relativeDirectory
         super.init(viewMode: .sourceAccurate)
     }
 
-    public static func parse(source: String, filePath: String = "") -> [ModelDefinition] {
+    public static func parse(
+        source: String,
+        filePath: String = "",
+        module: String = "",
+        relativeDirectory: String = ""
+    ) -> [ModelDefinition] {
         let sourceFile = Parser.parse(source: source)
-        let parser = ModelParser(filePath: filePath)
+        let parser = ModelParser(filePath: filePath, module: module, relativeDirectory: relativeDirectory)
         parser.walk(sourceFile)
         return parser.models
     }
 
-    public static func parse(fileURL: URL) throws -> [ModelDefinition] {
+    public static func parse(fileURL: URL, module: String = "", relativeDirectory: String = "") throws -> [ModelDefinition] {
         let source = try String(contentsOf: fileURL, encoding: .utf8)
-        return parse(source: source, filePath: fileURL.path)
+        return parse(source: source, filePath: fileURL.path, module: module, relativeDirectory: relativeDirectory)
     }
 
     public override func visit(_ node: StructDeclSyntax) -> SyntaxVisitorContinueKind {
@@ -81,7 +90,9 @@ public final class ModelParser: SyntaxVisitor, @unchecked Sendable {
             name: structName,
             filePath: filePath,
             isEnum: false,
-            properties: properties
+            properties: properties,
+            module: module,
+            relativeDirectory: relativeDirectory
         ))
 
         return .skipChildren
@@ -103,7 +114,9 @@ public final class ModelParser: SyntaxVisitor, @unchecked Sendable {
             name: enumName,
             filePath: filePath,
             isEnum: true,
-            enumCases: cases
+            enumCases: cases,
+            module: module,
+            relativeDirectory: relativeDirectory
         ))
 
         return .skipChildren

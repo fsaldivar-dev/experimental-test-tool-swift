@@ -7,7 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		467F1FBD7E554847B5B76585 /* Stubs.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = 467F1FBD7E554847B5B76584 /* Stubs.generated.swift */; };
+		5B0C4E5F0000000000000101 /* Pet+Stub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B0C4E5F0000000000000001 /* Pet+Stub.swift */; };
+		5B0C4E5F0000000000000102 /* Profile+Stub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B0C4E5F0000000000000002 /* Profile+Stub.swift */; };
+		5B0C4E5F0000000000000103 /* SomeStub+Stub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B0C4E5F0000000000000003 /* SomeStub+Stub.swift */; };
+		5B0C4E5F0000000000000104 /* User+Stub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B0C4E5F0000000000000004 /* User+Stub.swift */; };
 		21BB313104DA461E9A823459 /* UserService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52149D9B89EA479C815FCE62 /* UserService.swift */; };
 		9B1C605E90C448ED95C57965 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE2E784D0EA24F6285DC9FCC /* User.swift */; };
 		9D19AF7930865C6500039A2F /* (null) in Frameworks */ = {isa = PBXBuildFile; };
@@ -38,7 +41,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		467F1FBD7E554847B5B76584 /* Stubs.generated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stubs.generated.swift; sourceTree = "<group>"; };
+		5B0C4E5F0000000000000001 /* Pet+Stub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Pet+Stub.swift"; sourceTree = "<group>"; };
+		5B0C4E5F0000000000000002 /* Profile+Stub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Profile+Stub.swift"; sourceTree = "<group>"; };
+		5B0C4E5F0000000000000003 /* SomeStub+Stub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SomeStub+Stub.swift"; sourceTree = "<group>"; };
+		5B0C4E5F0000000000000004 /* User+Stub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "User+Stub.swift"; sourceTree = "<group>"; };
 		28F454F0E747413899986C73 /* ExampleTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ExampleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		52149D9B89EA479C815FCE62 /* UserService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserService.swift; sourceTree = "<group>"; };
 		B6436E42289E92AF00D9B5C2 /* Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -79,6 +85,41 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		5B0C4E5F0000000000000201 /* Generated */ = {
+			isa = PBXGroup;
+			children = (
+				5B0C4E5F0000000000000202 /* Example */,
+			);
+			path = Generated;
+			sourceTree = "<group>";
+		};
+		5B0C4E5F0000000000000202 /* Example */ = {
+			isa = PBXGroup;
+			children = (
+				5B0C4E5F0000000000000203 /* Domain */,
+			);
+			path = Example;
+			sourceTree = "<group>";
+		};
+		5B0C4E5F0000000000000203 /* Domain */ = {
+			isa = PBXGroup;
+			children = (
+				5B0C4E5F0000000000000204 /* Stubs */,
+			);
+			path = Domain;
+			sourceTree = "<group>";
+		};
+		5B0C4E5F0000000000000204 /* Stubs */ = {
+			isa = PBXGroup;
+			children = (
+				5B0C4E5F0000000000000001 /* Pet+Stub.swift */,
+				5B0C4E5F0000000000000002 /* Profile+Stub.swift */,
+				5B0C4E5F0000000000000003 /* SomeStub+Stub.swift */,
+				5B0C4E5F0000000000000004 /* User+Stub.swift */,
+			);
+			path = Stubs;
+			sourceTree = "<group>";
+		};
 		4B60AE8D52F541B088AC0524 /* Domain */ = {
 			isa = PBXGroup;
 			children = (
@@ -138,7 +179,7 @@
 			children = (
 				E7FFAD3E91B14831B429A8C8 /* UserStubTests.swift */,
 				FC03D86FE13847BEB41B3724 /* UserServiceMockTests.swift */,
-							467F1FBD7E554847B5B76584 /* Stubs.generated.swift */,
+				5B0C4E5F0000000000000201 /* Generated */,
 			);
 			path = ExampleTests;
 			sourceTree = "<group>";
@@ -150,7 +191,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 224290A47F0D4AE2A0EC9489 /* Build configuration list for PBXNativeTarget "ExampleTests" */;
 			buildPhases = (
-				A1B2C3D4E5F6789012345678 /* Generate Spock Stubs */,
 				C57424A1588A47138ED504B3 /* Sources */,
 				7741E29C632E4100B8C171CD /* Frameworks */,
 				7FAF23CF0219486EA5B96BF7 /* Resources */,
@@ -247,32 +287,6 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
-/* Begin PBXShellScriptBuildPhase section */
-		A1B2C3D4E5F6789012345678 /* Generate Spock Stubs */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"$(SRCROOT)/Example/Domain",
-				"$(SRCROOT)/ExampleTests",
-			);
-			name = "Generate Spock Stubs";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(SRCROOT)/ExampleTests/Stubs.generated.swift",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "unset SDKROOT\nunset PLATFORM_NAME\ncd \"${SRCROOT}/..\"\nswift run spock-gen --sources \"${SRCROOT}/Example/Domain\" --tests \"${SRCROOT}/ExampleTests\" --output \"${SRCROOT}/ExampleTests/Stubs.generated.swift\" --cache \"${DERIVED_FILE_DIR}/.spock-cache.json\"\n";
-			showEnvVarsInLog = 0;
-		};
-/* End PBXShellScriptBuildPhase section */
-
 /* Begin PBXSourcesBuildPhase section */
 		B6436E3E289E92AF00D9B5C2 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -291,8 +305,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				B50FFBB3C4C54659A8849C17 /* UserStubTests.swift in Sources */,
-				467F1FBD7E554847B5B76585 /* Stubs.generated.swift in Sources */,
 				BD6A96DAEC2042729D26303D /* UserServiceMockTests.swift in Sources */,
+				5B0C4E5F0000000000000101 /* Pet+Stub.swift in Sources */,
+				5B0C4E5F0000000000000102 /* Profile+Stub.swift in Sources */,
+				5B0C4E5F0000000000000103 /* SomeStub+Stub.swift in Sources */,
+				5B0C4E5F0000000000000104 /* User+Stub.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

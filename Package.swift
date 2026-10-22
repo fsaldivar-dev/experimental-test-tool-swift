@@ -25,17 +25,13 @@ let package = Package(
         .executable(
             name: "spock-gen",
             targets: ["SpockGenCLI"]
-        ),
-        .plugin(
-            name: "SpockPlugin",
-            targets: ["SpockPlugin"]
         )
     ],
     dependencies: [
         .package(url: "https://github.com/swiftlang/swift-syntax.git", "600.0.0"..<"602.0.0")
     ],
     targets: [
-        // 1. Compiler Plugin nativo (Swift Macros: @Stub marker)
+        // 1. Compiler Plugin nativo (Swift Macros: marcador @Stubbed)
         .macro(
             name: "SpockSwiftMacros",
             dependencies: [
@@ -45,14 +41,14 @@ let package = Package(
             path: "Sources/SpockSwiftMacros"
         ),
 
-        // 2. Biblioteca principal de testing: @Stub y SpockMock (@Stubbed, Spy, Stub)
+        // 2. Biblioteca principal de testing: @Stubbed y SpockMock (@StubbedCall, Spy, Stub)
         .target(
             name: "SpockSwift",
             dependencies: ["SpockSwiftMacros"],
             path: "Sources/SpockSwift"
         ),
 
-        // 3. Motor de generación: parsing AST, autoTree, deduplicación y caché
+        // 3. Motor de generación: parsing AST, autoTree, deduplicación, snapshots y caché
         .target(
             name: "SpockGenCore",
             dependencies: [
@@ -62,42 +58,34 @@ let package = Package(
             path: "Sources/SpockGenCore"
         ),
 
-        // 4. Herramienta CLI ejecutable
+        // 4. Herramienta CLI: `spock-gen generate | check | clean`
         .executableTarget(
             name: "SpockGenCLI",
             dependencies: ["SpockGenCore"],
             path: "Sources/SpockGenCLI"
         ),
 
-        // 5. SPM BuildToolPlugin para automatización en prebuild
-        .plugin(
-            name: "SpockPlugin",
-            capability: .buildTool(),
-            dependencies: ["SpockGenCLI"],
-            path: "Plugins/SpockPlugin"
-        ),
-
-        // 6. Pruebas del cliente SpockSwift
+        // 5. Pruebas del cliente SpockSwift
         .testTarget(
             name: "SpockSwiftTests",
             dependencies: ["SpockSwift"],
             path: "Tests/SpockSwiftTests"
         ),
 
-        // 7. Pruebas del motor SpockGenCore
+        // 6. Pruebas del motor SpockGenCore
         .testTarget(
             name: "SpockGenTests",
             dependencies: ["SpockGenCore"],
             path: "Tests/SpockGenTests"
         ),
 
-        // 8. Módulo de Dominio del Example
+        // 7. Módulo de Dominio del Example
         .target(
             name: "Example",
             path: "Example/Example/Domain"
         ),
 
-        // 9. Pruebas del Example usando SpockSwift y SpockPlugin
+        // 8. Pruebas del Example: los stubs viven en Example/ExampleTests/Generated y se versionan
         .testTarget(
             name: "ExampleTests",
             dependencies: [

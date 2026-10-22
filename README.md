@@ -84,15 +84,15 @@ A pesar de ser un experimento ingenioso, la implementación basada en `Decodable
 
 ## 🚀 3. La Evolución: Hacia SpockSwift 2 (`Spock 2`)
 
-Para resolver estos problemas de raíz, **SpockSwift 2** redefine por completo la estrategia: **abandonamos los trucos de runtime con `Decodable` y adoptamos una arquitectura híbrida de Prebuild Tool + Macros de Swift**.
+Para resolver estos problemas de raíz, **SpockSwift 2** redefine por completo la estrategia: **abandonamos los trucos de runtime con `Decodable` y adoptamos un generador (`spock-gen`) cuya salida se versiona como snapshots, más una macro marcador (`@Stubbed`)**.
 
 ```text
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │                       ARQUITECTURA DE SPOCK 2                               │
 ├─────────────────────────────────────┬───────────────────────────────────────┤
-│ En tus Tests (Solo lo que necesitas)│ Generado Automáticamente (Stubs)      │
+│ En tus Tests (Solo lo que necesitas)│ Generated/…/Stubs (versionado)        │
 ├─────────────────────────────────────┼───────────────────────────────────────┤
-│ @Stub                               │ extension User {                      │
+│ @Stubbed                            │ extension User {                      │
 │ extension User {}                   │     public static func stub(          │
 │                                     │         name: String = "dummy_name",  │
 │                                     │         pet: Pet = .stub()            │
@@ -111,11 +111,11 @@ Para resolver estos problemas de raíz, **SpockSwift 2** redefine por completo l
 2. **Sintaxis Directa `.stub(...)`:**
    Sin envoltorios innecesarios ni nombres largos. Extensiones nativas en Swift con parámetros con valores por defecto.
 3. **Motor `autoTree` (Resolución Recursiva en Cascada):**
-   Si `User` contiene a `Pet`, y `Pet` contiene a `Breed`, anotar `@Stub extension User {}` detecta todo el árbol y genera los stubs de los hijos automáticamente para que `.stub()` se encadene solo.
+   Si `User` contiene a `Pet`, y `Pet` contiene a `Breed`, anotar `@Stubbed extension User {}` detecta todo el árbol y genera los stubs de los hijos automáticamente para que `.stub()` se encadene solo.
 4. **Deduplicación Consciente del Archivo Fuente:**
-   Si `@Stub extension User` se declara en dos archivos de prueba diferentes, el generador sabe qué archivo lo originó y evita generar extensiones duplicadas (*"invalid redeclaration"*).
-5. **Caché Inteligente Incremental (SHA256):**
-   Si los modelos no cambian, el prebuild no reescribe nada en disco y toma **< 5 ms**. Si un modelo cambia en producción, actualiza la firma del stub automáticamente.
+   Si `@Stubbed extension User` se declara en dos archivos de prueba diferentes, el generador sabe qué archivo lo originó y evita generar extensiones duplicadas (*"invalid redeclaration"*).
+5. **Stubs como snapshots versionados:**
+   `spock-gen` escribe un archivo por modelo en `Generated/<Módulo>/<ruta>/Stubs/<Tipo>+Stub.swift`, dentro del target de tests, y se commitea. Los tests compilan sin plugins ni generación en build; `spock-gen check` detecta en CI si el dominio cambió y los stubs quedaron desfasados.
 6. **Modernización de `SpockMock` para Swift 6:**
    Mocks thread-safe protegidos contra data races, preparados para concurrencia estricta y Swift Testing (`@Test` / `#expect`).
 
@@ -123,42 +123,38 @@ Para resolver estos problemas de raíz, **SpockSwift 2** redefine por completo l
 
 ## 🛠️ 4. Uso de SpockSwift 2
 
-### En tu `Package.swift` (Target de Tests)
+Los stubs son **snapshots versionados**: `spock-gen` los escribe una vez en la carpeta `Generated` de tu target de tests, los commiteas, y los tests compilan sin plugins ni generación en build. Lo único que entra al grafo de tests es la macro `@Stubbed`, que SwiftPM resuelve con los binarios precompilados de swift-syntax.
 
-Conecta el plugin de compilación automática en tu target de pruebas:
+### 1. Dependencia en `Package.swift` (Target de Tests)
 
 ```swift
-// swift-tools-version: 6.0
+// swift-tools-version: 6.1
 .testTarget(
     name: "MyFeatureTests",
     dependencies: [
         "MyFeature",
         .product(name: "SpockSwift", package: "experimental-test-tool-swift")
-    ],
-    plugins: [
-        .plugin(name: "SpockPlugin", package: "experimental-test-tool-swift")
     ]
 )
 ```
 
-### En tus archivos de Test
+Sin `plugins:`. En un `.xcodeproj`, agrega la carpeta `Generated` al target de tests una sola vez.
 
-Simplemente declara qué modelos necesitas en tu archivo de prueba con `@Stub`:
+### 2. Declara qué stubs necesitas
 
 ```swift
 import Testing
 import SpockSwift
 @testable import MyFeature
 
-// 1. Declaras qué stubs deseas para tu suite de pruebas:
-@Stub
+// Declaras qué stubs quieres para tu suite; autoTree genera también los hijos (Pet, Breed, …):
+@Stubbed
 extension User {}
 
 @Suite("User Tests")
 struct UserTests {
     @Test("Prueba con stub por defecto")
     func testDefault() {
-        // Generado automáticamente con .stub(...) y autoTree para todos sus hijos:
         let user = User.stub()
         #expect(!user.name.isEmpty)
         #expect(user.pet.name == "dummy_name")
@@ -173,17 +169,40 @@ struct UserTests {
 }
 ```
 
-### Ejecución por Línea de Comandos (`spock-gen` CLI)
+Un modelo usado con `.stub()` sin anotar también se genera; `@Stubbed` deja la intención explícita.
 
-También puedes usar `spock-gen` de forma manual o en un Build Phase de Xcode (`.xcodeproj`):
+### 3. Genera y versiona
 
 ```bash
-swift run spock-gen \
-  --sources Sources/ \
-  --tests Tests/ \
-  --output Tests/Generated/Stubs.generated.swift \
-  --cache .spock-cache.json
+swift run spock-gen --sources MyFeature=Sources/MyFeature --tests MyFeatureTests=Tests/MyFeatureTests
 ```
+
+Con la convención de SwiftPM basta `spock-gen --sources Sources --tests Tests`: cada subcarpeta es un módulo. La salida refleja la estructura del módulo de origen:
+
+```text
+Tests/MyFeatureTests/Generated/
+└── MyFeature/
+    └── Data/
+        └── Entities/
+            └── Stubs/
+                ├── User+Stub.swift
+                └── Pet+Stub.swift
+```
+
+Commitea `Generated/`. Cada archivo lleva su origen en la cabecera, y el diff del PR muestra qué firma cambió cuando cambia el dominio.
+
+### 4. Detecta desfases en CI
+
+```bash
+swift run spock-gen check --sources Sources --tests Tests
+```
+
+Sale con código 1 y lista los stubs faltantes, desfasados o huérfanos, con el comando exacto para regenerar. Úsalo en CI o en un hook de pre-commit.
+
+### Otros comandos
+
+- `spock-gen clean`: elimina los stubs generados y la caché.
+- `spock-gen --watch` o `spock-gen daemon start`: regenera al guardar. Comodidad local, no infraestructura.
 
 ---
 

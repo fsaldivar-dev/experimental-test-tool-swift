@@ -1,22 +1,30 @@
 import Foundation
 import CryptoKit
 
+/// Manifiesto de caché: hashes de las entradas y de cada archivo generado.
 public struct SpockCacheManifest: Codable, Sendable, Equatable {
     public var version: String
-    public var fileHashes: [String: String] // ruta o identificador -> sha256
+    /// Ruta de entrada -> sha256 del contenido.
+    public var fileHashes: [String: String]
+    /// Hash del archivo único de salida (formato legado).
     public var outputHash: String?
+    /// Nombres de modelos generados (formato legado).
     public var generatedModels: [String]
+    /// Ruta relativa a la carpeta de salida -> sha256 del contenido generado.
+    public var generatedFiles: [String: String]
 
     public init(
-        version: String = "2.0.0",
+        version: String = "2.1.0",
         fileHashes: [String: String] = [:],
         outputHash: String? = nil,
-        generatedModels: [String] = []
+        generatedModels: [String] = [],
+        generatedFiles: [String: String] = [:]
     ) {
         self.version = version
         self.fileHashes = fileHashes
         self.outputHash = outputHash
         self.generatedModels = generatedModels
+        self.generatedFiles = generatedFiles
     }
 
     enum CodingKeys: String, CodingKey {
@@ -24,6 +32,7 @@ public struct SpockCacheManifest: Codable, Sendable, Equatable {
         case fileHashes
         case outputHash
         case generatedModels
+        case generatedFiles
     }
 
     public init(from decoder: Decoder) throws {
@@ -32,10 +41,11 @@ public struct SpockCacheManifest: Codable, Sendable, Equatable {
         self.fileHashes = try container.decodeIfPresent([String: String].self, forKey: .fileHashes) ?? [:]
         self.outputHash = try container.decodeIfPresent(String.self, forKey: .outputHash)
         self.generatedModels = try container.decodeIfPresent([String].self, forKey: .generatedModels) ?? []
+        self.generatedFiles = try container.decodeIfPresent([String: String].self, forKey: .generatedFiles) ?? [:]
     }
 }
 
-/// Administrador de caché incremental para optimizar builds sucesivos en < 5ms
+/// Administrador de caché incremental: evita volver a parsear cuando nada cambió.
 public final class CacheManager: Sendable {
     public let cacheFilePath: String
 
@@ -57,12 +67,12 @@ public final class CacheManager: Sendable {
         encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
         let data = try encoder.encode(manifest)
         let url = URL(fileURLWithPath: cacheFilePath)
-        
+
         let parentDir = url.deletingLastPathComponent()
         if !FileManager.default.fileExists(atPath: parentDir.path) {
             try FileManager.default.createDirectory(at: parentDir, withIntermediateDirectories: true)
         }
-        
+
         try data.write(to: url, options: .atomic)
     }
 
@@ -86,18 +96,9 @@ public final class CacheManager: Sendable {
         return hash(data: data)
     }
 
-    /// Evalúa si el caché es válido para una lista de archivos fuente y opcionalmente el archivo generado
-    /// Devuelve `true` únicamente si todos los archivos existen y sus hashes coinciden exactamente con el manifiesto.
-    public func isCacheValid(
-        for filePaths: [String],
-        outputPath: String? = nil,
-        cachedManifest: SpockCacheManifest?
-    ) -> Bool {
-        guard let manifest = cachedManifest else { return false }
-
-        // Si la cantidad de archivos cambió, el caché está invalidado
+    /// `true` solo si todas las entradas existen con el mismo hash que el manifiesto.
+    private func inputsMatch(_ filePaths: [String], manifest: SpockCacheManifest) -> Bool {
         guard manifest.fileHashes.count == filePaths.count else { return false }
-
         for path in filePaths {
             guard let cachedHash = manifest.fileHashes[path],
                   let currentHash = hash(fileAt: path),
@@ -105,8 +106,17 @@ public final class CacheManager: Sendable {
                 return false
             }
         }
+        return true
+    }
 
-        // Si se especificó un archivo de salida, debe existir y coincidir con el hash registrado
+    /// Evalúa si el caché es válido para una lista de archivos fuente y opcionalmente un archivo único de salida.
+    public func isCacheValid(
+        for filePaths: [String],
+        outputPath: String? = nil,
+        cachedManifest: SpockCacheManifest?
+    ) -> Bool {
+        guard let manifest = cachedManifest, inputsMatch(filePaths, manifest: manifest) else { return false }
+
         if let outputPath = outputPath {
             guard FileManager.default.fileExists(atPath: outputPath),
                   let cachedOutputHash = manifest.outputHash,
@@ -119,24 +129,69 @@ public final class CacheManager: Sendable {
         return true
     }
 
-    /// Construye un nuevo manifiesto a partir de una lista de archivos, el contenido generado y los modelos generados
+    /// Evalúa si el caché es válido para las entradas y para la carpeta de salida completa:
+    /// cada archivo generado del manifiesto existe con el mismo hash y no hay archivos de más.
+    public func isCacheValid(
+        for filePaths: [String],
+        layout: OutputLayout,
+        cachedManifest: SpockCacheManifest?
+    ) -> Bool {
+        guard let manifest = cachedManifest, inputsMatch(filePaths, manifest: manifest) else { return false }
+
+        let existing = Set(layout.existingGeneratedFiles())
+        guard existing == Set(manifest.generatedFiles.keys) else { return false }
+
+        for (relativePath, cachedHash) in manifest.generatedFiles {
+            guard let currentHash = hash(fileAt: layout.absolutePath(relative: relativePath)),
+                  currentHash == cachedHash else {
+                return false
+            }
+        }
+        return true
+    }
+
+    /// Manifiesto para el formato legado de archivo único.
     public func createManifest(
         filePaths: [String],
         generatedCode: String,
         generatedModels: [String] = []
     ) -> SpockCacheManifest {
+        SpockCacheManifest(
+            version: "2.0.0",
+            fileHashes: inputHashes(filePaths),
+            outputHash: hash(string: generatedCode),
+            generatedModels: generatedModels
+        )
+    }
+
+    /// Manifiesto para la carpeta de salida: `generatedFiles` es ruta relativa -> contenido generado.
+    public func createManifest(
+        filePaths: [String],
+        generatedFiles: [String: String]
+    ) -> SpockCacheManifest {
+        var outputHashes: [String: String] = [:]
+        for (relativePath, content) in generatedFiles {
+            outputHashes[relativePath] = hash(string: content)
+        }
+        let models = generatedFiles.keys
+            .map { ($0 as NSString).lastPathComponent.replacingOccurrences(of: OutputLayout.fileSuffix, with: "") }
+            .sorted()
+        return SpockCacheManifest(
+            version: "2.1.0",
+            fileHashes: inputHashes(filePaths),
+            outputHash: nil,
+            generatedModels: models,
+            generatedFiles: outputHashes
+        )
+    }
+
+    private func inputHashes(_ filePaths: [String]) -> [String: String] {
         var hashes: [String: String] = [:]
         for path in filePaths {
             if let fileHash = hash(fileAt: path) {
                 hashes[path] = fileHash
             }
         }
-        let codeHash = hash(string: generatedCode)
-        return SpockCacheManifest(
-            version: "2.0.0",
-            fileHashes: hashes,
-            outputHash: codeHash,
-            generatedModels: generatedModels
-        )
+        return hashes
     }
 }

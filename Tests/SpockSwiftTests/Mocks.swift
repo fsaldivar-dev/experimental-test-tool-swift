@@ -43,13 +43,13 @@ final class MockInteractor: Interactor, SpockMock, @unchecked Sendable {
         try fetchAllUserAction.onCall(()) ?? []
     }
     
-    @Stubbed<Int, MockUser>
+    @StubbedCall<Int, MockUser>
     var fetchUserAction
     func fetchUser(at serialID: Int) async throws -> MockUser {
         try fetchUserAction.onCall(serialID) ?? MockUser.dummy()
     }
     
-    @Stubbed<Int, MockUser>
+    @StubbedCall<Int, MockUser>
     var searchParentsAction
     func searchParents(at serialID: Int) async throws -> MockUser {
         try searchParentsAction.onCall(serialID) ?? MockUser.dummy()
@@ -59,14 +59,14 @@ final class MockInteractor: Interactor, SpockMock, @unchecked Sendable {
 
 final class MockView: View, SpockMock, @unchecked Sendable {
     
-    @Stubbed<[MockUser], Void>
+    @StubbedCall<[MockUser], Void>
     var loadUserListAction
     @MainActor
     func loadUserList(userList: [MockUser]) {
         try? loadUserListAction.onCall(userList)
     }
     
-    @Stubbed<MockUser, Void>
+    @StubbedCall<MockUser, Void>
     var showParentsAction
     @MainActor
     func showParents(user: MockUser) {
@@ -75,7 +75,7 @@ final class MockView: View, SpockMock, @unchecked Sendable {
 }
 
 final class MockTask: TaskCustom, @unchecked Sendable {
-    @Stubbed<() async throws -> Void, Void>
+    @StubbedCall<() async throws -> Void, Void>
     var runAction
     func run(_ task: @escaping @Sendable () async throws -> Void ) {
         try? runAction.onCall(task)

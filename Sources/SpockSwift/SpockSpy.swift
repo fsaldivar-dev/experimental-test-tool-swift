@@ -114,7 +114,7 @@ public final class Stub<Parameters, Stubbed>: @unchecked Sendable {
 }
 
 @propertyWrapper
-public final class Stubbed<I, O>: @unchecked Sendable {
+public final class StubbedCall<I, O>: @unchecked Sendable {
     public var wrappedValue: Stub<I, O> = .init()
     public init() {}
 }

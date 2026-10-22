@@ -9,12 +9,12 @@ import Testing
 import SpockSwift
 @testable import Example
 
-// Anotación declarativa @Stub:
+// Anotación declarativa @Stubbed:
 // autoTree descubrirá automáticamente Profile y Pet recursivamente!
-@Stub
+@Stubbed
 extension User {}
 
-@Stub
+@Stubbed
 extension SomeStub {}
 
 @Suite("Example - Stubs y autoTree")

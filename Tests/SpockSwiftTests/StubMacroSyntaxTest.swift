@@ -14,10 +14,10 @@ struct SampleUser {
     let age: Int
 }
 
-// Verifica que el macro @Stub se adjunta limpiamente a una extensión sin error del compilador
-@Stub
+// Verifica que el macro @Stubbed se adjunta limpiamente a una extensión sin error del compilador
+@Stubbed
 extension SampleUser {
-    // Extensión decorada con @Stub
+    // Extensión decorada con @Stubbed
 }
 
 final class StubMacroSyntaxTest: XCTestCase {

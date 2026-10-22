@@ -7,7 +7,7 @@
 
 import Foundation
 
-/// Genera el archivo final `Stubs.generated.swift` con la sintaxis limpia `.stub(...)` en extensiones de los modelos.
+/// Genera el código Swift de los stubs: una extensión `.stub(...)` por modelo.
 public final class CodeGenerator: Sendable {
     private let defaultValueProvider: DefaultValueProvider
 
@@ -15,6 +15,29 @@ public final class CodeGenerator: Sendable {
         self.defaultValueProvider = defaultValueProvider
     }
 
+    /// Archivo de un solo modelo, tal como se versiona en `Generated/.../Stubs/<Tipo>+Stub.swift`.
+    public func generateFile(
+        for model: ModelDefinition,
+        availableModels: [String: ModelDefinition],
+        imports: [String] = []
+    ) -> String {
+        var lines: [String] = []
+        lines.append("//")
+        lines.append("//  \(model.name)\(OutputLayout.fileSuffix)")
+        lines.append("//  Generado por spock-gen (SpockSwift 2). No editar a mano.")
+        lines.append("//")
+        lines.append("//  Origen: \(model.origin)")
+        lines.append("//  Si el modelo cambia, regenera con `spock-gen`; `spock-gen check` detecta el desfase.")
+        lines.append("//")
+        lines.append("")
+        lines.append(contentsOf: importLines(imports))
+        lines.append("")
+        lines.append(generateExtension(for: model, availableModels: availableModels))
+        lines.append("")
+        return lines.joined(separator: "\n")
+    }
+
+    /// Archivo único con todos los modelos (formato legado de `Stubs.generated.swift`).
     public func generate(
         models: [ModelDefinition],
         availableModels: [String: ModelDefinition],
@@ -28,21 +51,7 @@ public final class CodeGenerator: Sendable {
         lines.append("//  Generated automatically by spock-gen. Do not edit directly.")
         lines.append("//")
         lines.append("")
-        lines.append("import Foundation")
-
-        let uniqueImports = Array(Set(imports)).sorted()
-        for imp in uniqueImports {
-            if imp != "import Foundation" {
-                if imp.hasPrefix("@testable import ") {
-                    let module = imp.replacingOccurrences(of: "@testable import ", with: "").trimmingCharacters(in: .whitespacesAndNewlines)
-                    lines.append("#if canImport(\(module))")
-                    lines.append(imp)
-                    lines.append("#endif")
-                } else {
-                    lines.append(imp)
-                }
-            }
-        }
+        lines.append(contentsOf: importLines(imports))
         lines.append("")
 
         for model in models {
@@ -55,6 +64,22 @@ public final class CodeGenerator: Sendable {
         }
 
         return lines.joined(separator: "\n")
+    }
+
+    private func importLines(_ imports: [String]) -> [String] {
+        var lines: [String] = ["import Foundation"]
+        let uniqueImports = Array(Set(imports)).sorted()
+        for imp in uniqueImports where imp != "import Foundation" {
+            if imp.hasPrefix("@testable import ") {
+                let module = imp.replacingOccurrences(of: "@testable import ", with: "").trimmingCharacters(in: .whitespacesAndNewlines)
+                lines.append("#if canImport(\(module))")
+                lines.append(imp)
+                lines.append("#endif")
+            } else {
+                lines.append(imp)
+            }
+        }
+        return lines
     }
 
     private func generateExtension(

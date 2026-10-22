@@ -10,10 +10,10 @@ import SpockSwift
 @testable import Example
 
 final class MockUserRepository: UserRepositoryProtocol, SpockMock, @unchecked Sendable {
-    @Stubbed<Int, User>
+    @StubbedCall<Int, User>
     var fetchUserAction
 
-    @Stubbed<User, Bool>
+    @StubbedCall<User, Bool>
     var saveUserAction
 
     func fetchUser(id: Int) async throws -> User {

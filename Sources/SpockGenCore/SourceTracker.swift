@@ -7,7 +7,7 @@
 
 import Foundation
 
-/// Resultado del rastreo y deduplicación de `@Stub`.
+/// Resultado del rastreo y deduplicación de `@Stubbed`.
 public struct TrackingResult: Sendable, Equatable {
     public let activeStubs: [String: StubDeclaration]
     public let ignoredDuplicates: [StubDeclaration]
@@ -24,7 +24,7 @@ public struct TrackingResult: Sendable, Equatable {
     }
 }
 
-/// Registra el archivo de origen de cada `@Stub` y descarta duplicados para evitar errores de compilación.
+/// Registra el archivo de origen de cada `@Stubbed` y descarta duplicados para evitar errores de compilación.
 public final class SourceTracker: Sendable {
     public init() {}
 
@@ -34,13 +34,21 @@ public final class SourceTracker: Sendable {
         var warnings: [String] = []
 
         for decl in declarations {
-            if let existing = activeStubs[decl.typeName] {
-                ignoredDuplicates.append(decl)
-                let warn = "[SpockSwift] @Stub \(decl.typeName) declarado en \(decl.declaredInFile) fue omitido porque ya fue registrado por \(existing.declaredInFile)."
-                warnings.append(warn)
-            } else {
+            guard let existing = activeStubs[decl.typeName] else {
                 activeStubs[decl.typeName] = decl
+                continue
             }
+            // Una declaración explícita sustituye a un descubrimiento implícito sin avisar.
+            if decl.isExplicit, !existing.isExplicit {
+                activeStubs[decl.typeName] = decl
+                continue
+            }
+            // Un descubrimiento implícito repetido no es un duplicado del usuario.
+            guard decl.isExplicit, existing.isExplicit else { continue }
+
+            ignoredDuplicates.append(decl)
+            let warn = "[SpockSwift] @Stubbed \(decl.typeName) declarado en \(decl.declaredInFile) fue omitido porque ya fue registrado por \(existing.declaredInFile)."
+            warnings.append(warn)
         }
 
         return TrackingResult(

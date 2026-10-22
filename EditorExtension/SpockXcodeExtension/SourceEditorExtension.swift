@@ -23,7 +23,7 @@ final class SourceEditorExtension: NSObject, XCSourceEditorExtension {
             [
                 .classNameKey: SourceEditorCommand.className(),
                 .identifierKey: "com.fsaldivar.SpockXcodeExtension.addStubToSelection",
-                .nameKey: "Add @Stub to Selection"
+                .nameKey: "Add @Stubbed to Selection"
             ],
             [
                 .classNameKey: SourceEditorCommand.className(),

@@ -17,80 +17,236 @@ import Glibc
 setlinebuf(stdout)
 setlinebuf(stderr)
 
+// MARK: - Opciones
+
+struct Options {
+    var sources: [SourceRoot] = []
+    var tests: [SourceRoot] = []
+    var output: String?
+    var cache: String? = ".spock-cache.json"
+    var verbose = false
+    var watch = false
+}
+
 func printUsage() {
     print("""
-    Uso: spock-gen [subcomando] [opciones]
+    Uso: spock-gen [comando] [opciones]
 
-    Subcomandos:
-      daemon start   Inicia el demonio de observación en segundo plano
-      daemon stop    Detiene el demonio en segundo plano
-      daemon status  Muestra el estado del demonio (PID y logs)
-      clean          Limpia el archivo de caché (.spock-cache.json) y resetea los stubs
+    Comandos:
+      generate       (por defecto) Escribe los stubs en la carpeta de salida y elimina los huérfanos
+      check          Verifica que los stubs estén al día con el dominio; sale con código 1 si hay desfase
+      clean          Elimina los stubs generados y la caché
+      daemon start   Inicia el demonio de observación en segundo plano (opcional)
+      daemon stop    Detiene el demonio
+      daemon status  Muestra el estado del demonio
 
     Opciones:
-      --sources   <dir...>     Directorios de modelos de producción (Sources/)
-      --tests     <dir...>     Directorios de tests con declaraciones @Stub (Tests/)
-      --output    <ruta>       Ruta del archivo Swift generado (ej. Stubs.generated.swift)
-      --cache     <ruta>       Ruta del archivo de caché (por defecto .spock-cache.json)
-      --watch, -w              Modo reactivo: observa cambios al guardar (⌘S) y regenera al vuelo
-      --verbose                Imprime información detallada del proceso
-      --help, -h               Muestra esta ayuda
+      --sources <Módulo=dir | dir> ...  Raíces de los módulos de producción
+      --tests   <Módulo=dir | dir> ...  Raíces de los módulos de tests con declaraciones @Stubbed
+      --output  <dir>                   Carpeta de salida (por defecto <primer tests dir>/Generated)
+      --cache   <ruta>                  Manifiesto de caché (por defecto .spock-cache.json)
+      --watch, -w                       Observa cambios y regenera al guardar
+      --verbose                         Imprime información detallada
+      --help, -h                        Muestra esta ayuda
+
+    Un `dir` sin módulo toma el nombre de su último componente. Si el último componente es
+    `Sources` o `Tests`, cada subcarpeta se registra como un módulo (convención de SwiftPM).
+
+    La salida refleja la estructura del módulo de origen:
+      <output>/<Módulo>/<ruta relativa>/Stubs/<Tipo>+Stub.swift
 
     Ejemplos:
-      spock-gen --sources Example/Example/Domain --tests Example/ExampleTests --output Example/ExampleTests/Stubs.generated.swift
-      spock-gen daemon start --sources Example/Example/Domain --tests Example/ExampleTests --output Example/ExampleTests/Stubs.generated.swift
-      spock-gen daemon status
-      spock-gen daemon stop
+      spock-gen --sources Example=Example/Example --tests ExampleTests=Example/ExampleTests
+      spock-gen check --sources Sources --tests Tests
       spock-gen clean
     """)
 }
 
-func autoDetectConfig() -> (sources: [String], tests: [String], output: String)? {
-    let fm = FileManager.default
-    var foundSources: [String] = []
-    var foundTests: [String] = []
-    var foundOutput: String?
-
-    if fm.fileExists(atPath: "Example/Example/Domain") {
-        foundSources.append("Example/Example/Domain")
-    } else if fm.fileExists(atPath: "Example/Sources") {
-        foundSources.append("Example/Sources")
-    } else if fm.fileExists(atPath: "Sources") {
-        foundSources.append("Sources")
+/// `Sources` o `Tests` como raíz: una entrada por subcarpeta, con el nombre de la subcarpeta como módulo.
+func expandRoots(_ spec: String) -> [SourceRoot] {
+    if spec.contains("=") {
+        return [SourceRoot.parse(spec)]
     }
+    let root = SourceRoot.parse(spec)
+    let last = (root.path as NSString).lastPathComponent
+    guard last == "Sources" || last == "Tests" else { return [root] }
 
-    if fm.fileExists(atPath: "Example/ExampleTests") {
-        foundTests.append("Example/ExampleTests")
-        foundOutput = "Example/ExampleTests/Stubs.generated.swift"
-    } else if fm.fileExists(atPath: "Tests") {
-        foundTests.append("Tests")
-        foundOutput = "Tests/Stubs.generated.swift"
+    let fileManager = FileManager.default
+    guard let entries = try? fileManager.contentsOfDirectory(atPath: root.path) else { return [root] }
+    let modules = entries.sorted().compactMap { entry -> SourceRoot? in
+        var isDirectory: ObjCBool = false
+        let path = root.path + "/" + entry
+        guard !entry.hasPrefix("."), fileManager.fileExists(atPath: path, isDirectory: &isDirectory), isDirectory.boolValue else {
+            return nil
+        }
+        return SourceRoot(module: entry, path: path)
     }
-
-    if !foundSources.isEmpty && !foundTests.isEmpty, let out = foundOutput {
-        return (foundSources, foundTests, out)
-    }
-    return nil
+    return modules.isEmpty ? [root] : modules
 }
 
-let args = Array(CommandLine.arguments.dropFirst())
+func parseOptions(_ args: [String]) -> Options {
+    var options = Options()
+    var currentFlag: String?
 
-if args.contains("-h") || args.contains("--help") {
+    for arg in args {
+        switch arg {
+        case "--sources", "--tests", "--output", "--cache":
+            currentFlag = arg
+        case "--verbose":
+            options.verbose = true
+            currentFlag = nil
+        case "--watch", "-w":
+            options.watch = true
+            currentFlag = nil
+        default:
+            switch currentFlag {
+            case "--sources":
+                options.sources.append(contentsOf: expandRoots(arg))
+            case "--tests":
+                options.tests.append(contentsOf: expandRoots(arg))
+            case "--output":
+                options.output = arg
+                currentFlag = nil
+            case "--cache":
+                options.cache = arg
+                currentFlag = nil
+            default:
+                print("⚠️ Argumento ignorado: \(arg)")
+            }
+        }
+    }
+    return options
+}
+
+/// Rellena lo que falte con la convención del repositorio (Example) o de SwiftPM (Sources/Tests).
+func autoDetect(into options: inout Options) {
+    let fileManager = FileManager.default
+
+    if options.sources.isEmpty {
+        if fileManager.fileExists(atPath: "Example/Example/Domain") {
+            options.sources = [SourceRoot(module: "Example", path: "Example/Example")]
+        } else if fileManager.fileExists(atPath: "Sources") {
+            options.sources = expandRoots("Sources")
+        }
+    }
+
+    if options.tests.isEmpty {
+        if fileManager.fileExists(atPath: "Example/ExampleTests") {
+            options.tests = [SourceRoot(module: "ExampleTests", path: "Example/ExampleTests")]
+        } else if fileManager.fileExists(atPath: "Tests") {
+            options.tests = expandRoots("Tests")
+        }
+    }
+
+    if options.output == nil, let firstTests = options.tests.first {
+        options.output = firstTests.path + "/Generated"
+    }
+}
+
+func describeCommand(_ options: Options, command: String = "") -> String {
+    var parts = ["spock-gen"]
+    if !command.isEmpty { parts.append(command) }
+    parts.append("--sources")
+    parts.append(contentsOf: options.sources.map(\.spec))
+    parts.append("--tests")
+    parts.append(contentsOf: options.tests.map(\.spec))
+    if let output = options.output {
+        parts.append(contentsOf: ["--output", output])
+    }
+    return parts.joined(separator: " ")
+}
+
+func makeConfiguration(_ options: Options) -> SpockGenEngine.Configuration? {
+    guard !options.sources.isEmpty else {
+        print("❌ Error: Debes especificar al menos una raíz de fuentes con --sources.")
+        return nil
+    }
+    guard !options.tests.isEmpty else {
+        print("❌ Error: Debes especificar al menos una raíz de tests con --tests.")
+        return nil
+    }
+    guard let output = options.output else {
+        print("❌ Error: Debes especificar la carpeta de salida con --output.")
+        return nil
+    }
+    return SpockGenEngine.Configuration(
+        sourceRoots: options.sources,
+        testRoots: options.tests,
+        outputDirectory: output,
+        cachePath: options.cache,
+        verbose: options.verbose
+    )
+}
+
+/// Metadata con rutas absolutas para la extensión de Xcode.
+func persistProjectMetadata(_ options: Options, output: String) {
+    let cwd = FileManager.default.currentDirectoryPath
+    func absolute(_ path: String) -> String {
+        (path as NSString).isAbsolutePath ? path : URL(fileURLWithPath: cwd).appendingPathComponent(path).standardized.path
+    }
+    let metadata: [String: Any] = [
+        "projectRoot": cwd,
+        "outputDirectory": absolute(output),
+        "sources": options.sources.map { "\($0.module)=\(absolute($0.path))" },
+        "tests": options.tests.map { "\($0.module)=\(absolute($0.path))" },
+        "timestamp": Date().timeIntervalSince1970
+    ]
+    if let data = try? JSONSerialization.data(withJSONObject: metadata, options: .prettyPrinted) {
+        try? data.write(to: URL(fileURLWithPath: "/tmp/.spock_active_project.json"))
+    }
+}
+
+// MARK: - Comandos
+
+let arguments = Array(CommandLine.arguments.dropFirst())
+
+if arguments.contains("-h") || arguments.contains("--help") {
     printUsage()
     exit(0)
 }
 
-// 1. Manejo de Subcomandos
-if args.first == "daemon" {
-    let sub = args.count > 1 ? args[1] : "status"
+var command = "generate"
+var optionArguments = arguments
+if let first = arguments.first, !first.hasPrefix("-") {
+    command = first
+    optionArguments = Array(arguments.dropFirst())
+}
+if optionArguments.contains("--check") {
+    command = "check"
+    optionArguments.removeAll { $0 == "--check" }
+}
+
+func runGenerate(engine: SpockGenEngine) {
+    do {
+        let result = try engine.run()
+        switch result {
+        case .upToDate:
+            if engine.config.verbose {
+                print("⚡ SpockGen: Stubs al día (caché).")
+            }
+        case .generated(let count, let directory):
+            print("✅ SpockGen: \(count) modelos con stub en \(directory)")
+        case .noStubsFound:
+            if engine.config.verbose {
+                print("ℹ️ SpockGen: No se encontraron anotaciones @Stubbed activas.")
+            }
+        }
+    } catch {
+        print("❌ Error en SpockGen: \(error.localizedDescription)")
+    }
+}
+
+switch command {
+case "daemon":
+    let subcommand = optionArguments.first ?? "status"
     let daemon = DaemonManager()
 
-    switch sub {
+    switch subcommand {
     case "status":
-        let st = daemon.status()
-        if st.isRunning, let pid = st.pid {
+        let status = daemon.status()
+        if status.isRunning, let pid = status.pid {
             print("🟢 SpockGen Daemon está ACTIVO (PID: \(pid)).")
-            print("📝 Archivo de log: \(st.logFilePath ?? ".spock-daemon.log")")
+            print("📝 Archivo de log: \(status.logFilePath ?? ".spock-daemon.log")")
         } else {
             print("⚪ SpockGen Daemon está DETENIDO.")
         }
@@ -105,61 +261,25 @@ if args.first == "daemon" {
         exit(0)
 
     case "start":
-        let currentStatus = daemon.status()
-        if currentStatus.isRunning, let pid = currentStatus.pid {
+        if let pid = daemon.status().pid, daemon.status().isRunning {
             print("⚠️ SpockGen Daemon ya está activo con PID \(pid).")
             exit(0)
         }
 
-        // Parsear flags adicionales tras `daemon start`
-        var dSources: [String] = []
-        var dTests: [String] = []
-        var dOutput: String?
-        var dCache: String? = ".spock-cache.json"
-        var dVerbose: Bool = false
-
-        var curFlag: String? = nil
-        for arg in args.dropFirst(2) {
-            switch arg {
-            case "--sources": curFlag = "--sources"
-            case "--tests": curFlag = "--tests"
-            case "--output": curFlag = "--output"
-            case "--cache": curFlag = "--cache"
-            case "--verbose": dVerbose = true; curFlag = nil
-            default:
-                if let flag = curFlag {
-                    switch flag {
-                    case "--sources": dSources.append(arg)
-                    case "--tests": dTests.append(arg)
-                    case "--output": dOutput = arg; curFlag = nil
-                    case "--cache": dCache = arg; curFlag = nil
-                    default: break
-                    }
-                }
-            }
-        }
-
-        // Si faltan argumentos, intentar autodetectar
-        if dSources.isEmpty || dTests.isEmpty || dOutput == nil {
-            if let detected = autoDetectConfig() {
-                if dSources.isEmpty { dSources = detected.sources }
-                if dTests.isEmpty { dTests = detected.tests }
-                if dOutput == nil { dOutput = detected.output }
-            }
-        }
-
-        guard !dSources.isEmpty, !dTests.isEmpty, let finalOut = dOutput else {
+        var options = parseOptions(Array(optionArguments.dropFirst()))
+        autoDetect(into: &options)
+        guard let output = options.output, !options.sources.isEmpty, !options.tests.isEmpty else {
             print("❌ Error: Especifica --sources, --tests y --output para iniciar el demonio.")
             exit(1)
         }
 
-        let executablePath = CommandLine.arguments[0]
         let process = Process()
-        process.executableURL = URL(fileURLWithPath: executablePath)
-
-        var passArgs: [String] = ["--sources"] + dSources + ["--tests"] + dTests + ["--output", finalOut, "--watch"]
-        if let cache = dCache { passArgs += ["--cache", cache] }
-        if dVerbose { passArgs.append("--verbose") }
+        process.executableURL = URL(fileURLWithPath: CommandLine.arguments[0])
+        var passArgs = ["--sources"] + options.sources.map(\.spec)
+        passArgs += ["--tests"] + options.tests.map(\.spec)
+        passArgs += ["--output", output, "--watch"]
+        if let cache = options.cache { passArgs += ["--cache", cache] }
+        if options.verbose { passArgs.append("--verbose") }
         process.arguments = passArgs
 
         let logURL = URL(fileURLWithPath: daemon.logFilePath)
@@ -177,11 +297,10 @@ if args.first == "daemon" {
             try daemon.savePid(process.processIdentifier)
             print("🚀 SpockGen Daemon iniciado con PID \(process.processIdentifier).")
             print("👀 Observando cambios en:")
-            for s in dSources { print("   - [Sources] \(s)") }
-            for t in dTests { print("   - [Tests]   \(t)") }
-            print("📁 Salida: \(finalOut)")
+            for root in options.sources { print("   - [Sources] \(root.spec)") }
+            for root in options.tests { print("   - [Tests]   \(root.spec)") }
+            print("📁 Salida: \(output)")
             print("📝 Log:    \(daemon.logFilePath)")
-            print("💡 Los stubs se regenerarán automáticamente al presionar ⌘S en Xcode.")
             exit(0)
         } catch {
             print("❌ Error al iniciar el demonio: \(error.localizedDescription)")
@@ -189,227 +308,81 @@ if args.first == "daemon" {
         }
 
     default:
-        print("❌ Subcomando desconocido: '\(sub)'. Usa 'start', 'stop' o 'status'.")
+        print("❌ Subcomando desconocido: '\(subcommand)'. Usa 'start', 'stop' o 'status'.")
         exit(1)
     }
-}
 
-if args.first == "clean" {
-    var cOutput: String? = nil
-    var cCache: String? = ".spock-cache.json"
-
-    var curFlag: String? = nil
-    for arg in args.dropFirst() {
-        switch arg {
-        case "--output": curFlag = "--output"
-        case "--cache": curFlag = "--cache"
-        default:
-            if let flag = curFlag {
-                switch flag {
-                case "--output": cOutput = arg; curFlag = nil
-                case "--cache": cCache = arg; curFlag = nil
-                default: break
-                }
-            }
-        }
-    }
-
-    var cSources: [String] = []
-    var cTests: [String] = []
-
-    if let detected = autoDetectConfig() {
-        if cOutput == nil { cOutput = detected.output }
-        cSources = detected.sources
-        cTests = detected.tests
-    }
-
-    if let out = cOutput, !cSources.isEmpty, !cTests.isEmpty {
-        let cleanEngine = SpockGenEngine(config: SpockGenEngine.Configuration(
-            sourcesDirectories: cSources,
-            testsDirectories: cTests,
-            outputPath: out,
-            cachePath: nil,
-            verbose: true
-        ))
-        do {
-            let res = try cleanEngine.run()
-            switch res {
-            case .generated(let count, let path):
-                print("🧹 SpockGen Clean: \(count) modelos reconciliados y actualizados en \(path).")
-            case .upToDate:
-                print("🧹 SpockGen Clean: Modelos verificados y actualizados.")
-            case .noStubsFound:
-                print("🧹 SpockGen Clean: No se encontraron modelos activos. Archivo reseteado.")
-            }
-        } catch {
-            print("❌ Error durante clean: \(error.localizedDescription)")
-        }
-    } else if let out = cOutput {
-        let cleanPlaceholder = """
-        //
-        //  Stubs.generated.swift
-        //  SpockSwift 2 - Prebuild Generated Stubs
-        //
-        //  Generated automatically by spock-gen clean.
-        //  No active @Stub declarations found.
-        //
-
-        import Foundation
-
-        """
-        try? cleanPlaceholder.write(toFile: out, atomically: true, encoding: .utf8)
-        print("🧹 Archivo de stubs (\(out)) reseteado.")
-    }
-
-    print("✅ SpockGen limpiado exitosamente.")
-    exit(0)
-}
-
-// 2. Ejecución normal o reactiva con flags
-var sources: [String] = []
-var tests: [String] = []
-var output: String?
-var cache: String? = ".spock-cache.json"
-var verbose: Bool = false
-var watchMode: Bool = false
-
-var currentFlag: String? = nil
-for arg in args {
-    switch arg {
-    case "--sources":
-        currentFlag = "--sources"
-    case "--tests":
-        currentFlag = "--tests"
-    case "--output":
-        currentFlag = "--output"
-    case "--cache":
-        currentFlag = "--cache"
-    case "--verbose":
-        verbose = true
-        currentFlag = nil
-    case "--watch", "-w":
-        watchMode = true
-        currentFlag = nil
-    default:
-        if let flag = currentFlag {
-            switch flag {
-            case "--sources":
-                sources.append(arg)
-            case "--tests":
-                tests.append(arg)
-            case "--output":
-                output = arg
-                currentFlag = nil
-            case "--cache":
-                cache = arg
-                currentFlag = nil
-            default:
-                break
-            }
-        }
-    }
-}
-
-// Autodetección si faltan flags
-if sources.isEmpty || tests.isEmpty || output == nil {
-    if let detected = autoDetectConfig() {
-        if sources.isEmpty { sources = detected.sources }
-        if tests.isEmpty { tests = detected.tests }
-        if output == nil { output = detected.output }
-    }
-}
-
-guard !sources.isEmpty else {
-    print("❌ Error: Debes especificar al menos un directorio de fuentes con --sources.")
-    exit(1)
-}
-
-guard !tests.isEmpty else {
-    print("❌ Error: Debes especificar al menos un directorio de tests con --tests.")
-    exit(1)
-}
-
-guard let outputPath = output else {
-    print("❌ Error: Debes especificar la ruta del archivo de salida con --output.")
-    exit(1)
-}
-
-let config = SpockGenEngine.Configuration(
-    sourcesDirectories: sources,
-    testsDirectories: tests,
-    outputPath: outputPath,
-    cachePath: cache,
-    verbose: verbose
-)
-
-// Persistir metadata con rutas absolutas para comunicación in-process con la extensión de Xcode
-let cwd = FileManager.default.currentDirectoryPath
-let absOutput = (outputPath as NSString).isAbsolutePath ? outputPath : URL(fileURLWithPath: cwd).appendingPathComponent(outputPath).standardized.path
-let absSources = sources.map { ($0 as NSString).isAbsolutePath ? $0 : URL(fileURLWithPath: cwd).appendingPathComponent($0).standardized.path }
-let absTests = tests.map { ($0 as NSString).isAbsolutePath ? $0 : URL(fileURLWithPath: cwd).appendingPathComponent($0).standardized.path }
-
-let projectMetadata: [String: Any] = [
-    "projectRoot": cwd,
-    "outputPath": absOutput,
-    "sources": absSources,
-    "tests": absTests,
-    "timestamp": Date().timeIntervalSince1970
-]
-if let data = try? JSONSerialization.data(withJSONObject: projectMetadata, options: .prettyPrinted) {
-    try? data.write(to: URL(fileURLWithPath: "/tmp/.spock_active_project.json"))
-}
-
-let engine = SpockGenEngine(config: config)
-
-@Sendable
-func executeRun() {
+case "clean":
+    var options = parseOptions(optionArguments)
+    autoDetect(into: &options)
+    guard let config = makeConfiguration(options) else { exit(1) }
     do {
-        let result = try engine.run()
-        switch result {
-        case .upToDate:
-            if engine.config.verbose {
-                print("⚡ SpockGen: Archivos actualizados (Caché hit).")
-            }
-        case .generated(let count, let path):
-            print("✅ SpockGen: Se generaron stubs para \(count) modelos en: \(path)")
-        case .noStubsFound:
-            if engine.config.verbose {
-                print("ℹ️ SpockGen: No se encontraron anotaciones @Stub activas.")
-            }
+        let removed = try SpockGenEngine(config: config).clean()
+        if removed.isEmpty {
+            print("🧹 SpockGen Clean: no había stubs generados en \(config.outputDirectory).")
+        } else {
+            print("🧹 SpockGen Clean: \(removed.count) stubs eliminados de \(config.outputDirectory).")
+            for path in removed { print("   - \(path)") }
         }
+        print("✅ SpockGen limpiado exitosamente.")
+        exit(0)
     } catch {
-        print("❌ Error en SpockGen: \(error.localizedDescription)")
+        print("❌ Error durante clean: \(error.localizedDescription)")
+        exit(1)
     }
-}
 
-// 1. Ejecución inicial del motor de generación
-executeRun()
-
-// 2. Garantizar como salvaguarda que el archivo existe en disco para que Xcode nunca falle
-XcodeProjectIntegrator.ensureGeneratedFileExists(atPath: outputPath)
-
-// 3. Auto-sincronización con el manifiesto project.pbxproj si existe proyecto Xcode
-if let pbxPath = XcodeProjectIntegrator.findXcodeProject(nearPath: outputPath) {
-    let fileName = (outputPath as NSString).lastPathComponent
-    if let status = try? XcodeProjectIntegrator.integrate(
-        projectPbxprojPath: pbxPath,
-        generatedFileName: fileName,
-        sourcesDir: sources.first ?? "",
-        testsDir: tests.first ?? ""
-    ), case .integrated = status {
-        print("🛠️ SpockGen: \(fileName) y build phase sincronizados automáticamente con el manifiesto de Xcode.")
+case "check":
+    var options = parseOptions(optionArguments)
+    autoDetect(into: &options)
+    guard let config = makeConfiguration(options) else { exit(1) }
+    do {
+        let result = try SpockGenEngine(config: config).check()
+        if result.isUpToDate {
+            print("✅ SpockGen: los stubs en \(config.outputDirectory) están al día.")
+            exit(0)
+        }
+        print("❌ SpockGen: los stubs en \(config.outputDirectory) no están al día.")
+        if !result.missing.isEmpty {
+            print("   Faltan:")
+            for path in result.missing { print("     - \(path)") }
+        }
+        if !result.stale.isEmpty {
+            print("   Desfasados respecto al dominio:")
+            for path in result.stale { print("     - \(path)") }
+        }
+        if !result.orphaned.isEmpty {
+            print("   Huérfanos (sin modelo ni @Stubbed):")
+            for path in result.orphaned { print("     - \(path)") }
+        }
+        print("   Regenera con: \(describeCommand(options))")
+        exit(1)
+    } catch {
+        print("❌ Error durante check: \(error.localizedDescription)")
+        exit(1)
     }
-}
 
-// Si se activó modo watch
-if watchMode {
-    print("👀 SpockGen: Modo observación activo (--watch).")
-    print("💡 Presiona ⌘S en Xcode al terminar de escribir: los stubs se generarán reactivamente.")
-    let watcher = FileWatcher(directories: sources + tests) {
-        executeRun()
+case "generate":
+    var options = parseOptions(optionArguments)
+    autoDetect(into: &options)
+    guard let config = makeConfiguration(options) else { exit(1) }
+    persistProjectMetadata(options, output: config.outputDirectory)
+
+    let engine = SpockGenEngine(config: config)
+    runGenerate(engine: engine)
+
+    if options.watch {
+        print("👀 SpockGen: Modo observación activo (--watch).")
+        print("💡 Guarda en Xcode (⌘S) y los stubs se regenerarán al vuelo.")
+        let watcher = FileWatcher(directories: config.sourcesDirectories + config.testsDirectories) {
+            runGenerate(engine: engine)
+        }
+        watcher.start()
+        RunLoop.main.run()
     }
-    watcher.start()
-    RunLoop.main.run()
-} else {
     exit(0)
+
+default:
+    print("❌ Comando desconocido: '\(command)'. Usa generate, check, clean o daemon.")
+    printUsage()
+    exit(1)
 }
