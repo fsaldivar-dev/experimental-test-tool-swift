@@ -9,7 +9,7 @@ import Foundation
 import SwiftSyntax
 import SwiftParser
 
-/// Escanea archivos de tests buscando declaraciones `@Stubbed` y `@Mocking` (explícitas),
+/// Escanea archivos de tests buscando declaraciones `@Stubbed`, `@Mocking` y `@Spied` (explícitas),
 /// llamadas a `.stub()` y modelos usados (implícitos).
 ///
 /// Las explícitas tienen prioridad y solo entre ellas se reportan duplicados.
@@ -89,12 +89,28 @@ public final class TestScanner: SyntaxVisitor, @unchecked Sendable {
             register(typeName: typeName, explicit: true, kind: .mock)
             return .skipChildren
         }
+        if hasAttribute("Spied", in: node.attributes) {
+            register(typeName: typeName, explicit: true, kind: .spy)
+            return .skipChildren
+        }
         return .visitChildren
     }
 
     public override func visit(_ node: StructDeclSyntax) -> SyntaxVisitorContinueKind {
         if hasAttribute("Stubbed", in: node.attributes) {
             register(typeName: node.name.text, explicit: true, kind: .stub)
+            return .skipChildren
+        }
+        if hasAttribute("Spied", in: node.attributes) {
+            register(typeName: node.name.text, explicit: true, kind: .spy)
+            return .skipChildren
+        }
+        return .visitChildren
+    }
+
+    public override func visit(_ node: ClassDeclSyntax) -> SyntaxVisitorContinueKind {
+        if hasAttribute("Spied", in: node.attributes) {
+            register(typeName: node.name.text, explicit: true, kind: .spy)
             return .skipChildren
         }
         return .visitChildren

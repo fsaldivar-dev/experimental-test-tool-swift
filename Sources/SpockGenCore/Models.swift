@@ -115,8 +115,10 @@ public struct ModelDefinition: Sendable, Equatable {
 public enum DeclarationKind: String, Sendable, Equatable {
     /// `@Stubbed extension Tipo {}` o un modelo usado con `.stub()`: genera `Tipo.stub(...)`.
     case stub
-    /// `@Mocking extension Protocolo {}`: genera `MockProtocolo` con un llamada mockeada por requisito.
+    /// `@Mocking extension Protocolo {}`: genera `ProtocoloMock` con una llamada mockeada por requisito.
     case mock
+    /// `@Spied extension Impl {}`: genera `ImplSpy`, un envoltorio que registra cada llamada y delega en la real.
+    case spy
 }
 
 /// Representa una anotación `@Stubbed` / `@Mocking` encontrada en un archivo de pruebas.
@@ -157,13 +159,27 @@ public struct ParameterDefinition: Sendable, Equatable {
     public let typeName: String
     /// Closure sin `@escaping` (o `@autoclosure`): no se puede guardar, el mock lo pasa con `withoutActuallyEscaping`.
     public let isNonEscapingClosure: Bool
+    /// `inout`: se registra una copia y se reenvía con `&`.
+    public let isInout: Bool
+    /// Variádico: el espía no puede reenviarlo (un array no se expande en variádicos).
+    public let isVariadic: Bool
 
-    public init(label: String?, name: String, declaredType: String, typeName: String? = nil, isNonEscapingClosure: Bool = false) {
+    public init(
+        label: String?,
+        name: String,
+        declaredType: String,
+        typeName: String? = nil,
+        isNonEscapingClosure: Bool = false,
+        isInout: Bool = false,
+        isVariadic: Bool = false
+    ) {
         self.label = label
         self.name = name
         self.declaredType = declaredType
         self.typeName = typeName ?? declaredType
         self.isNonEscapingClosure = isNonEscapingClosure
+        self.isInout = isInout
+        self.isVariadic = isVariadic
     }
 
     /// `label name: Tipo` tal como va en la firma.
@@ -175,6 +191,12 @@ public struct ParameterDefinition: Sendable, Equatable {
             prefix = "_ \(name)"
         }
         return "\(prefix): \(declaredType)"
+    }
+
+    /// `label: name`, `name` o `&name`, tal como se reenvía la llamada a la implementación real.
+    public var forwardingText: String {
+        let value = (isInout ? "&" : "") + name
+        return label.map { "\($0): \(value)" } ?? value
     }
 }
 
@@ -296,6 +318,64 @@ public struct ProtocolDefinition: Sendable, Equatable {
             methods: methods,
             properties: properties,
             unsupportedRequirements: unsupported
+        )
+    }
+}
+
+// MARK: - Implementaciones
+
+/// Un tipo con implementación real (class, actor o struct), o una extensión suya, tal como lo ve el generador de espías.
+public struct ImplementationDefinition: Sendable, Equatable {
+    public enum Kind: String, Sendable, Equatable {
+        case `class`, actor, `struct`, `extension`
+    }
+
+    public let name: String
+    public let kind: Kind
+    public let filePath: String
+    public let module: String
+    public let relativeDirectory: String
+    /// Protocolos (y superclase) declarados en la cláusula de herencia.
+    public let inheritedTypes: [String]
+    /// Métodos no privados con cuerpo.
+    public let methods: [MethodRequirement]
+
+    public init(
+        name: String,
+        kind: Kind = .class,
+        filePath: String = "",
+        module: String = "",
+        relativeDirectory: String = "",
+        inheritedTypes: [String] = [],
+        methods: [MethodRequirement] = []
+    ) {
+        self.name = name
+        self.kind = kind
+        self.filePath = filePath
+        self.module = module
+        self.relativeDirectory = relativeDirectory
+        self.inheritedTypes = inheritedTypes
+        self.methods = methods
+    }
+
+    public var origin: String {
+        let file = (filePath as NSString).lastPathComponent
+        return [module, relativeDirectory, file].filter { !$0.isEmpty }.joined(separator: "/")
+    }
+
+    /// Copia con las conformancias y los métodos que aportan sus extensiones.
+    public func merging(extensions: [ImplementationDefinition]) -> ImplementationDefinition {
+        var inherited = inheritedTypes
+        var methods = self.methods
+        for ext in extensions where ext.name == name {
+            for type in ext.inheritedTypes where !inherited.contains(type) { inherited.append(type) }
+            for method in ext.methods where !methods.contains(where: { $0.selector == method.selector && $0.isStatic == method.isStatic }) {
+                methods.append(method)
+            }
+        }
+        return ImplementationDefinition(
+            name: name, kind: kind, filePath: filePath, module: module, relativeDirectory: relativeDirectory,
+            inheritedTypes: inherited, methods: methods
         )
     }
 }

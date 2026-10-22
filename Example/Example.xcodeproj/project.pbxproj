@@ -8,10 +8,12 @@
 
 /* Begin PBXBuildFile section */
 		5B0C4E5FF65011FDC697010E /* UserRepositoryProtocol+Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B0C4E5FEE51356E0203AA23 /* UserRepositoryProtocol+Mock.swift */; };
+		5B0C4E5F08F92418FC32F021 /* InMemoryUserRepository+Spy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B0C4E5F3630462DD7FA78AB /* InMemoryUserRepository+Spy.swift */; };
 		5B0C4E5FA8A0BFDA80E63BA3 /* Pet+Stub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B0C4E5F1C700B65B23EE6E3 /* Pet+Stub.swift */; };
 		5B0C4E5F23A02288CED10CFC /* Profile+Stub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B0C4E5F5ABC700DD4AE6260 /* Profile+Stub.swift */; };
 		5B0C4E5F171DEA32D1F22705 /* SomeStub+Stub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B0C4E5FA254441308B9CFF6 /* SomeStub+Stub.swift */; };
 		5B0C4E5F6D56EDA42CDF87D6 /* User+Stub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B0C4E5F6328A77D7BD8F33D /* User+Stub.swift */; };
+		5B0C4E5FD6239CF31A3B278B /* UserNotFound+Stub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B0C4E5F995AC08066575979 /* UserNotFound+Stub.swift */; };
 		21BB313104DA461E9A823459 /* UserService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52149D9B89EA479C815FCE62 /* UserService.swift */; };
 		9B1C605E90C448ED95C57965 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE2E784D0EA24F6285DC9FCC /* User.swift */; };
 		9D19AF7930865C6500039A2F /* (null) in Frameworks */ = {isa = PBXBuildFile; };
@@ -43,10 +45,12 @@
 
 /* Begin PBXFileReference section */
 		5B0C4E5FEE51356E0203AA23 /* UserRepositoryProtocol+Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserRepositoryProtocol+Mock.swift"; sourceTree = "<group>"; };
+		5B0C4E5F3630462DD7FA78AB /* InMemoryUserRepository+Spy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "InMemoryUserRepository+Spy.swift"; sourceTree = "<group>"; };
 		5B0C4E5F1C700B65B23EE6E3 /* Pet+Stub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Pet+Stub.swift"; sourceTree = "<group>"; };
 		5B0C4E5F5ABC700DD4AE6260 /* Profile+Stub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Profile+Stub.swift"; sourceTree = "<group>"; };
 		5B0C4E5FA254441308B9CFF6 /* SomeStub+Stub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SomeStub+Stub.swift"; sourceTree = "<group>"; };
 		5B0C4E5F6328A77D7BD8F33D /* User+Stub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "User+Stub.swift"; sourceTree = "<group>"; };
+		5B0C4E5F995AC08066575979 /* UserNotFound+Stub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserNotFound+Stub.swift"; sourceTree = "<group>"; };
 		28F454F0E747413899986C73 /* ExampleTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ExampleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		52149D9B89EA479C815FCE62 /* UserService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserService.swift; sourceTree = "<group>"; };
 		B6436E42289E92AF00D9B5C2 /* Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -107,6 +111,7 @@
 			isa = PBXGroup;
 			children = (
 				5B0C4E5F97A8B9B0186FB13C /* Mocks */,
+				5B0C4E5F54E5085E21B3FA95 /* Spies */,
 				5B0C4E5F201E70132B4E11D1 /* Stubs */,
 			);
 			path = Domain;
@@ -120,6 +125,14 @@
 			path = Example;
 			sourceTree = "<group>";
 		};
+		5B0C4E5F54E5085E21B3FA95 /* Spies */ = {
+			isa = PBXGroup;
+			children = (
+				5B0C4E5F3630462DD7FA78AB /* InMemoryUserRepository+Spy.swift */,
+			);
+			path = Spies;
+			sourceTree = "<group>";
+		};
 		5B0C4E5F201E70132B4E11D1 /* Stubs */ = {
 			isa = PBXGroup;
 			children = (
@@ -127,6 +140,7 @@
 				5B0C4E5F5ABC700DD4AE6260 /* Profile+Stub.swift */,
 				5B0C4E5FA254441308B9CFF6 /* SomeStub+Stub.swift */,
 				5B0C4E5F6328A77D7BD8F33D /* User+Stub.swift */,
+				5B0C4E5F995AC08066575979 /* UserNotFound+Stub.swift */,
 			);
 			path = Stubs;
 			sourceTree = "<group>";
@@ -315,10 +329,12 @@
 			);
 			outputPaths = (
 				"$(SRCROOT)/ExampleTests/Generated/Example/Domain/Mocks/UserRepositoryProtocol+Mock.swift",
+				"$(SRCROOT)/ExampleTests/Generated/Example/Domain/Spies/InMemoryUserRepository+Spy.swift",
 				"$(SRCROOT)/ExampleTests/Generated/Example/Domain/Stubs/Pet+Stub.swift",
 				"$(SRCROOT)/ExampleTests/Generated/Example/Domain/Stubs/Profile+Stub.swift",
 				"$(SRCROOT)/ExampleTests/Generated/Example/Domain/Stubs/SomeStub+Stub.swift",
 				"$(SRCROOT)/ExampleTests/Generated/Example/Domain/Stubs/User+Stub.swift",
+				"$(SRCROOT)/ExampleTests/Generated/Example/Domain/Stubs/UserNotFound+Stub.swift",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -345,10 +361,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				5B0C4E5FF65011FDC697010E /* UserRepositoryProtocol+Mock.swift in Sources */,
+				5B0C4E5F08F92418FC32F021 /* InMemoryUserRepository+Spy.swift in Sources */,
 				5B0C4E5FA8A0BFDA80E63BA3 /* Pet+Stub.swift in Sources */,
 				5B0C4E5F23A02288CED10CFC /* Profile+Stub.swift in Sources */,
 				5B0C4E5F171DEA32D1F22705 /* SomeStub+Stub.swift in Sources */,
 				5B0C4E5F6D56EDA42CDF87D6 /* User+Stub.swift in Sources */,
+				5B0C4E5FD6239CF31A3B278B /* UserNotFound+Stub.swift in Sources */,
 				B50FFBB3C4C54659A8849C17 /* UserStubTests.swift in Sources */,
 				BD6A96DAEC2042729D26303D /* UserServiceMockTests.swift in Sources */,
 			);

@@ -43,7 +43,7 @@ func printUsage() {
 
     Opciones:
       --sources <Módulo=dir | dir> ...  Raíces de los módulos de producción
-      --tests   <Módulo=dir | dir> ...  Raíces de los módulos de tests con declaraciones @Stubbed / @Mocking
+      --tests   <Módulo=dir | dir> ...  Raíces de los módulos de tests con declaraciones @Stubbed / @Mocking / @Spied
       --output  <dir>                   Carpeta de salida (por defecto <primer tests dir>/Generated)
       --cache   <ruta>                  Manifiesto de caché (por defecto .spock-cache.json)
       --watch, -w                       Observa cambios y regenera al guardar
@@ -57,6 +57,7 @@ func printUsage() {
     La salida refleja la estructura del módulo de origen:
       <output>/<Módulo>/<ruta relativa>/Stubs/<Tipo>+Stub.swift
       <output>/<Módulo>/<ruta relativa>/Mocks/<Protocolo>+Mock.swift
+      <output>/<Módulo>/<ruta relativa>/Spies/<Tipo>+Spy.swift
 
     Ejemplos:
       spock-gen --sources Example=Example/Example --tests ExampleTests=Example/ExampleTests
@@ -263,7 +264,7 @@ func runGenerate(engine: SpockGenEngine) {
                 print("⚡ SpockGen: Stubs al día (caché).")
             }
         case .generated(let count, let directory):
-            print("✅ SpockGen: \(count) stubs y mocks al día en \(directory)")
+            print("✅ SpockGen: \(count) stubs, mocks y espías al día en \(directory)")
         case .noStubsFound:
             if engine.config.verbose {
                 print("ℹ️ SpockGen: No se encontraron anotaciones @Stubbed activas.")
@@ -390,7 +391,7 @@ case "check":
             for path in result.stale { print("     - \(path)") }
         }
         if !result.orphaned.isEmpty {
-            print("   Huérfanos (sin modelo, @Stubbed ni @Mocking):")
+            print("   Huérfanos (sin @Stubbed, @Mocking ni @Spied que los pida):")
             for path in result.orphaned { print("     - \(path)") }
         }
         print("   Regenera con: \(describeCommand(options))")

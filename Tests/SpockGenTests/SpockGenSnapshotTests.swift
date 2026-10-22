@@ -288,6 +288,28 @@ struct SpockGenSnapshotEngineTests {
         let updated = try fixture.generatedContent(SnapshotFixture.userStub)
         #expect(updated.contains("email: String = \"dummy_email\""))
     }
+
+    @Test("Un struct declarado en tests no recibe stub por uso; solo con @Stubbed explícito")
+    func testTestDeclaredStructsNeedExplicitStubbed() throws {
+        let fixture = try SnapshotFixture()
+        defer { fixture.tearDown() }
+        try fixture.writeDomain()
+        try fixture.writeTest("""
+        struct NotFound: Error {}
+        @Stubbed extension User {}
+        func boom() throws { throw NotFound() }
+        """)
+
+        let plan = try fixture.engine().plan()
+        #expect(plan.files.keys.sorted() == [SnapshotFixture.petStub, SnapshotFixture.userStub])
+
+        try fixture.writeTest("""
+        @Stubbed struct NotFound: Error {}
+        @Stubbed extension User {}
+        """)
+        let explicit = try fixture.engine().plan()
+        #expect(explicit.files.keys.contains("AppTests/Stubs/NotFound+Stub.swift"))
+    }
 }
 
 // MARK: - check y clean

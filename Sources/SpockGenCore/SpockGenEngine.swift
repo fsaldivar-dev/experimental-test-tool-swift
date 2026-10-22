@@ -9,7 +9,7 @@ public final class SpockGenEngine: Sendable {
     public struct Configuration: Sendable {
         /// Módulos de producción, cada uno con la raíz de sus fuentes.
         public var sourceRoots: [SourceRoot]
-        /// Módulos de tests, donde viven las declaraciones `@Stubbed` / `@Mocking` y los modelos locales.
+        /// Módulos de tests, donde viven las declaraciones `@Stubbed` / `@Mocking` / `@Spied` y los modelos locales.
         public var testRoots: [SourceRoot]
         /// Carpeta `Generated`, normalmente dentro del target de tests.
         public var outputDirectory: String
@@ -64,6 +64,8 @@ public final class SpockGenEngine: Sendable {
         public let models: [ModelDefinition]
         /// Protocolos con mock.
         public let protocols: [ProtocolDefinition]
+        /// Implementaciones con espía.
+        public let spies: [ImplementationDefinition]
         public let files: [String: String]
         public let inputFiles: [String]
         public let warnings: [String]
@@ -104,9 +106,14 @@ public final class SpockGenEngine: Sendable {
 
         log("🔍 Encontrados \(sourceFiles.count) archivos de fuentes y \(testFiles.count) de tests.")
 
-        // 1. Modelos y protocolos disponibles: dominio y declarados en tests
+        // 1. Modelos y protocolos disponibles: dominio y declarados en tests.
+        //    Solo los del dominio se descubren implícitamente por uso; un struct declarado en tests
+        //    (un Error, un helper) necesita @Stubbed explícito para recibir stub.
         var availableModels: [String: ModelDefinition] = [:]
         var availableProtocols: [String: ProtocolDefinition] = [:]
+        var availableImplementations: [String: ImplementationDefinition] = [:]
+        var extensionsByType: [String: [ImplementationDefinition]] = [:]
+        var domainModelNames: Set<String> = []
         for input in sourceFiles + testFiles {
             guard let content = try? String(contentsOfFile: input.path, encoding: .utf8) else { continue }
             let parsed = ModelParser.parseAll(
@@ -115,18 +122,27 @@ public final class SpockGenEngine: Sendable {
                 module: input.root.module,
                 relativeDirectory: input.root.relativeDirectory(of: input.path) ?? ""
             )
+            let isDomain = sourceFiles.contains { $0.path == input.path }
             for model in parsed.models where availableModels[model.name] == nil {
                 availableModels[model.name] = model
+                if isDomain { domainModelNames.insert(model.name) }
             }
             for definition in parsed.protocols where availableProtocols[definition.name] == nil {
                 availableProtocols[definition.name] = definition
+            }
+            for implementation in parsed.implementations {
+                if implementation.kind == .extension {
+                    extensionsByType[implementation.name, default: []].append(implementation)
+                } else if availableImplementations[implementation.name] == nil {
+                    availableImplementations[implementation.name] = implementation
+                }
             }
         }
 
         // 2. Declaraciones @Stubbed / @Mocking, llamadas .stub() y modelos usados en tests
         var declarations: [StubDeclaration] = []
         var imports: [String] = []
-        let knownModelNames = Set(availableModels.keys)
+        let knownModelNames = domainModelNames
         for input in testFiles {
             guard let content = try? String(contentsOfFile: input.path, encoding: .utf8) else { continue }
             let scan = TestScanner.scanDetailed(source: content, filePath: input.path, knownModelNames: knownModelNames)
@@ -135,7 +151,7 @@ public final class SpockGenEngine: Sendable {
         }
 
         guard !declarations.isEmpty else {
-            return GenerationPlan(models: [], protocols: [], files: [:], inputFiles: inputFiles, warnings: [], detectedCycles: [])
+            return GenerationPlan(models: [], protocols: [], spies: [], files: [:], inputFiles: inputFiles, warnings: [], detectedCycles: [])
         }
 
         // 3. Deduplicación
@@ -170,6 +186,29 @@ public final class SpockGenEngine: Sendable {
             )
         }
 
+        // 4b. Espías: envoltorios que registran y delegan en la implementación real
+        let spyGenerator = SpyGenerator()
+        var spiedImplementations: [ImplementationDefinition] = []
+        for declaration in active where declaration.kind == .spy {
+            guard let implementation = availableImplementations[declaration.typeName] else {
+                warnings.append("@Spied \(declaration.typeName) en \(declaration.declaredInFile): no se encontró una clase, actor o struct con ese nombre en las fuentes.")
+                continue
+            }
+            let merged = implementation.merging(extensions: extensionsByType[implementation.name] ?? [])
+            let conformed = merged.inheritedTypes.compactMap { availableProtocols[$0] }
+                .map { $0.merging(parents: parentProtocols(of: $0, in: availableProtocols)) }
+            if conformed.isEmpty, merged.methods.isEmpty {
+                warnings.append("@Spied \(declaration.typeName): no conforma a ningún protocolo conocido ni tiene métodos que espiar.")
+                continue
+            }
+            spiedImplementations.append(merged)
+            files[layout.relativePath(for: merged)] = spyGenerator.generateFile(
+                for: merged,
+                conforming: conformed,
+                imports: imports
+            )
+        }
+
         // 5. Stubs: raíces explícitas e implícitas más lo que los mocks devuelven, y autoTree
         var rootTypes = active.filter { $0.kind == .stub }.map(\.typeName)
         for type in typesNeededByMocks where availableModels[type] != nil && !rootTypes.contains(type) {
@@ -190,6 +229,7 @@ public final class SpockGenEngine: Sendable {
         return GenerationPlan(
             models: tree.modelsToGenerate,
             protocols: mockedProtocols,
+            spies: spiedImplementations,
             files: files,
             inputFiles: inputFiles,
             warnings: warnings,
@@ -249,12 +289,12 @@ public final class SpockGenEngine: Sendable {
         }
 
         guard !plan.files.isEmpty else {
-            log("ℹ️ No se encontraron anotaciones @Stubbed / @Mocking ni modelos usados en tests.")
+            log("ℹ️ No se encontraron anotaciones @Stubbed / @Mocking / @Spied ni modelos usados en tests.")
             return .noStubsFound
         }
 
-        log("✨ \(plan.files.count) archivos al día en \(config.outputDirectory) (\(written.count) escritos, \(plan.protocols.count) mocks).")
-        return .generated(modelsCount: plan.models.count + plan.protocols.count, outputDirectory: config.outputDirectory)
+        log("✨ \(plan.files.count) archivos al día en \(config.outputDirectory) (\(written.count) escritos, \(plan.protocols.count) mocks, \(plan.spies.count) espías).")
+        return .generated(modelsCount: plan.models.count + plan.protocols.count + plan.spies.count, outputDirectory: config.outputDirectory)
     }
 
     /// Compara lo que se generaría con lo que hay en disco, sin escribir nada.

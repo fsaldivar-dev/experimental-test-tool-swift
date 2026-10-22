@@ -18,11 +18,14 @@ public struct OutputLayout: Sendable, Equatable {
     public static let fileSuffix = "+Stub.swift"
     /// Sufijo de un mock generado por spock-gen.
     public static let mockFileSuffix = "+Mock.swift"
+    /// Sufijo de un espía generado por spock-gen.
+    public static let spyFileSuffix = "+Spy.swift"
     /// Todo lo que spock-gen reconoce como suyo.
-    public static let generatedSuffixes = [fileSuffix, mockFileSuffix]
+    public static let generatedSuffixes = [fileSuffix, mockFileSuffix, spyFileSuffix]
     /// Carpetas hoja que agrupan lo generado por directorio de origen.
     public static let stubsFolder = "Stubs"
     public static let mocksFolder = "Mocks"
+    public static let spiesFolder = "Spies"
 
     public let rootDirectory: String
 
@@ -38,6 +41,11 @@ public struct OutputLayout: Sendable, Equatable {
     /// Ruta del mock relativa a la raíz: `<module>/<ruta relativa>/Mocks/<Protocolo>+Mock.swift`.
     public func relativePath(for definition: ProtocolDefinition) -> String {
         relativePath(module: definition.module, relativeDirectory: definition.relativeDirectory, folder: OutputLayout.mocksFolder, fileName: definition.name + OutputLayout.mockFileSuffix)
+    }
+
+    /// Ruta del espía relativa a la raíz: `<module>/<ruta relativa>/Spies/<Tipo>+Spy.swift`.
+    public func relativePath(for implementation: ImplementationDefinition) -> String {
+        relativePath(module: implementation.module, relativeDirectory: implementation.relativeDirectory, folder: OutputLayout.spiesFolder, fileName: implementation.name + OutputLayout.spyFileSuffix)
     }
 
     private func relativePath(module: String, relativeDirectory: String, folder: String, fileName: String) -> String {

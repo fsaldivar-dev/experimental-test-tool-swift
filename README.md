@@ -245,6 +245,46 @@ Cómo se mapea cada firma: cero parámetros usan `()`, uno su tipo, dos o más u
 
 El mock se escribe en `Generated/<Módulo>/<ruta>/Mocks/<Protocolo>+Mock.swift`. Los tipos que el protocolo devuelve reciben su `.stub()` automáticamente, los requisitos de los protocolos padre del dominio se incluyen, y los closures sin `@escaping` llegan a `run` pero no quedan en `history`. Métodos genéricos quedan con `fatalError`; protocolos con `associatedtype`, `init` o `subscript` se omiten con un aviso.
 
+### 6. Espías sobre implementaciones reales con `@Spied`
+
+Cuando ya tienes una implementación, en memoria o de prueba, y quieres saber cómo la usan sin reemplazarla, `@Spied` genera un espía: un envoltorio que conforma a los mismos protocolos del dominio, guarda la implementación real, registra cada llamada y **siempre** delega. Solo espía, no mockea: no tiene `whenCall`.
+
+```swift
+@Spied
+extension InMemoryUserRepository {}
+
+let real = InMemoryUserRepository(users: [.stub(id: 10)])
+let spy = InMemoryUserRepositorySpy(real)
+
+_ = try await UserService(repository: spy).updateBio(id: 10, newBio: "Nuevo")
+
+#expect(spy.verify(\.fetchUser).called(with: 10))
+#expect(spy.verify(\.saveUser).last?.profile.bio == "Nuevo")
+#expect(try await real.fetchUser(id: 10).profile.bio == "Nuevo")   // el real hizo el trabajo
+```
+
+Lo generado, en `Generated/<Módulo>/<ruta>/Spies/<Tipo>+Spy.swift`:
+
+```swift
+final class InMemoryUserRepositorySpy: UserRepositoryProtocol, SpockMock, @unchecked Sendable {
+    struct Calls {
+        let fetchUser = SpiedCall<Int>()
+        let saveUser = SpiedCall<User>()
+    }
+    let calls = Calls()
+    var inMemoryUserRepository: InMemoryUserRepository
+
+    init(_ inMemoryUserRepository: InMemoryUserRepository) { … }
+
+    func fetchUser(id: Int) async throws -> User {
+        calls.fetchUser.record(id)
+        return try await inMemoryUserRepository.fetchUser(id: id)
+    }
+}
+```
+
+El espía reenvía los requisitos de los protocolos del dominio a los que el tipo conforma, también los declarados en extensiones, y sus propiedades. Si no conforma a ninguno conocido, espía todos los métodos no privados del tipo sin declarar conformancia. Los parámetros `inout` se registran como copia y se reenvían con `&`; los closures sin `@escaping` quedan como `Void` en el registro; los métodos genéricos y los variádicos se omiten con un aviso en el archivo.
+
 ### Otros comandos
 
 - `spock-gen clean`: elimina los stubs generados y la caché.

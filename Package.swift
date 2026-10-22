@@ -31,7 +31,7 @@ let package = Package(
         .package(url: "https://github.com/swiftlang/swift-syntax.git", "600.0.0"..<"602.0.0")
     ],
     targets: [
-        // 1. Compiler Plugin nativo (Swift Macros: marcador @Stubbed)
+        // 1. Compiler Plugin nativo (Swift Macros: marcadores @Stubbed, @Mocking y @Spied)
         .macro(
             name: "SpockSwiftMacros",
             dependencies: [

@@ -6,7 +6,7 @@
 //  Reescrito para SpockSwift 2.
 //
 
-/// Un mock: un doble sin comportamiento propio, hecho de llamadas mockeadas.
+/// Un mock (`@Mocking`) o un espía (`@Spied`): un doble hecho de llamadas registradas.
 ///
 /// `spock-gen` genera la conformancia a partir de `@Mocking extension Protocolo {}`:
 /// una tabla `Calls` con un ``MockedCall`` o ``MockedThrowingCall`` por requisito,
@@ -44,6 +44,11 @@ extension SpockMock {
     }
 
     public func verify<I, O>(_ call: KeyPath<Calls, MockedThrowingCall<I, O>>) -> MockedThrowingCall<I, O> {
+        calls[keyPath: call]
+    }
+
+    /// Un espía (`@Spied`) solo expone `verify`: sus llamadas registran y delegan, no se programan.
+    public func verify<I>(_ call: KeyPath<Calls, SpiedCall<I>>) -> SpiedCall<I> {
         calls[keyPath: call]
     }
 }

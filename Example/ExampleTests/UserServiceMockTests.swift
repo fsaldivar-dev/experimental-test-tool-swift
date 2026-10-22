@@ -66,3 +66,40 @@ struct UserServiceMockTests {
         #expect(mockRepo.verify(\.fetchUser).called(with: 1))
     }
 }
+
+// MARK: - @Spied: la implementación real, registrada
+
+// Anotación declarativa @Spied:
+// spock-gen genera InMemoryUserRepositorySpy en Generated/Example/Domain/Spies/InMemoryUserRepository+Spy.swift.
+// Conforma a UserRepositoryProtocol, envuelve la implementación real, registra cada llamada y siempre delega.
+@Spied
+extension InMemoryUserRepository {}
+
+@Suite("Example - @Spied sobre una implementación real")
+struct UserServiceSpyTests {
+
+    @Test("El espía deja pasar al repositorio real y registra lo que pasó")
+    func testSpyPassesThrough() async throws {
+        let real = InMemoryUserRepository(users: [.stub(id: 10, name: "Francisco", profile: .stub(bio: "Original"))])
+        let spy = InMemoryUserRepositorySpy(real)
+        let service = UserService(repository: spy)
+
+        let success = try await service.updateBio(id: 10, newBio: "Updated Bio")
+
+        #expect(success == true)
+        #expect(try await real.fetchUser(id: 10).profile.bio == "Updated Bio", "el real guardó el cambio")
+        #expect(spy.verify(\.fetchUser).called(with: 10))
+        #expect(spy.verify(\.saveUser).last?.profile.bio == "Updated Bio")
+        #expect(spy.verify(\.saveUser).count == 1)
+    }
+
+    @Test("Los errores del real llegan tal cual a través del espía")
+    func testSpyPropagatesRealErrors() async {
+        let spy = InMemoryUserRepositorySpy(InMemoryUserRepository())
+
+        await #expect(throws: UserNotFound(id: 99)) {
+            try await UserService(repository: spy).getUserDisplayName(id: 99)
+        }
+        #expect(spy.verify(\.fetchUser).history == [99])
+    }
+}

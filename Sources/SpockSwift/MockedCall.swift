@@ -186,3 +186,32 @@ public final class MockedThrowingCall<I, O>: MockedCallVerification, @unchecked 
 
     public func reset() { state.reset() }
 }
+
+/// Llamada espiada: solo registra. No se puede programar, por eso un espía nunca deja de delegar.
+///
+/// ```swift
+/// #expect(spy.verify(\.fetchUser).called(with: 7))
+/// #expect(spy.verify(\.saveUser).history.count == 2)
+/// ```
+public final class SpiedCall<I>: MockedCallVerification, @unchecked Sendable {
+    private let lock = NSLock()
+    private var invocations: [I] = []
+
+    public init() {}
+
+    /// La usa el espía generado antes de delegar en la implementación real.
+    public func record(_ params: I) {
+        lock.lock(); defer { lock.unlock() }
+        invocations.append(params)
+    }
+
+    public var history: [I] {
+        lock.lock(); defer { lock.unlock() }
+        return invocations
+    }
+
+    public func reset() {
+        lock.lock(); defer { lock.unlock() }
+        invocations.removeAll()
+    }
+}

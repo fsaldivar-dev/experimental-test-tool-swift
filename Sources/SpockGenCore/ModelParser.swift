@@ -9,13 +9,15 @@ import Foundation
 import SwiftSyntax
 import SwiftParser
 
-/// Analizador de sintaxis de Swift que extrae structs, enums y protocolos de un archivo.
+/// Analizador de sintaxis de Swift que extrae structs, enums, protocolos e implementaciones de un archivo.
 public final class ModelParser: SyntaxVisitor, @unchecked Sendable {
     private let filePath: String
     private let module: String
     private let relativeDirectory: String
     public private(set) var models: [ModelDefinition] = []
     public private(set) var protocols: [ProtocolDefinition] = []
+    /// Clases, actores, structs y extensiones, con sus métodos no privados.
+    public private(set) var implementations: [ImplementationDefinition] = []
 
     public init(filePath: String = "", module: String = "", relativeDirectory: String = "") {
         self.filePath = filePath
@@ -34,17 +36,17 @@ public final class ModelParser: SyntaxVisitor, @unchecked Sendable {
         parseAll(source: source, filePath: filePath, module: module, relativeDirectory: relativeDirectory).models
     }
 
-    /// Structs, enums y protocolos del archivo.
+    /// Structs, enums, protocolos e implementaciones del archivo.
     public static func parseAll(
         source: String,
         filePath: String = "",
         module: String = "",
         relativeDirectory: String = ""
-    ) -> (models: [ModelDefinition], protocols: [ProtocolDefinition]) {
+    ) -> (models: [ModelDefinition], protocols: [ProtocolDefinition], implementations: [ImplementationDefinition]) {
         let sourceFile = Parser.parse(source: source)
         let parser = ModelParser(filePath: filePath, module: module, relativeDirectory: relativeDirectory)
         parser.walk(sourceFile)
-        return (parser.models, parser.protocols)
+        return (parser.models, parser.protocols, parser.implementations)
     }
 
     public static func parse(fileURL: URL, module: String = "", relativeDirectory: String = "") throws -> [ModelDefinition] {
@@ -96,6 +98,7 @@ public final class ModelParser: SyntaxVisitor, @unchecked Sendable {
             module: module,
             relativeDirectory: relativeDirectory
         ))
+        implementations.append(implementation(named: structName, kind: .struct, inheritance: node.inheritanceClause, members: node.memberBlock))
 
         return .skipChildren
     }
@@ -122,6 +125,46 @@ public final class ModelParser: SyntaxVisitor, @unchecked Sendable {
         ))
 
         return .skipChildren
+    }
+
+    // MARK: - Implementaciones
+
+    public override func visit(_ node: ClassDeclSyntax) -> SyntaxVisitorContinueKind {
+        implementations.append(implementation(named: node.name.text, kind: .class, inheritance: node.inheritanceClause, members: node.memberBlock))
+        return .skipChildren
+    }
+
+    public override func visit(_ node: ActorDeclSyntax) -> SyntaxVisitorContinueKind {
+        implementations.append(implementation(named: node.name.text, kind: .actor, inheritance: node.inheritanceClause, members: node.memberBlock))
+        return .skipChildren
+    }
+
+    public override func visit(_ node: ExtensionDeclSyntax) -> SyntaxVisitorContinueKind {
+        implementations.append(implementation(named: node.extendedType.trimmedDescription, kind: .extension, inheritance: node.inheritanceClause, members: node.memberBlock))
+        return .skipChildren
+    }
+
+    private func implementation(
+        named name: String,
+        kind: ImplementationDefinition.Kind,
+        inheritance: InheritanceClauseSyntax?,
+        members: MemberBlockSyntax
+    ) -> ImplementationDefinition {
+        let methods = members.members.compactMap { member -> MethodRequirement? in
+            guard let function = member.decl.as(FunctionDeclSyntax.self), function.body != nil else { return nil }
+            let isPrivate = function.modifiers.contains { $0.name.text == "private" || $0.name.text == "fileprivate" }
+            guard !isPrivate else { return nil }
+            return ModelParser.requirement(from: function)
+        }
+        return ImplementationDefinition(
+            name: name,
+            kind: kind,
+            filePath: filePath,
+            module: module,
+            relativeDirectory: relativeDirectory,
+            inheritedTypes: inheritance?.inheritedTypes.map { $0.type.trimmedDescription } ?? [],
+            methods: methods
+        )
     }
 
     // MARK: - Protocolos
@@ -162,7 +205,9 @@ public final class ModelParser: SyntaxVisitor, @unchecked Sendable {
         return .skipChildren
     }
 
-    private static func requirement(from function: FunctionDeclSyntax) -> MethodRequirement {
+    // MARK: - Firmas
+
+    static func requirement(from function: FunctionDeclSyntax) -> MethodRequirement {
         let signature = function.signature
         let parameters = signature.parameterClause.parameters.map { parameter -> ParameterDefinition in
             let first = parameter.firstName.text
@@ -171,16 +216,20 @@ public final class ModelParser: SyntaxVisitor, @unchecked Sendable {
 
             var declared = parameter.type.trimmedDescription
             var usable = tupleFriendlyType(parameter.type)
-            if parameter.ellipsis != nil {
+            let isVariadic = parameter.ellipsis != nil
+            if isVariadic {
                 declared += "..."
                 usable = "[\(usable)]"
             }
+            let isInout = parameter.type.as(AttributedTypeSyntax.self)?.specifiers.trimmedDescription.contains("inout") ?? false
             return ParameterDefinition(
                 label: label,
                 name: name,
                 declaredType: declared,
                 typeName: usable,
-                isNonEscapingClosure: isNonEscapingClosure(parameter.type)
+                isNonEscapingClosure: isNonEscapingClosure(parameter.type),
+                isInout: isInout,
+                isVariadic: isVariadic
             )
         }
 

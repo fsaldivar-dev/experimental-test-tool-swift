@@ -12,6 +12,7 @@ import SwiftSyntaxMacros
 struct SpockSwiftMacrosPlugin: CompilerPlugin {
     let providingMacros: [Macro.Type] = [
         StubbedMacro.self,
-        MockingMacro.self
+        MockingMacro.self,
+        SpiedMacro.self
     ]
 }
