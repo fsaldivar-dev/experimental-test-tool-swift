@@ -20,6 +20,8 @@ repo.whenCall(\.fetchUser).returns(.stub(name: "Ana"))
 
 ---
 
+> 🤖 **¿Eres un agente de IA?** Lee [AGENTS.md](AGENTS.md): una página densa con todo lo necesario para escribir tests con la librería, sin leer este README completo.
+
 ## Índice
 
 1. [Quick Start](#-quick-start)
