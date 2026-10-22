@@ -1,0 +1,49 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main, feat/spock-2]
+  workflow_dispatch:
+
+# Una corrida por rama: un push nuevo cancela la anterior.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Build, test and check snapshots (macOS)
+    runs-on: macos-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # Swift 6.1+ (swift-tools-version 6.1 y macros con binarios precompilados de swift-syntax).
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
+
+      - name: Swift version
+        run: swift --version
+
+      - name: Cache SwiftPM
+        uses: actions/cache@v4
+        with:
+          path: .build
+          key: spm-${{ runner.os }}-${{ hashFiles('Package.resolved', 'Package.swift') }}
+          restore-keys: |
+            spm-${{ runner.os }}-
+
+      - name: Build
+        run: swift build
+
+      - name: Test
+        run: swift test
+
+      # Los stubs, mocks y espías del Example son snapshots versionados:
+      # si el dominio cambió y nadie regeneró, este paso falla y dice qué regenerar.
+      - name: Check generated snapshots
+        run: swift run spock-gen check --sources Example=Example/Example --tests ExampleTests=Example/ExampleTests --output Example/ExampleTests/Generated
