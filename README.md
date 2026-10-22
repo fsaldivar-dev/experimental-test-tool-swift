@@ -9,7 +9,7 @@
 [![CI](https://github.com/fsaldivar-dev/experimental-test-tool-swift/actions/workflows/ci.yml/badge.svg?branch=feat/spock-2)](https://github.com/fsaldivar-dev/experimental-test-tool-swift/actions/workflows/ci.yml)
 ![Estado](https://img.shields.io/badge/estado-beta-yellow?style=for-the-badge)
 
-> ⚠️ **Beta.** El diseño está probado (91 tests, CI en verde), pero la madurez todavía no: hoy funciona en **macOS con Swift Package Manager**, lo mantiene una sola persona y aún no se ha usado fuera de este repositorio. No compila en Linux por ahora. Lee los [límites](AGENTS.md#l%C3%ADmites-no-intentar) antes de adoptarla en algo crítico.
+> ⚠️ **Beta.** El diseño está probado (91 tests, CI en verde), pero la madurez todavía no: lo mantiene una sola persona y aún no se ha usado fuera de este repositorio. Corre en **macOS y Linux** con Swift Package Manager (CI en ambos). Lee los [límites](AGENTS.md#l%C3%ADmites-no-intentar) antes de adoptarla en algo crítico.
 
 Dobles de prueba para Swift inspirados en **Spock** (Java/Groovy): declaras en tus tests qué necesitas con una anotación, y `spock-gen` escribe los **stubs**, **mocks** y **espías** como archivos versionados junto a los tests. Tu dominio no cambia, tus tests compilan sin build-tool plugins, y la sintaxis es la misma para programar y verificar:
 
@@ -182,7 +182,7 @@ Investigamos el ecosistema de dobles de prueba para Swift a octubre de 2026: gen
 - **Mocks de protocolos genéricos o con `associatedtype`.** Un mock tendría que guardar un `T` que no conoce, y eso llena la API de `Any`. Los espías sí los reenvían, porque no guardan nada. Para mocks genéricos: Mockable, Mockolo o swift-mocking de Fetch.
 - **Mocks parciales de clases**, "llama al real salvo este método". Aquí un espía nunca stubbea, a propósito: es la definición de Spock. Si lo necesitas, Cuckoo lo hace con `thenCallRealImplementation()`.
 - **Verificación en orden entre varios mocks.** Los matchers ya están cubiertos con `called(where:)` y un closure; el orden entre mocks no, y solo se añadiría como una función si un caso real lo pide. smockable y SwiftMocking tienen `InOrder`.
-- **Escala y Linux.** Mockolo nació para millones de líneas y se distribuye como binario para Linux. SpockSwift corre hoy en macOS; Linux es trabajo interno pendiente, no de API.
+- **Escala.** Mockolo nació para millones de líneas y se distribuye como binario para macOS y Linux. SpockSwift corre en macOS y Linux (CI en ambos) pero no publica números de rendimiento más allá del segundo de la fase de Xcode con caché.
 - **Madurez.** SpockSwift 2 no tiene release y lo mantiene una persona; Mockable, Cuckoo y Mockolo tienen años de releases y varios mantenedores.
 - **Datos aleatorios o localizados.** Los valores de `.stub()` son fijos a propósito, para que un test dé lo mismo en cada corrida. Si quieres variedad o localización, LoremSwiftify y Fakery.
 

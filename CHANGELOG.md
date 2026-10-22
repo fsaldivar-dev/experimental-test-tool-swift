@@ -5,7 +5,7 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es/1.1.0/) y el v
 
 ## [2.0.0-beta.1] — 2026-10-22
 
-Primera beta de Spock 2. Funciona en macOS con SwiftPM; Linux pendiente. Reescritura completa: los dobles de prueba dejan de resolverse en runtime con `Decodable` y pasan a generarse como **snapshots versionados** por `spock-gen`, a partir de anotaciones inertes en los tests.
+Primera beta de Spock 2. Corre en macOS y Linux con SwiftPM (CI en ambos). Reescritura completa: los dobles de prueba dejan de resolverse en runtime con `Decodable` y pasan a generarse como **snapshots versionados** por `spock-gen`, a partir de anotaciones inertes en los tests.
 
 ### Añadido
 - **`@Stubbed extension Tipo {}`**: genera `Tipo.stub(...)` con un parámetro por propiedad y valores por defecto deterministas y con sentido según el nombre y el tipo (`name` → `"Ana García"`, `email`, `createdAt` → fecha fija, `id` → `1`), más `Tipo.stubs(count:)`. `autoTree` genera los stubs de los tipos hijos. `--defaults plain` conserva los valores planos.
@@ -15,6 +15,7 @@ Primera beta de Spock 2. Funciona en macOS con SwiftPM; Linux pendiente. Reescri
 - Integración con `.xcodeproj`: `spock-gen` mantiene las referencias de archivo y una fase de build que regenera lo que falte (cache HIT ≈ 1 s).
 - Runtime thread-safe para Swift 6: `MockedCall`, `MockedThrowingCall`, `SpiedCall` y el protocolo `SpockMock` con `whenCall` / `verify`.
 - Documentación: guía de testing (Given/When/Then, `makeSUT`), comparativa con el ecosistema de test doubles de Swift y workflow de CI único.
+- Soporte de Linux: SHA-256 propio sin CryptoKit y `FileWatcher` guardado por plataforma; CI corre build, test y `check` en macOS y Linux.
 
 ### Cambiado
 - Mínimo Swift 6.1 (`swift-tools-version: 6.1`), solo Swift Package Manager.
