@@ -1,5 +1,4 @@
 import Foundation
-import CryptoKit
 
 /// Manifiesto de caché: hashes de las entradas y de cada archivo generado.
 public struct SpockCacheManifest: Codable, Sendable, Equatable {
@@ -88,8 +87,7 @@ public final class CacheManager: Sendable {
 
     /// Calcula el hash SHA256 de un bloque de datos
     public func hash(data: Data) -> String {
-        let digest = SHA256.hash(data: data)
-        return digest.map { String(format: "%02x", $0) }.joined()
+        return SHA256Portable.digest(data).map { String(format: "%02x", $0) }.joined()
     }
 
     /// Calcula el hash SHA256 de un archivo en disco

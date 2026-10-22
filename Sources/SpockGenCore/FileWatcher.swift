@@ -11,7 +11,9 @@ import Dispatch
 /// Observador de sistema de archivos que monitorea cambios en Sources/ y Tests/
 /// ejecutando generación reactiva al guardar (⌘S) sin requerir compilación manual.
 public final class FileWatcher: @unchecked Sendable {
+#if canImport(Darwin)
     private var sources: [DispatchSourceFileSystemObject] = []
+#endif
     private var fileDescriptors: [Int32] = []
     private let queue = DispatchQueue(label: "com.spockswift.filewatcher", qos: .utility)
     private var debounceWorkItem: DispatchWorkItem?
@@ -29,7 +31,9 @@ public final class FileWatcher: @unchecked Sendable {
         stop()
         recordInitialTimestamps()
 
-        // 1. Monitoreo por eventos del sistema de archivos (FSEvents/DispatchSource)
+        // 1. Monitoreo por eventos del sistema de archivos (kqueue/DispatchSource, solo Apple).
+        //    O_EVTONLY y makeFileSystemObjectSource no existen en Linux; allí basta el timer de abajo.
+#if canImport(Darwin)
         let allDirs = collectAllDirectories(from: directories)
         for dir in allDirs {
             let fd = open(dir, O_EVTONLY)
@@ -53,6 +57,7 @@ public final class FileWatcher: @unchecked Sendable {
             source.resume()
             sources.append(source)
         }
+#endif
 
         // 2. Timer de respaldo (polling suave cada 1s) para capturar guardados atómicos que reemplazan inodos
         let timer = DispatchSource.makeTimerSource(queue: queue)
@@ -181,10 +186,12 @@ public final class FileWatcher: @unchecked Sendable {
         debounceWorkItem = nil
         timerSource?.cancel()
         timerSource = nil
+#if canImport(Darwin)
         for source in sources {
             source.cancel()
         }
         sources.removeAll()
+#endif
         fileDescriptors.removeAll()
     }
 

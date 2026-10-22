@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import CryptoKit
 
 /// Mantiene un proyecto de Xcode (`project.pbxproj`) sincronizado con la carpeta `Generated`.
 ///
@@ -290,8 +289,7 @@ public struct XcodeProjectIntegrator: Sendable {
     // MARK: - Helpers de texto
 
     static func objectId(_ key: String) -> String {
-        let digest = SHA256.hash(data: Data(key.utf8))
-        let hex = digest.map { String(format: "%02X", $0) }.joined()
+        let hex = SHA256Portable.digest(Data(key.utf8)).map { String(format: "%02X", $0) }.joined()
         return objectPrefix + String(hex.prefix(16))
     }
 
