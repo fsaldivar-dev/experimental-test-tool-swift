@@ -47,6 +47,11 @@ playground.xcworkspace
 # .swiftpm
 
 .build/
+.spock-cache.json
+.spock-daemon.log
+.spock-daemon.pid
+.DS_Store
+*.DS_Store
 
 # CocoaPods
 #
@@ -88,3 +93,10 @@ fastlane/test_output
 # https://github.com/johnno1962/injectionforxcode
 
 iOSInjectionProject/
+
+# Esquemas que Xcode autogenera al abrir el paquete
+.swiftpm/xcode/xcshareddata/xcschemes/
+
+# Notas de investigación (los informes finales van a docs/)
+research_notes/
+reports/
