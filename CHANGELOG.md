@@ -3,9 +3,9 @@
 Todos los cambios notables de este proyecto se documentan aquí.
 El formato sigue [Keep a Changelog](https://keepachangelog.com/es/1.1.0/) y el versionado [SemVer](https://semver.org/lang/es/).
 
-## [Sin publicar] — Spock 2
+## [2.0.0-beta.1] — 2026-10-22
 
-Reescritura completa. Los dobles de prueba dejan de resolverse en runtime con `Decodable` y pasan a generarse como **snapshots versionados** por `spock-gen`, a partir de anotaciones inertes en los tests.
+Primera beta de Spock 2. Funciona en macOS con SwiftPM; Linux pendiente. Reescritura completa: los dobles de prueba dejan de resolverse en runtime con `Decodable` y pasan a generarse como **snapshots versionados** por `spock-gen`, a partir de anotaciones inertes en los tests.
 
 ### Añadido
 - **`@Stubbed extension Tipo {}`**: genera `Tipo.stub(...)` con un parámetro por propiedad y valores por defecto deterministas y con sentido según el nombre y el tipo (`name` → `"Ana García"`, `email`, `createdAt` → fecha fija, `id` → `1`), más `Tipo.stubs(count:)`. `autoTree` genera los stubs de los tipos hijos. `--defaults plain` conserva los valores planos.
