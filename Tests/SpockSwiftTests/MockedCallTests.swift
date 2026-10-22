@@ -154,7 +154,7 @@ final class MockedCallTests: XCTestCase {
         view.whenCall(\.showParents).run { _ in }
         XCTAssertFalse(view.verify(\.showParents).called())
 
-        view.calls.showParents.invoke(try! .dummy())
+        view.calls.showParents.invoke(.stub())
         XCTAssertTrue(view.verify(\.showParents).called(times: 1))
     }
 }

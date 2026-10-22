@@ -477,19 +477,28 @@ Spock 2 abandona los trucos de runtime con `Decodable` y adopta un generador (`s
 
 ---
 
-## 📦 Instalación legacy (v1.0.0)
+## 📦 Migrar desde v1.0.0
+
+La API de v1 (el protocolo `SpockDummy`, `.dummy()` y el decodificador `Decodable`) y el soporte de CocoaPods se **retiraron** en Spock 2. Spock 2 es solo Swift Package Manager y Swift 6.1+.
+
+La v1.0.0 sigue disponible en su tag para quien la necesite:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/fsaldivar-dev/experimental-test-tool-swift", from: "1.0.0")
+    .package(url: "https://github.com/fsaldivar-dev/experimental-test-tool-swift", exact: "1.0.0")
 ]
 ```
 
-```ruby
-pod 'SpockSwift', '~> 1.0.0'
-```
+Para migrar a Spock 2, cambia los dobles de datos de `.dummy()` a `.stub()` generado:
 
----
+| v1 | Spock 2 |
+| --- | --- |
+| `struct User: Codable, SpockDummy {}` | `struct User {}` (el dominio no lleva nada) y `@Stubbed extension User {}` en tests |
+| `let user: User = try .dummy()` | `let user = User.stub()` |
+| `.dummy(with: .init(at: "name", with: "Ana"))` | `User.stub(name: "Ana")` (tipado: renombrar el campo rompe en compilación) |
+| Property wrappers `@Stubbed<I, O>` / `whenRun` / `isInvoked` | `@Mocking extension Repo {}`, `mock.whenCall(\.x).returns(...)`, `mock.verify(\.x).called()` |
+
+El resto de la migración, cómo anotar y generar, está en el [Quick Start](#-quick-start).
 
 ## 👤 Autor y licencia
 

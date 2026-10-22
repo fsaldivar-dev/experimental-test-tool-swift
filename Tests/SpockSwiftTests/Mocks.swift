@@ -9,7 +9,7 @@
 import Foundation
 import SpockSwift
 
-extension MockUser: SpockDummy, Equatable {
+extension MockUser: Equatable {
     static func == (lhs: MockUser, rhs: MockUser) -> Bool {
         lhs.acount == rhs.acount &&
         lhs.address == rhs.address &&
@@ -20,7 +20,7 @@ extension MockUser: SpockDummy, Equatable {
     }
 }
 
-extension Address: SpockDummy, Equatable {
+extension Address: Equatable {
     static func == (lhs: Address, rhs: Address) -> Bool {
         lhs.stret == rhs.stret &&
         lhs.cp == rhs.cp &&
@@ -29,7 +29,7 @@ extension Address: SpockDummy, Equatable {
     }
 }
 
-extension Account: SpockDummy, Equatable {
+extension Account: Equatable {
     static func == (lhs: Account, rhs: Account) -> Bool {
         lhs.numberAcount == rhs.numberAcount &&
         lhs.serialID == rhs.serialID
@@ -50,11 +50,11 @@ final class MockInteractor: Interactor, SpockMock, @unchecked Sendable {
     }
 
     func fetchUser(at serialID: Int) async throws -> MockUser {
-        try calls.fetchUser.invoke(serialID) ?? MockUser.dummy()
+        try calls.fetchUser.invoke(serialID) ?? MockUser.stub()
     }
 
     func searchParents(at serialID: Int) async throws -> MockUser {
-        try calls.searchParents.invoke(serialID) ?? MockUser.dummy()
+        try calls.searchParents.invoke(serialID) ?? MockUser.stub()
     }
 }
 

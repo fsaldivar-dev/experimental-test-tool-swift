@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct MockUser: Decodable, Sendable {
+struct MockUser: Sendable {
     let name: String
     let email: String
     let phone: String
@@ -16,16 +16,43 @@ struct MockUser: Decodable, Sendable {
     let acount: Account
 }
 
-struct Address: Decodable, Sendable {
+struct Address: Sendable {
     let stret: String
     let cp: String
     let intNumber: Int
     let extNumber: Int
 }
 
-struct Account: Decodable, Sendable {
+struct Account: Sendable {
     var numberAcount: Int
     var serialID: Int
+}
+
+// Fixtures escritas a mano para los modelos de prueba (sustituyen al `.dummy()` de v1).
+// En un proyecto real estas las generaría `spock-gen` con `@Stubbed`.
+extension Account {
+    static func stub(numberAcount: Int = 1, serialID: Int = 1) -> Account {
+        Account(numberAcount: numberAcount, serialID: serialID)
+    }
+}
+
+extension Address {
+    static func stub(stret: String = "Av. Reforma 123", cp: String = "06600", intNumber: Int = 1, extNumber: Int = 10) -> Address {
+        Address(stret: stret, cp: cp, intNumber: intNumber, extNumber: extNumber)
+    }
+}
+
+extension MockUser {
+    static func stub(
+        name: String = "Ana García",
+        email: String = "ana.garcia@example.com",
+        phone: String = "+52 55 1234 5678",
+        age: Int = 30,
+        address: Address = .stub(),
+        acount: Account = .stub()
+    ) -> MockUser {
+        MockUser(name: name, email: email, phone: phone, age: age, address: address, acount: acount)
+    }
 }
 
 protocol Interactor: Sendable {

@@ -1,6 +1,6 @@
 //
 //  SpockMockTest.swift
-//  SpockSwift-Unit-SpockDummy-Tests
+//  SpockSwiftTests
 //
 //  Created by Francisco Javier Saldivar Rubio on 11/08/22.
 //
@@ -26,8 +26,8 @@ final class SpockMockTest: XCTestCase {
 
     func testLoadData() async throws {
         let listUserSpected: [MockUser] = [
-            try .dummy(with: .init(at: "name", with: "Fran")),
-            try .dummy(with: .init(at: "name", with: "Javi"))
+            .stub(name: "Fran"),
+            .stub(name: "Javi")
         ]
         // Arrange
         mockInteractor.whenCall(\.fetchAllUser).returns(listUserSpected)
@@ -43,7 +43,7 @@ final class SpockMockTest: XCTestCase {
 
     func testSelectedUserThrowsAreNotSwallowedByTheMock() async throws {
         struct Boom: Error {}
-        let user: MockUser = try .dummy()
+        let user: MockUser = .stub()
         mockInteractor.whenCall(\.searchParents).throws(Boom())
 
         presenter.selectedUser(user: user)
