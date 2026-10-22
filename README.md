@@ -506,6 +506,12 @@ Para migrar a Spock 2, cambia los dobles de datos de `.dummy()` a `.stub()` gene
 
 El resto de la migración, cómo anotar y generar, está en el [Quick Start](#-quick-start).
 
+## 🩺 Problemas conocidos
+
+**`Internal Error: DecodingError.dataCorrupted … unexpected end of file`** puede aparecer de forma intermitente en los logs de `swift build` o `swift test`. **Es inofensivo**: el build termina con código 0, las macros (`@Stubbed`, `@Mocking`, `@Spied`) se expanden y los tests pasan.
+
+El mensaje lo emite swift-syntax, no SpockSwift. Cuando el compilador termina con el plugin de macros y cierra la conexión justo a mitad de un mensaje (una carrera en el teardown del build en paralelo), el bucle de lectura del plugin lanza en vez de ver un cierre limpio, imprime esa línea y sale. Ocurre después de que el compilador ya obtuvo todas las expansiones, así que no cambia el resultado. No es reproducible de forma determinista y no se puede corregir desde el plugin; está fijado swift-syntax 601.0.1 (`601.0.1`, rango `600.0.0..<602.0.0`).
+
 ## 👤 Autor y licencia
 
 Creado por **Francisco Javier Saldivar** ([LinkedIn](https://www.linkedin.com/in/fsaldivar-dev))
