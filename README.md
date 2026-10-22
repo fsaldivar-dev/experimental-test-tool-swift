@@ -138,7 +138,11 @@ Los stubs son **snapshots versionados**: `spock-gen` los escribe una vez en la c
 )
 ```
 
-Sin `plugins:`. En un `.xcodeproj`, agrega la carpeta `Generated` al target de tests una sola vez.
+Sin `plugins:`. En un `.xcodeproj`, `spock-gen` mantiene el proyecto sincronizado por ti cuando encuentra uno cerca de la carpeta de salida: crea grupos que reflejan las carpetas de `Generated`, una referencia por archivo y una fase de script en el target de tests que declara esos archivos como outputs y corre `spock-gen` en cada build. Con todo al día la fase es una comprobación de hashes que termina en milisegundos; si borras la carpeta o un archivo, cambió el dominio o apareció un `@Stubbed` o `@Mocking` nuevo, regenera y actualiza el proyecto. Un archivo que ya estaba referenciado compila en ese mismo build; uno nuevo, que no existía al cargar el proyecto, compila en el siguiente, porque Xcode fija la lista de fuentes antes de ejecutar cualquier fase.
+
+Lo que escribe en el `.pbxproj` lleva identificadores con prefijo `5B0C4E5F` y se reconstruye en cada sincronización. Desactívalo con `--no-xcode`. Si el target tiene `ENABLE_USER_SCRIPT_SANDBOXING = YES`, ponlo en `NO`: la fase necesita leer `Package.swift` y escribir fuera de sus outputs. El rastro de cada ejecución queda en `.build/spock-phase.log`.
+
+El `Example` del repositorio está configurado así.
 
 ### 2. Declara qué stubs necesitas
 
@@ -198,6 +202,48 @@ swift run spock-gen check --sources Sources --tests Tests
 ```
 
 Sale con código 1 y lista los stubs faltantes, desfasados o huérfanos, con el comando exacto para regenerar. Úsalo en CI o en un hook de pre-commit.
+
+### 5. Mocks de protocolos con `@Mocking`
+
+El mismo generador lee los protocolos del dominio. Anota una extensión vacía y obtienes `<Protocolo>Mock`, una clase con una llamada mockeada por requisito que se programa con `whenCall` y se verifica con `verify`:
+
+```swift
+@Mocking
+extension UserRepositoryProtocol {}
+
+@Test func testDisplayName() async throws {
+    let repo = UserRepositoryMock()
+    repo.whenCall(\.fetchUser).returns(.stub(name: "Jhonatan", role: .admin))
+
+    let name = try await UserService(repository: repo).getUserDisplayName(id: 42)
+
+    #expect(name == "Jhonatan (admin)")
+    #expect(repo.verify(\.fetchUser).called(with: 42))
+}
+```
+
+Tres verbos para programar, que se encadenan:
+
+| Verbo | Qué hace | Disponible en |
+|---|---|---|
+| `run { params in … }` | efecto en cada invocación: disparar un completion, mutar estado | todos los métodos |
+| `returns(valor)` / `returns { params in … }` | el valor que devuelve | métodos con retorno |
+| `throws(error)` / `throws { params in … }` | el error que lanza (`nil` deja pasar a `returns`) | solo métodos `throws` |
+
+Y la verificación: `called()`, `called(times:)`, `called(with:)` cuando el parámetro es `Equatable`, `called(where:)` para tuplas, `history`, `last` y `count`.
+
+```swift
+// Completion handlers: el closure llega como parámetro
+repo.whenCall(\.fetch).run { id, completion in completion(.success(.stub(id: id))) }
+
+// O guárdalo y dispáralo cuando el test decida
+sut.start()
+repo.verify(\.observe).last?(.started)
+```
+
+Cómo se mapea cada firma: cero parámetros usan `()`, uno su tipo, dos o más una tupla etiquetada `(id: Int, note: String?)`. Métodos `throws` reciben un `MockedThrowingCall`, el resto un `MockedCall`, por lo que programar `throws` en un método que no lanza no compila. Sin nada programado, el método devuelve `.stub()` para tipos del dominio y el valor por defecto para primitivos.
+
+El mock se escribe en `Generated/<Módulo>/<ruta>/Mocks/<Protocolo>+Mock.swift`. Los tipos que el protocolo devuelve reciben su `.stub()` automáticamente, los requisitos de los protocolos padre del dominio se incluyen, y los closures sin `@escaping` llegan a `run` pero no quedan en `history`. Métodos genéricos quedan con `fatalError`; protocolos con `associatedtype`, `init` o `subscript` se omiten con un aviso.
 
 ### Otros comandos
 

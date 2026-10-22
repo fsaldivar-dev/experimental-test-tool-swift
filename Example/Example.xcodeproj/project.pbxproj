@@ -7,10 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		5B0C4E5F0000000000000101 /* Pet+Stub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B0C4E5F0000000000000001 /* Pet+Stub.swift */; };
-		5B0C4E5F0000000000000102 /* Profile+Stub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B0C4E5F0000000000000002 /* Profile+Stub.swift */; };
-		5B0C4E5F0000000000000103 /* SomeStub+Stub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B0C4E5F0000000000000003 /* SomeStub+Stub.swift */; };
-		5B0C4E5F0000000000000104 /* User+Stub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B0C4E5F0000000000000004 /* User+Stub.swift */; };
+		5B0C4E5FF65011FDC697010E /* UserRepositoryProtocol+Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B0C4E5FEE51356E0203AA23 /* UserRepositoryProtocol+Mock.swift */; };
+		5B0C4E5FA8A0BFDA80E63BA3 /* Pet+Stub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B0C4E5F1C700B65B23EE6E3 /* Pet+Stub.swift */; };
+		5B0C4E5F23A02288CED10CFC /* Profile+Stub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B0C4E5F5ABC700DD4AE6260 /* Profile+Stub.swift */; };
+		5B0C4E5F171DEA32D1F22705 /* SomeStub+Stub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B0C4E5FA254441308B9CFF6 /* SomeStub+Stub.swift */; };
+		5B0C4E5F6D56EDA42CDF87D6 /* User+Stub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B0C4E5F6328A77D7BD8F33D /* User+Stub.swift */; };
 		21BB313104DA461E9A823459 /* UserService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52149D9B89EA479C815FCE62 /* UserService.swift */; };
 		9B1C605E90C448ED95C57965 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE2E784D0EA24F6285DC9FCC /* User.swift */; };
 		9D19AF7930865C6500039A2F /* (null) in Frameworks */ = {isa = PBXBuildFile; };
@@ -41,10 +42,11 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		5B0C4E5F0000000000000001 /* Pet+Stub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Pet+Stub.swift"; sourceTree = "<group>"; };
-		5B0C4E5F0000000000000002 /* Profile+Stub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Profile+Stub.swift"; sourceTree = "<group>"; };
-		5B0C4E5F0000000000000003 /* SomeStub+Stub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SomeStub+Stub.swift"; sourceTree = "<group>"; };
-		5B0C4E5F0000000000000004 /* User+Stub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "User+Stub.swift"; sourceTree = "<group>"; };
+		5B0C4E5FEE51356E0203AA23 /* UserRepositoryProtocol+Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserRepositoryProtocol+Mock.swift"; sourceTree = "<group>"; };
+		5B0C4E5F1C700B65B23EE6E3 /* Pet+Stub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Pet+Stub.swift"; sourceTree = "<group>"; };
+		5B0C4E5F5ABC700DD4AE6260 /* Profile+Stub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Profile+Stub.swift"; sourceTree = "<group>"; };
+		5B0C4E5FA254441308B9CFF6 /* SomeStub+Stub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SomeStub+Stub.swift"; sourceTree = "<group>"; };
+		5B0C4E5F6328A77D7BD8F33D /* User+Stub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "User+Stub.swift"; sourceTree = "<group>"; };
 		28F454F0E747413899986C73 /* ExampleTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ExampleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		52149D9B89EA479C815FCE62 /* UserService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserService.swift; sourceTree = "<group>"; };
 		B6436E42289E92AF00D9B5C2 /* Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -85,37 +87,46 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		5B0C4E5F0000000000000201 /* Generated */ = {
+		5B0C4E5F456466C57D06F35C /* Generated */ = {
 			isa = PBXGroup;
 			children = (
-				5B0C4E5F0000000000000202 /* Example */,
+				5B0C4E5FCB4ACDCE5DFBE7DA /* Example */,
 			);
 			path = Generated;
 			sourceTree = "<group>";
 		};
-		5B0C4E5F0000000000000202 /* Example */ = {
+		5B0C4E5F97A8B9B0186FB13C /* Mocks */ = {
 			isa = PBXGroup;
 			children = (
-				5B0C4E5F0000000000000203 /* Domain */,
+				5B0C4E5FEE51356E0203AA23 /* UserRepositoryProtocol+Mock.swift */,
 			);
-			path = Example;
+			path = Mocks;
 			sourceTree = "<group>";
 		};
-		5B0C4E5F0000000000000203 /* Domain */ = {
+		5B0C4E5FE41A270332F725A6 /* Domain */ = {
 			isa = PBXGroup;
 			children = (
-				5B0C4E5F0000000000000204 /* Stubs */,
+				5B0C4E5F97A8B9B0186FB13C /* Mocks */,
+				5B0C4E5F201E70132B4E11D1 /* Stubs */,
 			);
 			path = Domain;
 			sourceTree = "<group>";
 		};
-		5B0C4E5F0000000000000204 /* Stubs */ = {
+		5B0C4E5FCB4ACDCE5DFBE7DA /* Example */ = {
 			isa = PBXGroup;
 			children = (
-				5B0C4E5F0000000000000001 /* Pet+Stub.swift */,
-				5B0C4E5F0000000000000002 /* Profile+Stub.swift */,
-				5B0C4E5F0000000000000003 /* SomeStub+Stub.swift */,
-				5B0C4E5F0000000000000004 /* User+Stub.swift */,
+				5B0C4E5FE41A270332F725A6 /* Domain */,
+			);
+			path = Example;
+			sourceTree = "<group>";
+		};
+		5B0C4E5F201E70132B4E11D1 /* Stubs */ = {
+			isa = PBXGroup;
+			children = (
+				5B0C4E5F1C700B65B23EE6E3 /* Pet+Stub.swift */,
+				5B0C4E5F5ABC700DD4AE6260 /* Profile+Stub.swift */,
+				5B0C4E5FA254441308B9CFF6 /* SomeStub+Stub.swift */,
+				5B0C4E5F6328A77D7BD8F33D /* User+Stub.swift */,
 			);
 			path = Stubs;
 			sourceTree = "<group>";
@@ -179,7 +190,7 @@
 			children = (
 				E7FFAD3E91B14831B429A8C8 /* UserStubTests.swift */,
 				FC03D86FE13847BEB41B3724 /* UserServiceMockTests.swift */,
-				5B0C4E5F0000000000000201 /* Generated */,
+				5B0C4E5F456466C57D06F35C /* Generated */,
 			);
 			path = ExampleTests;
 			sourceTree = "<group>";
@@ -191,6 +202,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 224290A47F0D4AE2A0EC9489 /* Build configuration list for PBXNativeTarget "ExampleTests" */;
 			buildPhases = (
+				5B0C4E5FC8FBC43D918152C7 /* Spock: regenerar Generated si falta */,
 				C57424A1588A47138ED504B3 /* Sources */,
 				7741E29C632E4100B8C171CD /* Frameworks */,
 				7FAF23CF0219486EA5B96BF7 /* Resources */,
@@ -287,6 +299,34 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		5B0C4E5FC8FBC43D918152C7 /* Spock: regenerar Generated si falta */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Spock: regenerar Generated si falta";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(SRCROOT)/ExampleTests/Generated/Example/Domain/Mocks/UserRepositoryProtocol+Mock.swift",
+				"$(SRCROOT)/ExampleTests/Generated/Example/Domain/Stubs/Pet+Stub.swift",
+				"$(SRCROOT)/ExampleTests/Generated/Example/Domain/Stubs/Profile+Stub.swift",
+				"$(SRCROOT)/ExampleTests/Generated/Example/Domain/Stubs/SomeStub+Stub.swift",
+				"$(SRCROOT)/ExampleTests/Generated/Example/Domain/Stubs/User+Stub.swift",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Spock: la carpeta Generated es el snapshot de stubs y mocks.\n# Cada build corre spock-gen; con todo al día termina en milisegundos (cache HIT).\n# Deja rastro en .build/spock-phase.log junto al Package.swift.\nLOG=\"${SRCROOT}/../.build/spock-phase.log\"\nmkdir -p \"$(dirname \"$LOG\")\"\nSTART=$(date +%s)\ncd \"${SRCROOT}/..\"\n/usr/bin/env -i HOME=\"$HOME\" PATH=\"/usr/bin:/bin:/usr/sbin:/sbin\" DEVELOPER_DIR=\"${DEVELOPER_DIR}\" /usr/bin/swift run spock-gen --sources Example=Example/Example --tests ExampleTests=Example/ExampleTests --output Example/ExampleTests/Generated >> \"$LOG\" 2>&1\nSTATUS=$?\necho \"$(date '+%F %T') spock-gen terminó con código $STATUS en $(( $(date +%s) - START )) s\" >> \"$LOG\"\nexit $STATUS";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		B6436E3E289E92AF00D9B5C2 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -304,12 +344,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5B0C4E5FF65011FDC697010E /* UserRepositoryProtocol+Mock.swift in Sources */,
+				5B0C4E5FA8A0BFDA80E63BA3 /* Pet+Stub.swift in Sources */,
+				5B0C4E5F23A02288CED10CFC /* Profile+Stub.swift in Sources */,
+				5B0C4E5F171DEA32D1F22705 /* SomeStub+Stub.swift in Sources */,
+				5B0C4E5F6D56EDA42CDF87D6 /* User+Stub.swift in Sources */,
 				B50FFBB3C4C54659A8849C17 /* UserStubTests.swift in Sources */,
 				BD6A96DAEC2042729D26303D /* UserServiceMockTests.swift in Sources */,
-				5B0C4E5F0000000000000101 /* Pet+Stub.swift in Sources */,
-				5B0C4E5F0000000000000102 /* Profile+Stub.swift in Sources */,
-				5B0C4E5F0000000000000103 /* SomeStub+Stub.swift in Sources */,
-				5B0C4E5F0000000000000104 /* User+Stub.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

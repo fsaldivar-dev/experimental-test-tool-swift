@@ -9,7 +9,9 @@ import Foundation
 import SwiftSyntax
 import SwiftParser
 
-/// Escanea archivos de tests buscando declaraciones `@Stubbed` (explícitas), llamadas a `.stub()` y modelos usados (implícitos).
+/// Escanea archivos de tests buscando declaraciones `@Stubbed` y `@Mocking` (explícitas),
+/// llamadas a `.stub()` y modelos usados (implícitos).
+///
 /// Las explícitas tienen prioridad y solo entre ellas se reportan duplicados.
 public final class TestScanner: SyntaxVisitor, @unchecked Sendable {
     private let filePath: String
@@ -50,21 +52,22 @@ public final class TestScanner: SyntaxVisitor, @unchecked Sendable {
         return scan(source: source, filePath: fileURL.path, knownModelNames: knownModelNames)
     }
 
-    private func registerStub(typeName: String, explicit: Bool) {
+    private func register(typeName: String, explicit: Bool, kind: DeclarationKind = .stub) {
         let trimmed = typeName.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { return }
 
         if let index = stubDeclarations.firstIndex(where: { $0.typeName == trimmed }) {
             // Una declaración explícita reemplaza a un descubrimiento implícito del mismo archivo.
             if explicit, !stubDeclarations[index].isExplicit {
-                stubDeclarations[index] = StubDeclaration(typeName: trimmed, declaredInFile: filePath, isExplicit: true)
+                stubDeclarations[index] = StubDeclaration(typeName: trimmed, declaredInFile: filePath, isExplicit: true, kind: kind)
             }
             return
         }
         stubDeclarations.append(StubDeclaration(
             typeName: trimmed,
             declaredInFile: filePath,
-            isExplicit: explicit
+            isExplicit: explicit,
+            kind: kind
         ))
     }
 
@@ -77,21 +80,31 @@ public final class TestScanner: SyntaxVisitor, @unchecked Sendable {
     }
 
     public override func visit(_ node: ExtensionDeclSyntax) -> SyntaxVisitorContinueKind {
-        if hasStubAttribute(node.attributes) {
-            let typeName = node.extendedType.trimmedDescription
-            registerStub(typeName: typeName, explicit: true)
+        let typeName = node.extendedType.trimmedDescription
+        if hasAttribute("Stubbed", in: node.attributes) {
+            register(typeName: typeName, explicit: true, kind: .stub)
+            return .skipChildren
+        }
+        if hasAttribute("Mocking", in: node.attributes) {
+            register(typeName: typeName, explicit: true, kind: .mock)
             return .skipChildren
         }
         return .visitChildren
     }
 
     public override func visit(_ node: StructDeclSyntax) -> SyntaxVisitorContinueKind {
-        if hasStubAttribute(node.attributes) {
-            let typeName = node.name.text.trimmingCharacters(in: .whitespacesAndNewlines)
-            registerStub(typeName: typeName, explicit: true)
+        if hasAttribute("Stubbed", in: node.attributes) {
+            register(typeName: node.name.text, explicit: true, kind: .stub)
             return .skipChildren
         }
         return .visitChildren
+    }
+
+    public override func visit(_ node: ProtocolDeclSyntax) -> SyntaxVisitorContinueKind {
+        if hasAttribute("Mocking", in: node.attributes) {
+            register(typeName: node.name.text, explicit: true, kind: .mock)
+        }
+        return .skipChildren
     }
 
     public override func visit(_ node: FunctionCallExprSyntax) -> SyntaxVisitorContinueKind {
@@ -101,12 +114,12 @@ public final class TestScanner: SyntaxVisitor, @unchecked Sendable {
             if let base = memberAccess.base?.as(DeclReferenceExprSyntax.self) {
                 let typeName = base.baseName.text.trimmingCharacters(in: .whitespacesAndNewlines)
                 if !typeName.isEmpty, typeName.first?.isUppercase == true {
-                    registerStub(typeName: typeName, explicit: false)
+                    register(typeName: typeName, explicit: false)
                 }
             } else if let memberBase = memberAccess.base?.as(MemberAccessExprSyntax.self) {
                 let typeName = memberBase.declName.baseName.text.trimmingCharacters(in: .whitespacesAndNewlines)
                 if !typeName.isEmpty, typeName.first?.isUppercase == true {
-                    registerStub(typeName: typeName, explicit: false)
+                    register(typeName: typeName, explicit: false)
                 }
             }
         }
@@ -116,7 +129,7 @@ public final class TestScanner: SyntaxVisitor, @unchecked Sendable {
     public override func visit(_ node: DeclReferenceExprSyntax) -> SyntaxVisitorContinueKind {
         let name = node.baseName.text
         if knownModelNames.contains(name) {
-            registerStub(typeName: name, explicit: false)
+            register(typeName: name, explicit: false)
         }
         return .skipChildren
     }
@@ -124,16 +137,16 @@ public final class TestScanner: SyntaxVisitor, @unchecked Sendable {
     public override func visit(_ node: IdentifierTypeSyntax) -> SyntaxVisitorContinueKind {
         let name = node.name.text
         if knownModelNames.contains(name) {
-            registerStub(typeName: name, explicit: false)
+            register(typeName: name, explicit: false)
         }
         return .visitChildren
     }
 
-    private func hasStubAttribute(_ attributes: AttributeListSyntax) -> Bool {
+    private func hasAttribute(_ name: String, in attributes: AttributeListSyntax) -> Bool {
         for element in attributes {
             if let attr = element.as(AttributeSyntax.self) {
                 let attrName = attr.attributeName.trimmedDescription
-                if attrName == "Stubbed" || attrName == "SpockSwift.Stubbed" {
+                if attrName == name || attrName == "SpockSwift.\(name)" {
                     return true
                 }
             }

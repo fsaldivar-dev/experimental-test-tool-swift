@@ -3,6 +3,7 @@
 //  SpockSwift
 //
 //  Created by Francisco Javier Saldivar Rubio on 11/08/22.
+//  Mocks escritos a mano con la misma forma que genera spock-gen.
 //
 
 import Foundation
@@ -36,48 +37,54 @@ extension Account: SpockDummy, Equatable {
 }
 
 final class MockInteractor: Interactor, SpockMock, @unchecked Sendable {
-    
-    
-    var fetchAllUserAction: Stub<(), [MockUser]> = .init()
+
+    struct Calls {
+        let fetchAllUser = MockedThrowingCall<(), [MockUser]>()
+        let fetchUser = MockedThrowingCall<Int, MockUser>()
+        let searchParents = MockedThrowingCall<Int, MockUser>()
+    }
+    let calls = Calls()
+
     func fetchAllUser() async throws -> [MockUser] {
-        try fetchAllUserAction.onCall(()) ?? []
+        try calls.fetchAllUser.invoke(()) ?? []
     }
-    
-    @StubbedCall<Int, MockUser>
-    var fetchUserAction
+
     func fetchUser(at serialID: Int) async throws -> MockUser {
-        try fetchUserAction.onCall(serialID) ?? MockUser.dummy()
+        try calls.fetchUser.invoke(serialID) ?? MockUser.dummy()
     }
-    
-    @StubbedCall<Int, MockUser>
-    var searchParentsAction
+
     func searchParents(at serialID: Int) async throws -> MockUser {
-        try searchParentsAction.onCall(serialID) ?? MockUser.dummy()
+        try calls.searchParents.invoke(serialID) ?? MockUser.dummy()
     }
 }
-
 
 final class MockView: View, SpockMock, @unchecked Sendable {
-    
-    @StubbedCall<[MockUser], Void>
-    var loadUserListAction
+
+    struct Calls {
+        let loadUserList = MockedCall<[MockUser], Void>()
+        let showParents = MockedCall<MockUser, Void>()
+    }
+    let calls = Calls()
+
     @MainActor
     func loadUserList(userList: [MockUser]) {
-        try? loadUserListAction.onCall(userList)
+        calls.loadUserList.invoke(userList)
     }
-    
-    @StubbedCall<MockUser, Void>
-    var showParentsAction
+
     @MainActor
     func showParents(user: MockUser) {
-        try? showParentsAction.onCall(user)
+        calls.showParents.invoke(user)
     }
 }
 
-final class MockTask: TaskCustom, @unchecked Sendable {
-    @StubbedCall<() async throws -> Void, Void>
-    var runAction
-    func run(_ task: @escaping @Sendable () async throws -> Void ) {
-        try? runAction.onCall(task)
+final class MockTask: TaskCustom, SpockMock, @unchecked Sendable {
+
+    struct Calls {
+        let run = MockedCall<@Sendable () async throws -> Void, Void>()
+    }
+    let calls = Calls()
+
+    func run(_ task: @escaping @Sendable () async throws -> Void) {
+        calls.run.invoke(task)
     }
 }

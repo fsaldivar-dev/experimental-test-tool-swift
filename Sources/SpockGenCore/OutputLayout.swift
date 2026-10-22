@@ -7,16 +7,22 @@
 
 import Foundation
 
-/// Dónde vive cada stub generado dentro de la carpeta de salida.
+/// Dónde vive cada archivo generado dentro de la carpeta de salida.
 ///
 /// La carpeta refleja la estructura del módulo de origen, así el stub de
 /// `Data/Entities/User.swift` del módulo `App` queda en
-/// `Generated/App/Data/Entities/Stubs/User+Stub.swift`.
+/// `Generated/App/Data/Entities/Stubs/User+Stub.swift`, y el mock de
+/// `Data/Services/UserRepository.swift` en `Generated/App/Data/Services/Mocks/UserRepository+Mock.swift`.
 public struct OutputLayout: Sendable, Equatable {
-    /// Sufijo que identifica a un archivo generado por spock-gen.
+    /// Sufijo de un stub generado por spock-gen.
     public static let fileSuffix = "+Stub.swift"
-    /// Carpeta hoja que agrupa los stubs de un directorio de origen.
+    /// Sufijo de un mock generado por spock-gen.
+    public static let mockFileSuffix = "+Mock.swift"
+    /// Todo lo que spock-gen reconoce como suyo.
+    public static let generatedSuffixes = [fileSuffix, mockFileSuffix]
+    /// Carpetas hoja que agrupan lo generado por directorio de origen.
     public static let stubsFolder = "Stubs"
+    public static let mocksFolder = "Mocks"
 
     public let rootDirectory: String
 
@@ -26,13 +32,22 @@ public struct OutputLayout: Sendable, Equatable {
 
     /// Ruta del stub relativa a la raíz: `<module>/<ruta relativa>/Stubs/<Tipo>+Stub.swift`.
     public func relativePath(for model: ModelDefinition) -> String {
-        var components: [String] = [model.module.isEmpty ? "Unknown" : model.module]
-        components.append(contentsOf: model.relativeDirectory
+        relativePath(module: model.module, relativeDirectory: model.relativeDirectory, folder: OutputLayout.stubsFolder, fileName: model.name + OutputLayout.fileSuffix)
+    }
+
+    /// Ruta del mock relativa a la raíz: `<module>/<ruta relativa>/Mocks/<Protocolo>+Mock.swift`.
+    public func relativePath(for definition: ProtocolDefinition) -> String {
+        relativePath(module: definition.module, relativeDirectory: definition.relativeDirectory, folder: OutputLayout.mocksFolder, fileName: definition.name + OutputLayout.mockFileSuffix)
+    }
+
+    private func relativePath(module: String, relativeDirectory: String, folder: String, fileName: String) -> String {
+        var components: [String] = [module.isEmpty ? "Unknown" : module]
+        components.append(contentsOf: relativeDirectory
             .split(separator: "/")
             .map(String.init)
             .filter { !$0.isEmpty && $0 != "." })
-        components.append(OutputLayout.stubsFolder)
-        components.append(model.name + OutputLayout.fileSuffix)
+        components.append(folder)
+        components.append(fileName)
         return components.joined(separator: "/")
     }
 
@@ -44,13 +59,27 @@ public struct OutputLayout: Sendable, Equatable {
         rootDirectory + "/" + relative
     }
 
+    /// `true` si el nombre lleva alguno de los sufijos de spock-gen.
+    public static func isGeneratedFile(_ path: String) -> Bool {
+        generatedSuffixes.contains { path.hasSuffix($0) }
+    }
+
+    /// Nombre del tipo a partir de un archivo generado: `User+Stub.swift` -> `User`.
+    public static func typeName(fromGeneratedFile path: String) -> String {
+        var name = (path as NSString).lastPathComponent
+        for suffix in generatedSuffixes where name.hasSuffix(suffix) {
+            name.removeLast(suffix.count)
+        }
+        return name
+    }
+
     /// Archivos generados que existen hoy bajo la raíz, como rutas relativas ordenadas.
     public func existingGeneratedFiles() -> [String] {
         let fileManager = FileManager.default
         guard let enumerator = fileManager.enumerator(atPath: rootDirectory) else { return [] }
         var files: [String] = []
         while let element = enumerator.nextObject() as? String {
-            if element.hasSuffix(OutputLayout.fileSuffix) {
+            if OutputLayout.isGeneratedFile(element) {
                 files.append(element)
             }
         }

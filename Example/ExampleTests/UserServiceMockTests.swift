@@ -9,59 +9,60 @@ import Testing
 import SpockSwift
 @testable import Example
 
-final class MockUserRepository: UserRepositoryProtocol, SpockMock, @unchecked Sendable {
-    @StubbedCall<Int, User>
-    var fetchUserAction
+// Anotación declarativa @Mocking:
+// spock-gen genera UserRepositoryMock en Generated/Example/Domain/Mocks/UserRepositoryProtocol+Mock.swift,
+// con una llamada mockeada por requisito y los stubs de los tipos que devuelve.
 
-    @StubbedCall<User, Bool>
-    var saveUserAction
-
-    func fetchUser(id: Int) async throws -> User {
-        try fetchUserAction.onCall(id) ?? .stub()
-    }
-
-    func saveUser(_ user: User) async throws -> Bool {
-        try saveUserAction.onCall(user) ?? true
-    }
-}
+@Mocking
+extension UserRepositoryProtocol {}
 
 @Suite("Example - SpockMock & Spy")
 struct UserServiceMockTests {
 
     @Test("UserService llama al repositorio y retorna el nombre formateado")
     func testGetDisplayName() async throws {
-        let mockRepo = MockUserRepository()
+        let mockRepo = UserRepositoryMock()
         let expectedUser = User.stub(name: "Jhonatan", role: .admin)
 
-        mockRepo.fetchUserAction.whenRun { _ in
-            expectedUser
-        }
+        mockRepo.whenCall(\.fetchUser).returns(expectedUser)
 
         let service = UserService(repository: mockRepo)
         let displayName = try await service.getUserDisplayName(id: 42)
 
         #expect(displayName == "Jhonatan (admin)")
-        #expect(mockRepo.isInvoked(stub: { $0.fetchUserAction }))
-        #expect(mockRepo.compare(stub: { $0.fetchUserAction }, to: 42))
+        #expect(mockRepo.verify(\.fetchUser).called(times: 1))
+        #expect(mockRepo.verify(\.fetchUser).called(with: 42))
     }
 
     @Test("UserService actualiza el bio del usuario correctamente")
     func testUpdateBio() async throws {
-        let mockRepo = MockUserRepository()
+        let mockRepo = UserRepositoryMock()
         let initialUser = User.stub(name: "Francisco", profile: .stub(bio: "Original"))
 
-        mockRepo.fetchUserAction.whenRun { _ in
+        mockRepo.whenCall(\.fetchUser).returns { id in
             initialUser
         }
-        mockRepo.saveUserAction.whenRun { _ in
-            true
-        }
+        mockRepo.whenCall(\.saveUser).returns(true)
 
         let service = UserService(repository: mockRepo)
         let success = try await service.updateBio(id: 10, newBio: "Updated Bio")
 
         #expect(success == true)
-        #expect(mockRepo.isInvoked(stub: { $0.saveUserAction }))
-        #expect(mockRepo.saveUserAction.getSpy().parameter?.profile.bio == "Updated Bio")
+        #expect(mockRepo.verify(\.saveUser).called())
+        #expect(mockRepo.verify(\.saveUser).last?.profile.bio == "Updated Bio")
+    }
+
+    @Test("Un error programado en el repositorio llega al servicio")
+    func testRepositoryErrorPropagates() async {
+        struct Offline: Error {}
+        let mockRepo = UserRepositoryMock()
+        mockRepo.whenCall(\.fetchUser).throws(Offline())
+
+        let service = UserService(repository: mockRepo)
+
+        await #expect(throws: Offline.self) {
+            try await service.getUserDisplayName(id: 1)
+        }
+        #expect(mockRepo.verify(\.fetchUser).called(with: 1))
     }
 }

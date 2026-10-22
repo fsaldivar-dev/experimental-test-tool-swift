@@ -111,18 +111,191 @@ public struct ModelDefinition: Sendable, Equatable {
     }
 }
 
-/// Representa una anotación `@Stubbed` encontrada en un archivo de pruebas.
+/// Qué pide una anotación encontrada en tests.
+public enum DeclarationKind: String, Sendable, Equatable {
+    /// `@Stubbed extension Tipo {}` o un modelo usado con `.stub()`: genera `Tipo.stub(...)`.
+    case stub
+    /// `@Mocking extension Protocolo {}`: genera `MockProtocolo` con un llamada mockeada por requisito.
+    case mock
+}
+
+/// Representa una anotación `@Stubbed` / `@Mocking` encontrada en un archivo de pruebas.
 public struct StubDeclaration: Sendable, Equatable {
     public let typeName: String
     public let declaredInFile: String
     public let line: Int
-    /// `true` para `@Stubbed`; `false` cuando el modelo se descubrió por su uso en un test.
+    /// `true` para una anotación escrita; `false` cuando el modelo se descubrió por su uso en un test.
     public let isExplicit: Bool
+    public let kind: DeclarationKind
 
-    public init(typeName: String, declaredInFile: String, line: Int = 1, isExplicit: Bool = true) {
+    public init(
+        typeName: String,
+        declaredInFile: String,
+        line: Int = 1,
+        isExplicit: Bool = true,
+        kind: DeclarationKind = .stub
+    ) {
         self.typeName = typeName
         self.declaredInFile = declaredInFile
         self.line = line
         self.isExplicit = isExplicit
+        self.kind = kind
+    }
+}
+
+// MARK: - Protocolos
+
+/// Parámetro de un requisito de protocolo.
+public struct ParameterDefinition: Sendable, Equatable {
+    /// Etiqueta externa; `nil` cuando se declaró `_`.
+    public let label: String?
+    /// Nombre interno, el que se usa dentro del cuerpo.
+    public let name: String
+    /// Tipo tal como se declaró (`@escaping () -> Void`, `inout Int`, `Int...`).
+    public let declaredType: String
+    /// Tipo utilizable dentro de una tupla o genérico (`() -> Void`, `Int`, `[Int]`).
+    public let typeName: String
+    /// Closure sin `@escaping` (o `@autoclosure`): no se puede guardar, el mock lo pasa con `withoutActuallyEscaping`.
+    public let isNonEscapingClosure: Bool
+
+    public init(label: String?, name: String, declaredType: String, typeName: String? = nil, isNonEscapingClosure: Bool = false) {
+        self.label = label
+        self.name = name
+        self.declaredType = declaredType
+        self.typeName = typeName ?? declaredType
+        self.isNonEscapingClosure = isNonEscapingClosure
+    }
+
+    /// `label name: Tipo` tal como va en la firma.
+    public var signatureText: String {
+        let prefix: String
+        if let label {
+            prefix = label == name ? name : "\(label) \(name)"
+        } else {
+            prefix = "_ \(name)"
+        }
+        return "\(prefix): \(declaredType)"
+    }
+}
+
+/// Método requerido por un protocolo.
+public struct MethodRequirement: Sendable, Equatable {
+    public let name: String
+    public let parameters: [ParameterDefinition]
+    /// `nil` cuando devuelve `Void`.
+    public let returnType: String?
+    public let isAsync: Bool
+    public let isThrows: Bool
+    public let isStatic: Bool
+    public let isGeneric: Bool
+    /// Atributos a replicar en la implementación (`@MainActor`, `@discardableResult`).
+    public let attributes: [String]
+
+    public init(
+        name: String,
+        parameters: [ParameterDefinition] = [],
+        returnType: String? = nil,
+        isAsync: Bool = false,
+        isThrows: Bool = false,
+        isStatic: Bool = false,
+        isGeneric: Bool = false,
+        attributes: [String] = []
+    ) {
+        self.name = name
+        self.parameters = parameters
+        self.returnType = returnType
+        self.isAsync = isAsync
+        self.isThrows = isThrows
+        self.isStatic = isStatic
+        self.isGeneric = isGeneric
+        self.attributes = attributes
+    }
+
+    /// `fetchUser(id:)`, útil para nombres únicos y mensajes.
+    public var selector: String {
+        "\(name)(\(parameters.map { ($0.label ?? "_") + ":" }.joined()))"
+    }
+}
+
+/// Propiedad requerida por un protocolo.
+public struct PropertyRequirement: Sendable, Equatable {
+    public let name: String
+    public let typeName: String
+    public let isOptional: Bool
+    public let isSettable: Bool
+    public let isStatic: Bool
+
+    public init(name: String, typeName: String, isOptional: Bool = false, isSettable: Bool = false, isStatic: Bool = false) {
+        self.name = name
+        self.typeName = typeName
+        self.isOptional = isOptional
+        self.isSettable = isSettable
+        self.isStatic = isStatic
+    }
+}
+
+/// Representa un protocolo analizado en el código fuente.
+public struct ProtocolDefinition: Sendable, Equatable {
+    public let name: String
+    public let filePath: String
+    public let module: String
+    public let relativeDirectory: String
+    /// Protocolos de los que hereda (`Sendable`, `AnyObject`, otros del dominio).
+    public let inheritedTypes: [String]
+    public let methods: [MethodRequirement]
+    public let properties: [PropertyRequirement]
+    /// Requisitos que el mock no puede satisfacer: `associatedtype`, `init`, `subscript`.
+    public let unsupportedRequirements: [String]
+
+    public init(
+        name: String,
+        filePath: String = "",
+        module: String = "",
+        relativeDirectory: String = "",
+        inheritedTypes: [String] = [],
+        methods: [MethodRequirement] = [],
+        properties: [PropertyRequirement] = [],
+        unsupportedRequirements: [String] = []
+    ) {
+        self.name = name
+        self.filePath = filePath
+        self.module = module
+        self.relativeDirectory = relativeDirectory
+        self.inheritedTypes = inheritedTypes
+        self.methods = methods
+        self.properties = properties
+        self.unsupportedRequirements = unsupportedRequirements
+    }
+
+    /// Origen portable: `<module>/<ruta relativa>/<archivo>`.
+    public var origin: String {
+        let file = (filePath as NSString).lastPathComponent
+        return [module, relativeDirectory, file].filter { !$0.isEmpty }.joined(separator: "/")
+    }
+
+    /// Copia con los requisitos de los protocolos padre añadidos (sin repetir).
+    public func merging(parents: [ProtocolDefinition]) -> ProtocolDefinition {
+        var methods = self.methods
+        var properties = self.properties
+        var unsupported = self.unsupportedRequirements
+        for parent in parents {
+            for method in parent.methods where !methods.contains(where: { $0.selector == method.selector && $0.isStatic == method.isStatic }) {
+                methods.append(method)
+            }
+            for property in parent.properties where !properties.contains(where: { $0.name == property.name && $0.isStatic == property.isStatic }) {
+                properties.append(property)
+            }
+            unsupported.append(contentsOf: parent.unsupportedRequirements)
+        }
+        return ProtocolDefinition(
+            name: name,
+            filePath: filePath,
+            module: module,
+            relativeDirectory: relativeDirectory,
+            inheritedTypes: inheritedTypes,
+            methods: methods,
+            properties: properties,
+            unsupportedRequirements: unsupported
+        )
     }
 }

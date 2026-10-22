@@ -26,6 +26,7 @@ struct Options {
     var cache: String? = ".spock-cache.json"
     var verbose = false
     var watch = false
+    var syncXcode = true
 }
 
 func printUsage() {
@@ -42,10 +43,11 @@ func printUsage() {
 
     Opciones:
       --sources <Módulo=dir | dir> ...  Raíces de los módulos de producción
-      --tests   <Módulo=dir | dir> ...  Raíces de los módulos de tests con declaraciones @Stubbed
+      --tests   <Módulo=dir | dir> ...  Raíces de los módulos de tests con declaraciones @Stubbed / @Mocking
       --output  <dir>                   Carpeta de salida (por defecto <primer tests dir>/Generated)
       --cache   <ruta>                  Manifiesto de caché (por defecto .spock-cache.json)
       --watch, -w                       Observa cambios y regenera al guardar
+      --no-xcode                        No sincroniza el .xcodeproj cercano a la carpeta de salida
       --verbose                         Imprime información detallada
       --help, -h                        Muestra esta ayuda
 
@@ -54,6 +56,7 @@ func printUsage() {
 
     La salida refleja la estructura del módulo de origen:
       <output>/<Módulo>/<ruta relativa>/Stubs/<Tipo>+Stub.swift
+      <output>/<Módulo>/<ruta relativa>/Mocks/<Protocolo>+Mock.swift
 
     Ejemplos:
       spock-gen --sources Example=Example/Example --tests ExampleTests=Example/ExampleTests
@@ -97,6 +100,9 @@ func parseOptions(_ args: [String]) -> Options {
             currentFlag = nil
         case "--watch", "-w":
             options.watch = true
+            currentFlag = nil
+        case "--no-xcode":
+            options.syncXcode = false
             currentFlag = nil
         default:
             switch currentFlag {
@@ -178,6 +184,38 @@ func makeConfiguration(_ options: Options) -> SpockGenEngine.Configuration? {
     )
 }
 
+/// Si hay un .xcodeproj cerca de la carpeta de salida, refleja en él los archivos generados
+/// y la fase de script que los regenera cuando faltan.
+func syncXcodeProject(_ options: Options, config: SpockGenEngine.Configuration) {
+    guard options.syncXcode,
+          let pbxPath = XcodeProjectIntegrator.findXcodeProject(nearPath: config.outputDirectory),
+          let testModule = options.tests.first?.module else { return }
+
+    // La fase regenera y, si Xcode borró las referencias al borrar los archivos, las restaura.
+    let request = XcodeProjectIntegrator.SyncRequest(
+        projectPbxprojPath: pbxPath,
+        targetName: testModule,
+        generatedDirectory: config.outputDirectory,
+        generateCommand: "/usr/bin/swift run " + describeCommand(options)
+    )
+    do {
+        switch try XcodeProjectIntegrator.sync(request) {
+        case .synchronized(let count):
+            print("🛠️ SpockGen: \(pbxPath) sincronizado (\(count) archivos generados referenciados).")
+        case .upToDate:
+            break
+        case .targetNotFound(let name):
+            print("⚠️ SpockGen: no se encontró el target \(name) en \(pbxPath); el proyecto no se tocó.")
+        case .parentGroupNotFound(let name):
+            print("⚠️ SpockGen: no se encontró el grupo \(name) en \(pbxPath); el proyecto no se tocó.")
+        case .noProjectFound:
+            break
+        }
+    } catch {
+        print("⚠️ SpockGen: no se pudo sincronizar \(pbxPath): \(error.localizedDescription)")
+    }
+}
+
 /// Metadata con rutas absolutas para la extensión de Xcode.
 func persistProjectMetadata(_ options: Options, output: String) {
     let cwd = FileManager.default.currentDirectoryPath
@@ -225,7 +263,7 @@ func runGenerate(engine: SpockGenEngine) {
                 print("⚡ SpockGen: Stubs al día (caché).")
             }
         case .generated(let count, let directory):
-            print("✅ SpockGen: \(count) modelos con stub en \(directory)")
+            print("✅ SpockGen: \(count) stubs y mocks al día en \(directory)")
         case .noStubsFound:
             if engine.config.verbose {
                 print("ℹ️ SpockGen: No se encontraron anotaciones @Stubbed activas.")
@@ -324,6 +362,7 @@ case "clean":
             print("🧹 SpockGen Clean: \(removed.count) stubs eliminados de \(config.outputDirectory).")
             for path in removed { print("   - \(path)") }
         }
+        syncXcodeProject(options, config: config)
         print("✅ SpockGen limpiado exitosamente.")
         exit(0)
     } catch {
@@ -351,7 +390,7 @@ case "check":
             for path in result.stale { print("     - \(path)") }
         }
         if !result.orphaned.isEmpty {
-            print("   Huérfanos (sin modelo ni @Stubbed):")
+            print("   Huérfanos (sin modelo, @Stubbed ni @Mocking):")
             for path in result.orphaned { print("     - \(path)") }
         }
         print("   Regenera con: \(describeCommand(options))")
@@ -369,6 +408,7 @@ case "generate":
 
     let engine = SpockGenEngine(config: config)
     runGenerate(engine: engine)
+    syncXcodeProject(options, config: config)
 
     if options.watch {
         print("👀 SpockGen: Modo observación activo (--watch).")

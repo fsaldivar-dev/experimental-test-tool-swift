@@ -30,7 +30,7 @@ public final class CodeGenerator: Sendable {
         lines.append("//  Si el modelo cambia, regenera con `spock-gen`; `spock-gen check` detecta el desfase.")
         lines.append("//")
         lines.append("")
-        lines.append(contentsOf: importLines(imports))
+        lines.append(contentsOf: CodeGenerator.importLines(imports))
         lines.append("")
         lines.append(generateExtension(for: model, availableModels: availableModels))
         lines.append("")
@@ -51,7 +51,7 @@ public final class CodeGenerator: Sendable {
         lines.append("//  Generated automatically by spock-gen. Do not edit directly.")
         lines.append("//")
         lines.append("")
-        lines.append(contentsOf: importLines(imports))
+        lines.append(contentsOf: CodeGenerator.importLines(imports))
         lines.append("")
 
         for model in models {
@@ -66,7 +66,7 @@ public final class CodeGenerator: Sendable {
         return lines.joined(separator: "\n")
     }
 
-    private func importLines(_ imports: [String]) -> [String] {
+    static func importLines(_ imports: [String]) -> [String] {
         var lines: [String] = ["import Foundation"]
         let uniqueImports = Array(Set(imports)).sorted()
         for imp in uniqueImports where imp != "import Foundation" {

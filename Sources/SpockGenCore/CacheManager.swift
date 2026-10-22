@@ -3,6 +3,10 @@ import CryptoKit
 
 /// Manifiesto de caché: hashes de las entradas y de cada archivo generado.
 public struct SpockCacheManifest: Codable, Sendable, Equatable {
+    /// Versión del formato de salida. Súbela cuando cambie lo que spock-gen escribe:
+    /// un manifiesto con otra versión nunca es un cache hit, aunque nada más haya cambiado.
+    public static let currentVersion = "2.3.0"
+
     public var version: String
     /// Ruta de entrada -> sha256 del contenido.
     public var fileHashes: [String: String]
@@ -14,7 +18,7 @@ public struct SpockCacheManifest: Codable, Sendable, Equatable {
     public var generatedFiles: [String: String]
 
     public init(
-        version: String = "2.1.0",
+        version: String = SpockCacheManifest.currentVersion,
         fileHashes: [String: String] = [:],
         outputHash: String? = nil,
         generatedModels: [String] = [],
@@ -136,7 +140,9 @@ public final class CacheManager: Sendable {
         layout: OutputLayout,
         cachedManifest: SpockCacheManifest?
     ) -> Bool {
-        guard let manifest = cachedManifest, inputsMatch(filePaths, manifest: manifest) else { return false }
+        guard let manifest = cachedManifest,
+              manifest.version == SpockCacheManifest.currentVersion,
+              inputsMatch(filePaths, manifest: manifest) else { return false }
 
         let existing = Set(layout.existingGeneratedFiles())
         guard existing == Set(manifest.generatedFiles.keys) else { return false }
@@ -174,10 +180,10 @@ public final class CacheManager: Sendable {
             outputHashes[relativePath] = hash(string: content)
         }
         let models = generatedFiles.keys
-            .map { ($0 as NSString).lastPathComponent.replacingOccurrences(of: OutputLayout.fileSuffix, with: "") }
+            .map { OutputLayout.typeName(fromGeneratedFile: $0) }
             .sorted()
         return SpockCacheManifest(
-            version: "2.1.0",
+            version: SpockCacheManifest.currentVersion,
             fileHashes: inputHashes(filePaths),
             outputHash: nil,
             generatedModels: models,
