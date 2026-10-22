@@ -9,6 +9,8 @@
 [![CI](https://github.com/fsaldivar-dev/experimental-test-tool-swift/actions/workflows/ci.yml/badge.svg?branch=feat/spock-2)](https://github.com/fsaldivar-dev/experimental-test-tool-swift/actions/workflows/ci.yml)
 ![Estado](https://img.shields.io/badge/estado-beta-yellow?style=for-the-badge)
 
+🌐 [English](README.en.md) · **Español**
+
 > ⚠️ **Beta.** El diseño está probado (91 tests, CI en verde), pero la madurez todavía no: lo mantiene una sola persona y aún no se ha usado fuera de este repositorio. Corre en **macOS y Linux** con Swift Package Manager (CI en ambos). Lee los [límites](AGENTS.md#l%C3%ADmites-no-intentar) antes de adoptarla en algo crítico.
 
 Dobles de prueba para Swift inspirados en **Spock** (Java/Groovy): declaras en tus tests qué necesitas con una anotación, y `spock-gen` escribe los **stubs**, **mocks** y **espías** como archivos versionados junto a los tests. Tu dominio no cambia, tus tests compilan sin build-tool plugins, y la sintaxis es la misma para programar y verificar:

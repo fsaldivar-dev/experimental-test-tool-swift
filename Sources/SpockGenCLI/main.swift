@@ -23,7 +23,7 @@ struct Options {
     var sources: [SourceRoot] = []
     var tests: [SourceRoot] = []
     var output: String?
-    var cache: String? = ".spock-cache.json"
+    var cache: String? = ".build/spock-cache.json"
     var verbose = false
     var watch = false
     var syncXcode = true
@@ -46,7 +46,7 @@ func printUsage() {
       --sources <Módulo=dir | dir> ...  Raíces de los módulos de producción
       --tests   <Módulo=dir | dir> ...  Raíces de los módulos de tests con declaraciones @Stubbed / @Mocking / @Spied
       --output  <dir>                   Carpeta de salida (por defecto <primer tests dir>/Generated)
-      --cache   <ruta>                  Manifiesto de caché (por defecto .spock-cache.json)
+      --cache   <ruta>                  Manifiesto de caché (por defecto .build/spock-cache.json)
       --watch, -w                       Observa cambios y regenera al guardar
       --defaults <realistic|plain>      Valores por defecto de los stubs: con sentido según nombre y tipo (realistic) o planos (plain)
       --no-xcode                        No sincroniza el .xcodeproj cercano a la carpeta de salida
