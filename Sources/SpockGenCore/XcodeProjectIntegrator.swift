@@ -21,7 +21,7 @@ import CryptoKit
 public struct XcodeProjectIntegrator: Sendable {
     /// Prefijo de los identificadores de objetos que gestiona spock-gen.
     public static let objectPrefix = "5B0C4E5F"
-    public static let scriptPhaseName = "Spock: regenerar Generated si falta"
+    public static let scriptPhaseName = "Spock: sincronizar Generated"
 
     public enum SyncStatus: Sendable, Equatable {
         /// El proyecto ya reflejaba la carpeta.
@@ -194,8 +194,10 @@ public struct XcodeProjectIntegrator: Sendable {
         // regenera y sincroniza el proyecto. Se ejecuta con un entorno limpio para que SwiftPM
         // comparta la caché de .build con la terminal en vez de recompilar el generador.
         let script = """
-        # Spock: la carpeta Generated es el snapshot de stubs y mocks.
-        # Cada build corre spock-gen; con todo al día termina en milisegundos (cache HIT).
+        # Spock: la carpeta Generated es el snapshot de stubs, mocks y espías.
+        # Cada build corre spock-gen: con todo al día es una comprobación de hashes (cache HIT);
+        # si falta un archivo, cambió el dominio o hay una anotación nueva, regenera y sincroniza el proyecto.
+        # Esta fase, sus Output Files y su orden los mantiene spock-gen; no los edites a mano.
         # Deja rastro en .build/spock-phase.log junto al Package.swift.
         LOG="${SRCROOT}/\(packageRelative)/.build/spock-phase.log"
         mkdir -p "$(dirname "$LOG")"

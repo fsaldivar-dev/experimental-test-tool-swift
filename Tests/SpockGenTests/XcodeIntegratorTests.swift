@@ -74,7 +74,7 @@ struct XcodeIntegratorTests {
         let domainChildren = domainBlock[..<(domainBlock.range(of: "\n\t\t};")!.lowerBound)]
         #expect(!domainChildren.contains("/* Generated */"))
         // Fase de script: primera del target, con los dos outputs y sin inputs
-        #expect(content.contains("\t\t\tbuildPhases = (\n\t\t\t\t\(XcodeProjectIntegrator.objectId("script:ExampleTests/Generated")) /* Spock: regenerar Generated si falta */,\n\t\t\t\tC57424A1588A47138ED504B3 /* Sources */,"))
+        #expect(content.contains("\t\t\tbuildPhases = (\n\t\t\t\t\(XcodeProjectIntegrator.objectId("script:ExampleTests/Generated")) /* Spock: sincronizar Generated */,\n\t\t\t\tC57424A1588A47138ED504B3 /* Sources */,"))
         #expect(content.contains("\"$(SRCROOT)/ExampleTests/Generated/Example/Domain/Stubs/User+Stub.swift\","))
         #expect(content.contains("\"$(SRCROOT)/ExampleTests/Generated/Example/Domain/Mocks/UserRepositoryProtocol+Mock.swift\","))
         #expect(content.contains("alwaysOutOfDate = 1;"))

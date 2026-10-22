@@ -13,12 +13,22 @@ import Foundation
 
 extension Pet {
     public static func stub(
-        name: String = "dummy_name",
-        age: Int = 0
+        name: String = "Ana García",
+        age: Int = 30
     ) -> Pet {
         Pet(
             name: name,
             age: age
         )
+    }
+
+    /// `count` instancias con identidad distinta: los identificadores incrementan y los textos llevan el índice.
+    public static func stubs(count: Int) -> [Pet] {
+        (0..<max(count, 0)).map { offset in
+            let index = offset + 1
+            return Pet.stub(
+                name: "Ana García \(index)"
+            )
+        }
     }
 }

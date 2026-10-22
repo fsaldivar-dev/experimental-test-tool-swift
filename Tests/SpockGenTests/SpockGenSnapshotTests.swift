@@ -163,9 +163,12 @@ struct SpockGenSnapshotEngineTests {
         #expect(user.contains("@testable import App"))
         #expect(!user.contains("extension Pet {"))
 
+        #expect(user.contains("public static func stubs(count: Int) -> [User] {"))
+        #expect(user.contains("name: \"Ana García \\(index)\""))
+
         let pet = try fixture.generatedContent(SnapshotFixture.petStub)
         #expect(pet.contains("extension Pet {"))
-        #expect(pet.contains("name: String = \"dummy_name\""))
+        #expect(pet.contains("name: String = \"Ana García\""))
     }
 
     @Test("Segunda ejecución sin cambios es cache HIT y un duplicado en otro archivo no genera de más")
@@ -237,7 +240,7 @@ struct SpockGenSnapshotEngineTests {
         let local = try fixture.generatedContent("AppTests/Stubs/LocalTestModel+Stub.swift")
         #expect(local.contains("//  Origen: AppTests/CombinedTests.swift"))
         #expect(local.contains("some: String = \"dummy_some\""))
-        #expect(local.contains("count: Int = 0"))
+        #expect(local.contains("count: Int = 3"))
     }
 
     @Test("El cleaner elimina stubs huérfanos y carpetas vacías cuando desaparece la declaración")
@@ -269,7 +272,7 @@ struct SpockGenSnapshotEngineTests {
         struct UserTests {
             @Test func testUser() {
                 let user = User.stub()
-                #expect(user.name == "dummy_name")
+                #expect(user.name == "Ana García")
             }
         }
         """)
@@ -281,12 +284,12 @@ struct SpockGenSnapshotEngineTests {
             return
         }
         #expect(count == 2)
-        #expect(try fixture.generatedContent(SnapshotFixture.userStub).contains("name: String = \"dummy_name\""))
+        #expect(try fixture.generatedContent(SnapshotFixture.userStub).contains("name: String = \"Ana García\""))
 
         try fixture.writeDomain(userHasEmail: true)
         _ = try engine.run()
         let updated = try fixture.generatedContent(SnapshotFixture.userStub)
-        #expect(updated.contains("email: String = \"dummy_email\""))
+        #expect(updated.contains("email: String = \"ana.garcia@example.com\""))
     }
 
     @Test("Un struct declarado en tests no recibe stub por uso; solo con @Stubbed explícito")

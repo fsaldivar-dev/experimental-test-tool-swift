@@ -5,7 +5,7 @@ import CryptoKit
 public struct SpockCacheManifest: Codable, Sendable, Equatable {
     /// Versión del formato de salida. Súbela cuando cambie lo que spock-gen escribe:
     /// un manifiesto con otra versión nunca es un cache hit, aunque nada más haya cambiado.
-    public static let currentVersion = "2.3.0"
+    public static let currentVersion = "2.5.0"
 
     public var version: String
     /// Ruta de entrada -> sha256 del contenido.

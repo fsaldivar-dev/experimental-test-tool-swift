@@ -15,19 +15,23 @@ public final class SpockGenEngine: Sendable {
         public var outputDirectory: String
         public var cachePath: String?
         public var verbose: Bool
+        /// Estilo de los valores por defecto de stubs y fallbacks de mocks.
+        public var defaultsStyle: DefaultValueProvider.Style
 
         public init(
             sourceRoots: [SourceRoot],
             testRoots: [SourceRoot],
             outputDirectory: String,
             cachePath: String? = nil,
-            verbose: Bool = false
+            verbose: Bool = false,
+            defaultsStyle: DefaultValueProvider.Style = .realistic
         ) {
             self.sourceRoots = sourceRoots
             self.testRoots = testRoots
             self.outputDirectory = SourceRoot.normalize(outputDirectory)
             self.cachePath = cachePath
             self.verbose = verbose
+            self.defaultsStyle = defaultsStyle
         }
 
         /// Infiere el nombre de cada módulo del último componente de su directorio.
@@ -161,7 +165,8 @@ public final class SpockGenEngine: Sendable {
 
         // 4. Mocks: resolver protocolos (con sus padres) y anotar los tipos que sus stubs deben cubrir
         let layout = config.layout
-        let mockGenerator = MockGenerator()
+        let valueProvider = DefaultValueProvider(style: config.defaultsStyle)
+        let mockGenerator = MockGenerator(defaultValueProvider: valueProvider)
         var files: [String: String] = [:]
         var mockedProtocols: [ProtocolDefinition] = []
         var typesNeededByMocks: [String] = []
@@ -217,7 +222,7 @@ public final class SpockGenEngine: Sendable {
         rootTypes.sort()
         let tree = AutoTreeResolver().resolve(rootTypes: rootTypes, availableModels: availableModels)
 
-        let generator = CodeGenerator()
+        let generator = CodeGenerator(defaultValueProvider: valueProvider)
         for model in tree.modelsToGenerate where !model.isEnum {
             files[layout.relativePath(for: model)] = generator.generateFile(
                 for: model,

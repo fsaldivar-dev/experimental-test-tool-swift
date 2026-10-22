@@ -27,6 +27,7 @@ struct Options {
     var verbose = false
     var watch = false
     var syncXcode = true
+    var defaults: DefaultValueProvider.Style = .realistic
 }
 
 func printUsage() {
@@ -47,6 +48,7 @@ func printUsage() {
       --output  <dir>                   Carpeta de salida (por defecto <primer tests dir>/Generated)
       --cache   <ruta>                  Manifiesto de caché (por defecto .spock-cache.json)
       --watch, -w                       Observa cambios y regenera al guardar
+      --defaults <realistic|plain>      Valores por defecto de los stubs: con sentido según nombre y tipo (realistic) o planos (plain)
       --no-xcode                        No sincroniza el .xcodeproj cercano a la carpeta de salida
       --verbose                         Imprime información detallada
       --help, -h                        Muestra esta ayuda
@@ -94,7 +96,7 @@ func parseOptions(_ args: [String]) -> Options {
 
     for arg in args {
         switch arg {
-        case "--sources", "--tests", "--output", "--cache":
+        case "--sources", "--tests", "--output", "--cache", "--defaults":
             currentFlag = arg
         case "--verbose":
             options.verbose = true
@@ -116,6 +118,13 @@ func parseOptions(_ args: [String]) -> Options {
                 currentFlag = nil
             case "--cache":
                 options.cache = arg
+                currentFlag = nil
+            case "--defaults":
+                if let style = DefaultValueProvider.Style(rawValue: arg) {
+                    options.defaults = style
+                } else {
+                    print("⚠️ --defaults acepta plain o realistic; se ignora '\(arg)'.")
+                }
                 currentFlag = nil
             default:
                 print("⚠️ Argumento ignorado: \(arg)")
@@ -160,6 +169,9 @@ func describeCommand(_ options: Options, command: String = "") -> String {
     if let output = options.output {
         parts.append(contentsOf: ["--output", output])
     }
+    if options.defaults != .realistic {
+        parts.append(contentsOf: ["--defaults", options.defaults.rawValue])
+    }
     return parts.joined(separator: " ")
 }
 
@@ -181,7 +193,8 @@ func makeConfiguration(_ options: Options) -> SpockGenEngine.Configuration? {
         testRoots: options.tests,
         outputDirectory: output,
         cachePath: options.cache,
-        verbose: options.verbose
+        verbose: options.verbose,
+        defaultsStyle: options.defaults
     )
 }
 

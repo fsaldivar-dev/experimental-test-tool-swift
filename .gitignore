@@ -96,3 +96,7 @@ iOSInjectionProject/
 
 # Esquemas que Xcode autogenera al abrir el paquete
 .swiftpm/xcode/xcshareddata/xcschemes/
+
+# Notas de investigación (los informes finales van a docs/)
+research_notes/
+reports/

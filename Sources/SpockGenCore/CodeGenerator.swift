@@ -94,6 +94,11 @@ public final class CodeGenerator: Sendable {
             lines.append("    public static func stub() -> \(name) {")
             lines.append("        \(name)()")
             lines.append("    }")
+            lines.append("")
+            lines.append("    /// `count` instancias iguales.")
+            lines.append("    public static func stubs(count: Int) -> [\(name)] {")
+            lines.append("        (0..<max(count, 0)).map { _ in \(name).stub() }")
+            lines.append("    }")
         } else {
             var params: [String] = []
             var callArgs: [String] = []
@@ -111,6 +116,28 @@ public final class CodeGenerator: Sendable {
             lines.append("        \(name)(")
             lines.append(callArgs.joined(separator: ",\n"))
             lines.append("        )")
+            lines.append("    }")
+
+            // stubs(count:): identificadores incrementales y textos con índice, el resto por defecto.
+            var varied: [String] = []
+            for prop in model.properties {
+                if let expression = defaultValueProvider.variedValue(for: prop, availableModels: availableModels) {
+                    varied.append("                \(prop.name): \(expression)")
+                }
+            }
+            lines.append("")
+            lines.append("    /// `count` instancias con identidad distinta: los identificadores incrementan y los textos llevan el índice.")
+            lines.append("    public static func stubs(count: Int) -> [\(name)] {")
+            if varied.isEmpty {
+                lines.append("        (0..<max(count, 0)).map { _ in \(name).stub() }")
+            } else {
+                lines.append("        (0..<max(count, 0)).map { offset in")
+                lines.append("            let index = offset + 1")
+                lines.append("            return \(name).stub(")
+                lines.append(varied.joined(separator: ",\n"))
+                lines.append("            )")
+                lines.append("        }")
+            }
             lines.append("    }")
         }
 

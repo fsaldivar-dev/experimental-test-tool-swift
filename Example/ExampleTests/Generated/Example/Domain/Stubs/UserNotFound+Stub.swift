@@ -19,4 +19,14 @@ extension UserNotFound {
             id: id
         )
     }
+
+    /// `count` instancias con identidad distinta: los identificadores incrementan y los textos llevan el índice.
+    public static func stubs(count: Int) -> [UserNotFound] {
+        (0..<max(count, 0)).map { offset in
+            let index = offset + 1
+            return UserNotFound.stub(
+                id: index
+            )
+        }
+    }
 }

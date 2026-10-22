@@ -176,7 +176,7 @@ struct MockGeneratorTests {
         """))
         #expect(!code.contains("StaticCalls"))
 
-        #expect(code.contains("    var count: Int = 0"))
+        #expect(code.contains("    var count: Int = 3"))
 
         #expect(code.contains("    func fetchUser(id: Int) async throws -> User {\n        try calls.fetchUser.invoke(id) ?? .stub()\n    }"))
         #expect(code.contains("    func save(_ user: User, note: String?) -> Bool {\n        calls.save.invoke((user: user, note: note)) ?? false\n    }"))

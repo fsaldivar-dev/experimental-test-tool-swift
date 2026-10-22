@@ -113,25 +113,66 @@ struct SpockGenPhase2Tests {
 @Suite("SpockGenCore - Fase 3: autoTree y Default Values")
 struct SpockGenPhase3Tests {
 
-    @Test("DefaultValueProvider sintetiza valores inteligentes según el tipo")
-    func testDefaultValueProvider() {
+    @Test("DefaultValueProvider (realistic) sintetiza valores deterministas con sentido según nombre y tipo")
+    func testDefaultValueProviderRealistic() {
         let provider = DefaultValueProvider()
         let availableModels: [String: ModelDefinition] = [
             "Status": ModelDefinition(name: "Status", filePath: "Status.swift", isEnum: true, enumCases: ["active", "inactive"]),
             "Pet": ModelDefinition(name: "Pet", filePath: "Pet.swift", isEnum: false, properties: [])
         ]
+        func value(_ name: String, _ type: String, optional: Bool = false) -> String {
+            provider.defaultValue(for: ModelProperty(name: name, typeName: type, isOptional: optional), availableModels: availableModels)
+        }
 
-        #expect(provider.defaultValue(for: ModelProperty(name: "name", typeName: "String"), availableModels: availableModels) == "\"dummy_name\"")
-        #expect(provider.defaultValue(for: ModelProperty(name: "userId", typeName: "Int"), availableModels: availableModels) == "1")
-        #expect(provider.defaultValue(for: ModelProperty(name: "count", typeName: "Int"), availableModels: availableModels) == "0")
-        #expect(provider.defaultValue(for: ModelProperty(name: "isVerified", typeName: "Bool"), availableModels: availableModels) == "false")
-        #expect(provider.defaultValue(for: ModelProperty(name: "id", typeName: "UUID"), availableModels: availableModels) == "UUID()")
-        #expect(provider.defaultValue(for: ModelProperty(name: "createdAt", typeName: "Date"), availableModels: availableModels) == "Date()")
-        #expect(provider.defaultValue(for: ModelProperty(name: "website", typeName: "URL"), availableModels: availableModels) == "URL(string: \"https://example.com\")!")
-        #expect(provider.defaultValue(for: ModelProperty(name: "tags", typeName: "[String]"), availableModels: availableModels) == "[]")
-        #expect(provider.defaultValue(for: ModelProperty(name: "nickname", typeName: "String", isOptional: true), availableModels: availableModels) == "nil")
-        #expect(provider.defaultValue(for: ModelProperty(name: "status", typeName: "Status"), availableModels: availableModels) == ".active")
-        #expect(provider.defaultValue(for: ModelProperty(name: "pet", typeName: "Pet"), availableModels: availableModels) == ".stub()")
+        #expect(value("name", "String") == "\"Ana García\"")
+        #expect(value("firstName", "String") == "\"Ana\"")
+        #expect(value("lastName", "String") == "\"García\"")
+        #expect(value("email", "String") == "\"ana.garcia@example.com\"")
+        #expect(value("bio", "String") == "\"Texto de ejemplo\"")
+        #expect(value("avatarURL", "URL") == "URL(string: \"https://example.com/image.png\")!")
+        #expect(value("website", "URL") == "URL(string: \"https://example.com\")!")
+        #expect(value("named", "String") == "\"dummy_named\"", "las reglas van por palabra, no por substring")
+        #expect(value("userId", "Int") == "1")
+        #expect(value("count", "Int") == "3")
+        #expect(value("age", "Int") == "30")
+        #expect(value("price", "Double") == "9.99")
+        #expect(value("latitude", "Double") == "19.4326")
+        #expect(value("isVerified", "Bool") == "true")
+        #expect(value("deleted", "Bool") == "false")
+        #expect(value("id", "UUID") == DefaultValueProvider.fixedUUID)
+        #expect(value("createdAt", "Date") == DefaultValueProvider.fixedDate)
+        #expect(value("tags", "[String]") == "[]")
+        #expect(value("nickname", "String", optional: true) == "nil")
+        #expect(value("status", "Status") == ".active")
+        #expect(value("pet", "Pet") == ".stub()")
+    }
+
+    @Test("DefaultValueProvider (plain) conserva los valores planos de siempre")
+    func testDefaultValueProviderPlain() {
+        let provider = DefaultValueProvider(style: .plain)
+        func value(_ name: String, _ type: String) -> String {
+            provider.defaultValue(for: ModelProperty(name: name, typeName: type), availableModels: [:])
+        }
+        #expect(value("name", "String") == "\"dummy_name\"")
+        #expect(value("userId", "Int") == "1")
+        #expect(value("count", "Int") == "0")
+        #expect(value("isVerified", "Bool") == "false")
+        #expect(value("id", "UUID") == "UUID()")
+        #expect(value("createdAt", "Date") == "Date()")
+    }
+
+    @Test("variedValue da identidad distinta por índice a ids y textos")
+    func testVariedValues() {
+        let provider = DefaultValueProvider()
+        func varied(_ name: String, _ type: String) -> String? {
+            provider.variedValue(for: ModelProperty(name: name, typeName: type), availableModels: [:])
+        }
+        #expect(varied("id", "Int") == "index")
+        #expect(varied("count", "Int") == nil)
+        #expect(varied("name", "String") == "\"Ana García \\(index)\"")
+        #expect(varied("email", "String") == "\"ana.garcia\\(index)@example.com\"")
+        #expect(varied("named", "String") == "\"dummy_named_\\(index)\"")
+        #expect(varied("createdAt", "Date") == nil)
     }
 
     @Test("AutoTreeResolver resuelve árbol de 3 niveles A -> B -> C automáticamente")
@@ -214,7 +255,7 @@ struct SpockGenPhase4Tests {
         // Verificar que Pet tiene su extension y .stub()
         #expect(generatedCode.contains("extension Pet {"))
         #expect(generatedCode.contains("public static func stub("))
-        #expect(generatedCode.contains("name: String = \"dummy_name\""))
+        #expect(generatedCode.contains("name: String = \"Ana García\""))
 
         // Verificar que User tiene su extension y encadena pet con .stub()
         #expect(generatedCode.contains("extension User {"))

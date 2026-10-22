@@ -4,6 +4,10 @@
 //
 //  Created for SpockSwift 2 Example.
 //
+//  Cómo se escribe un test con SpockSwift 2:
+//  - makeSUT construye el sistema bajo prueba con sus dobles y los devuelve con nombre.
+//  - Cada test se lee en tres bloques: Given (dobles programados), When (una sola acción), Then (#expect).
+//
 
 import Testing
 import SpockSwift
@@ -12,58 +16,76 @@ import SpockSwift
 // Anotación declarativa @Mocking:
 // spock-gen genera UserRepositoryMock en Generated/Example/Domain/Mocks/UserRepositoryProtocol+Mock.swift,
 // con una llamada mockeada por requisito y los stubs de los tipos que devuelve.
-
 @Mocking
 extension UserRepositoryProtocol {}
 
-@Suite("Example - SpockMock & Spy")
+@Suite("Example - UserService con un mock")
 struct UserServiceMockTests {
 
-    @Test("UserService llama al repositorio y retorna el nombre formateado")
+    /// El punto único donde se construye el SUT. Si cambia el init de UserService, cambia aquí y no en cada test.
+    private func makeSUT() -> (sut: UserService, repo: UserRepositoryMock) {
+        let repo = UserRepositoryMock()
+        let sut = UserService(repository: repo)
+        return (sut, repo)
+    }
+
+    @Test("Devuelve el nombre formateado del usuario que entrega el repositorio")
     func testGetDisplayName() async throws {
-        let mockRepo = UserRepositoryMock()
-        let expectedUser = User.stub(name: "Jhonatan", role: .admin)
+        // Given
+        let (sut, repo) = makeSUT()
+        repo.whenCall(\.fetchUser).returns(.stub(name: "Jhonatan", role: .admin))
 
-        mockRepo.whenCall(\.fetchUser).returns(expectedUser)
+        // When
+        let displayName = try await sut.getUserDisplayName(id: 42)
 
-        let service = UserService(repository: mockRepo)
-        let displayName = try await service.getUserDisplayName(id: 42)
-
+        // Then
         #expect(displayName == "Jhonatan (admin)")
-        #expect(mockRepo.verify(\.fetchUser).called(times: 1))
-        #expect(mockRepo.verify(\.fetchUser).called(with: 42))
+        #expect(repo.verify(\.fetchUser).called(times: 1))
+        #expect(repo.verify(\.fetchUser).called(with: 42))
     }
 
-    @Test("UserService actualiza el bio del usuario correctamente")
+    @Test("Actualiza el bio y guarda el usuario modificado")
     func testUpdateBio() async throws {
-        let mockRepo = UserRepositoryMock()
-        let initialUser = User.stub(name: "Francisco", profile: .stub(bio: "Original"))
+        // Given
+        let (sut, repo) = makeSUT()
+        repo.whenCall(\.fetchUser).returns { id in .stub(id: id, name: "Francisco", profile: .stub(bio: "Original")) }
+        repo.whenCall(\.saveUser).returns(true)
 
-        mockRepo.whenCall(\.fetchUser).returns { id in
-            initialUser
-        }
-        mockRepo.whenCall(\.saveUser).returns(true)
+        // When
+        let success = try await sut.updateBio(id: 10, newBio: "Updated Bio")
 
-        let service = UserService(repository: mockRepo)
-        let success = try await service.updateBio(id: 10, newBio: "Updated Bio")
-
+        // Then
         #expect(success == true)
-        #expect(mockRepo.verify(\.saveUser).called())
-        #expect(mockRepo.verify(\.saveUser).last?.profile.bio == "Updated Bio")
+        let saved = try #require(repo.verify(\.saveUser).last)
+        #expect(saved.id == 10)
+        #expect(saved.profile.bio == "Updated Bio")
     }
 
-    @Test("Un error programado en el repositorio llega al servicio")
+    @Test("Un error programado en el repositorio llega al servicio sin transformarse")
     func testRepositoryErrorPropagates() async {
+        // Given
         struct Offline: Error {}
-        let mockRepo = UserRepositoryMock()
-        mockRepo.whenCall(\.fetchUser).throws(Offline())
+        let (sut, repo) = makeSUT()
+        repo.whenCall(\.fetchUser).throws(Offline())
 
-        let service = UserService(repository: mockRepo)
-
+        // When / Then
         await #expect(throws: Offline.self) {
-            try await service.getUserDisplayName(id: 1)
+            try await sut.getUserDisplayName(id: 1)
         }
-        #expect(mockRepo.verify(\.fetchUser).called(with: 1))
+        #expect(repo.verify(\.fetchUser).called(with: 1))
+    }
+
+    @Test("Formatea cualquier rol entre paréntesis", arguments: [UserRole.admin, .member, .guest])
+    func testDisplayNameForEveryRole(role: UserRole) async throws {
+        // Given
+        let (sut, repo) = makeSUT()
+        repo.whenCall(\.fetchUser).returns(.stub(name: "Ana", role: role))
+
+        // When
+        let displayName = try await sut.getUserDisplayName(id: 1)
+
+        // Then
+        #expect(displayName == "Ana (\(role.rawValue))")
     }
 }
 
@@ -75,17 +97,26 @@ struct UserServiceMockTests {
 @Spied
 extension InMemoryUserRepository {}
 
-@Suite("Example - @Spied sobre una implementación real")
+@Suite("Example - UserService con un espía sobre el repositorio real")
 struct UserServiceSpyTests {
+
+    /// Aquí el SUT usa la implementación real; el espía solo mira. Se devuelven los tres para el Then.
+    private func makeSUT(users: [User] = []) -> (sut: UserService, spy: InMemoryUserRepositorySpy, real: InMemoryUserRepository) {
+        let real = InMemoryUserRepository(users: users)
+        let spy = InMemoryUserRepositorySpy(real)
+        let sut = UserService(repository: spy)
+        return (sut, spy, real)
+    }
 
     @Test("El espía deja pasar al repositorio real y registra lo que pasó")
     func testSpyPassesThrough() async throws {
-        let real = InMemoryUserRepository(users: [.stub(id: 10, name: "Francisco", profile: .stub(bio: "Original"))])
-        let spy = InMemoryUserRepositorySpy(real)
-        let service = UserService(repository: spy)
+        // Given
+        let (sut, spy, real) = makeSUT(users: [.stub(id: 10, name: "Francisco", profile: .stub(bio: "Original"))])
 
-        let success = try await service.updateBio(id: 10, newBio: "Updated Bio")
+        // When
+        let success = try await sut.updateBio(id: 10, newBio: "Updated Bio")
 
+        // Then
         #expect(success == true)
         #expect(try await real.fetchUser(id: 10).profile.bio == "Updated Bio", "el real guardó el cambio")
         #expect(spy.verify(\.fetchUser).called(with: 10))
@@ -95,10 +126,12 @@ struct UserServiceSpyTests {
 
     @Test("Los errores del real llegan tal cual a través del espía")
     func testSpyPropagatesRealErrors() async {
-        let spy = InMemoryUserRepositorySpy(InMemoryUserRepository())
+        // Given
+        let (sut, spy, _) = makeSUT()
 
+        // When / Then
         await #expect(throws: UserNotFound(id: 99)) {
-            try await UserService(repository: spy).getUserDisplayName(id: 99)
+            try await sut.getUserDisplayName(id: 99)
         }
         #expect(spy.verify(\.fetchUser).history == [99])
     }

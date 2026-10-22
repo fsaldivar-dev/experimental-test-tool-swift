@@ -216,7 +216,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 224290A47F0D4AE2A0EC9489 /* Build configuration list for PBXNativeTarget "ExampleTests" */;
 			buildPhases = (
-				5B0C4E5FC8FBC43D918152C7 /* Spock: regenerar Generated si falta */,
+				5B0C4E5FC8FBC43D918152C7 /* Spock: sincronizar Generated */,
 				C57424A1588A47138ED504B3 /* Sources */,
 				7741E29C632E4100B8C171CD /* Frameworks */,
 				7FAF23CF0219486EA5B96BF7 /* Resources */,
@@ -314,7 +314,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		5B0C4E5FC8FBC43D918152C7 /* Spock: regenerar Generated si falta */ = {
+		5B0C4E5FC8FBC43D918152C7 /* Spock: sincronizar Generated */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
@@ -324,7 +324,7 @@
 			);
 			inputPaths = (
 			);
-			name = "Spock: regenerar Generated si falta";
+			name = "Spock: sincronizar Generated";
 			outputFileListPaths = (
 			);
 			outputPaths = (
@@ -338,7 +338,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Spock: la carpeta Generated es el snapshot de stubs y mocks.\n# Cada build corre spock-gen; con todo al día termina en milisegundos (cache HIT).\n# Deja rastro en .build/spock-phase.log junto al Package.swift.\nLOG=\"${SRCROOT}/../.build/spock-phase.log\"\nmkdir -p \"$(dirname \"$LOG\")\"\nSTART=$(date +%s)\ncd \"${SRCROOT}/..\"\n/usr/bin/env -i HOME=\"$HOME\" PATH=\"/usr/bin:/bin:/usr/sbin:/sbin\" DEVELOPER_DIR=\"${DEVELOPER_DIR}\" /usr/bin/swift run spock-gen --sources Example=Example/Example --tests ExampleTests=Example/ExampleTests --output Example/ExampleTests/Generated >> \"$LOG\" 2>&1\nSTATUS=$?\necho \"$(date '+%F %T') spock-gen terminó con código $STATUS en $(( $(date +%s) - START )) s\" >> \"$LOG\"\nexit $STATUS";
+			shellScript = "# Spock: la carpeta Generated es el snapshot de stubs, mocks y espías.\n# Cada build corre spock-gen: con todo al día es una comprobación de hashes (cache HIT);\n# si falta un archivo, cambió el dominio o hay una anotación nueva, regenera y sincroniza el proyecto.\n# Esta fase, sus Output Files y su orden los mantiene spock-gen; no los edites a mano.\n# Deja rastro en .build/spock-phase.log junto al Package.swift.\nLOG=\"${SRCROOT}/../.build/spock-phase.log\"\nmkdir -p \"$(dirname \"$LOG\")\"\nSTART=$(date +%s)\ncd \"${SRCROOT}/..\"\n/usr/bin/env -i HOME=\"$HOME\" PATH=\"/usr/bin:/bin:/usr/sbin:/sbin\" DEVELOPER_DIR=\"${DEVELOPER_DIR}\" /usr/bin/swift run spock-gen --sources Example=Example/Example --tests ExampleTests=Example/ExampleTests --output Example/ExampleTests/Generated >> \"$LOG\" 2>&1\nSTATUS=$?\necho \"$(date '+%F %T') spock-gen terminó con código $STATUS en $(( $(date +%s) - START )) s\" >> \"$LOG\"\nexit $STATUS";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
