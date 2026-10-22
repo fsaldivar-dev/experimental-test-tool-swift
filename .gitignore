@@ -48,6 +48,7 @@ playground.xcworkspace
 
 .build/
 .spock-cache.json
+# (el manifiesto por defecto ahora vive en .build/spock-cache.json, ya cubierto por .build/)
 .spock-daemon.log
 .spock-daemon.pid
 .DS_Store
