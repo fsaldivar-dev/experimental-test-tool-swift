@@ -24,6 +24,7 @@ Primera beta de Spock 2. Corre en macOS y Linux con SwiftPM (CI en ambos). Reesc
 ### Eliminado
 - API de v1: el protocolo `SpockDummy`, `.dummy()`, `SpockDummyGenerator`, `SpockDecoder` y los contenedores sintéticos (`SpockContainer`, `SpockSingleValueContainer`, `SpockUnkeyedContainer`).
 - Soporte de CocoaPods (`SpockSwift.podspec`): Spock 2 requiere SwiftPM por las macros.
+- La extensión de Xcode Source Editor (`EditorExtension/`): la fase de build que `spock-gen` instala en el `.xcodeproj` cubre su caso (regenerar al compilar), y `spock-gen daemon` / `--watch` siguen disponibles desde la CLI para regenerar al guardar.
 
 ## [1.0.0] — 2022-08
 Primera versión: dummies vía `Decodable` (`SpockDummy`, `.dummy()`) y mocks con property wrappers. Disponible en el tag `1.0.0`.

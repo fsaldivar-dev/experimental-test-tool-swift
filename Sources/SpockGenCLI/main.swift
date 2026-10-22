@@ -230,24 +230,6 @@ func syncXcodeProject(_ options: Options, config: SpockGenEngine.Configuration) 
     }
 }
 
-/// Metadata con rutas absolutas para la extensión de Xcode.
-func persistProjectMetadata(_ options: Options, output: String) {
-    let cwd = FileManager.default.currentDirectoryPath
-    func absolute(_ path: String) -> String {
-        (path as NSString).isAbsolutePath ? path : URL(fileURLWithPath: cwd).appendingPathComponent(path).standardized.path
-    }
-    let metadata: [String: Any] = [
-        "projectRoot": cwd,
-        "outputDirectory": absolute(output),
-        "sources": options.sources.map { "\($0.module)=\(absolute($0.path))" },
-        "tests": options.tests.map { "\($0.module)=\(absolute($0.path))" },
-        "timestamp": Date().timeIntervalSince1970
-    ]
-    if let data = try? JSONSerialization.data(withJSONObject: metadata, options: .prettyPrinted) {
-        try? data.write(to: URL(fileURLWithPath: "/tmp/.spock_active_project.json"))
-    }
-}
-
 // MARK: - Comandos
 
 let arguments = Array(CommandLine.arguments.dropFirst())
@@ -418,7 +400,6 @@ case "generate":
     var options = parseOptions(optionArguments)
     autoDetect(into: &options)
     guard let config = makeConfiguration(options) else { exit(1) }
-    persistProjectMetadata(options, output: config.outputDirectory)
 
     let engine = SpockGenEngine(config: config)
     runGenerate(engine: engine)
