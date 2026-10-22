@@ -13,9 +13,9 @@ import Darwin
 import Glibc
 #endif
 
-// Desactivar buffer en bloque para que los logs se escriban inmediatamente en disco
-setlinebuf(stdout)
-setlinebuf(stderr)
+// No ajustamos el buffering de stdout/stderr: referenciar esos globales no es concurrency-safe
+// en Swift 6 bajo Glibc (y rompía el build de Linux). En modo --watch vaciamos con fflush(nil)
+// tras cada generación; en modo de una sola corrida, stdio se vacía al salir.
 
 // MARK: - Opciones
 
@@ -429,6 +429,7 @@ case "generate":
         print("💡 Guarda en Xcode (⌘S) y los stubs se regenerarán al vuelo.")
         let watcher = FileWatcher(directories: config.sourcesDirectories + config.testsDirectories) {
             runGenerate(engine: engine)
+            fflush(nil)   // logs en vivo sin tocar los globales stdout/stderr
         }
         watcher.start()
         RunLoop.main.run()
