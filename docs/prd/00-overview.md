@@ -33,11 +33,11 @@ Es el mismo modelo que hizo exitoso a swift-snapshot-testing, aplicado de forma 
 | --- | --- | --- |
 | **SpockMock** | Dobles: `Tipo.stub(...)`, `ProtocoloMock`, `TipoSpy` | Entregado (2.0.0-beta.1) |
 | **SpockSnapshot** | Snapshot de UI en dos capas: árbol semántico (FAIL) + píxeles (WARNING) | PRD / diseño |
-| **SpockRegression** | Golden master de valores, `Codable`, salidas de funciones puras | PRD / diseño |
+| **SpockRegression** | Record/replay de servicios: fixtures HAR versionados, re-grabado contra vivo como señal de contrato | PRD / diseño |
 | **SpockPerformance** | Baselines de tiempo/asignaciones versionados | PRD / diseño |
 | **SpockAccessibility** | Aserciones sobre el árbol de accesibilidad (WCAG, target 44pt, labels) | PRD / diseño |
 
-Regresión y accesibilidad comparten mecanismo con Snapshot (ver sus PRDs): Regression es el motor de Snapshot aplicado a valores no-UI; Accessibility son aserciones sobre el mismo árbol que Snapshot captura.
+Regresión y accesibilidad comparten la tesis con Snapshot (ver sus PRDs): Regression es record/replay de servicios (HAR versionado + re-grabado como señal de contrato), misma idea de artefacto versionado con detección de desfase; Accessibility son aserciones sobre el mismo árbol de a11y que Snapshot captura.
 
 ## Infraestructura compartida
 
